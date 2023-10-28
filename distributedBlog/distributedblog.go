@@ -6,6 +6,7 @@ import (
 
 	"distributedBlog/internal/config"
 	"distributedBlog/internal/handler"
+	auth "distributedBlog/internal/logic/Auth"
 	"distributedBlog/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -22,10 +23,11 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
-
+	var a auth.Auth
+	p := a.GetProtectionlist()
+	fmt.Println(p)
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
-
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

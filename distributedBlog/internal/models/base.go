@@ -1,5 +1,7 @@
 package models
 
+import "database/sql"
+
 type BaseModel struct {
-	ID []byte `json:"id" gorm:"primarykey"`
+	ID sql.NullString `json:"UID" gorm:"primarykey" db:"UID"`
 }

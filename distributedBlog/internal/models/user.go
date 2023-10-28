@@ -1,14 +1,18 @@
 package models
 
+import (
+	"database/sql"
+)
+
 type User struct {
-	BaseModel
-	password           []byte `json:"password"`
-	secret_protection1 []byte `json:"secret_protection1"`
-	secret_protection2 []byte `json:"secret_protection2"`
-	secret_protection3 []byte `json:"secret_protection3"`
-	is_Admin           int    `json:"is_Admin"`
+	UID                BaseModel
+	Password           sql.NullString `json:"password" db:"password"`
+	Secret_protection1 sql.NullString `json:"secret_protection1" db:"secret_protection1"`
+	Secret_protection2 sql.NullString `json:"secret_protection2" db:"secret_protection2"`
+	Secret_protection3 sql.NullString `json:"secret_protection3" db:"secret_protection3"`
+	Is_Admin           int64          `json:"is_Admin" db:"is_Admin"`
 }
 
-func (User) TableName() string {
+func (u *User) TableName() string {
 	return "user"
 }
