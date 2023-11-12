@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	UID                BaseModel
+	UID                sql.NullString `json:"password" db:"UID"`
 	Password           sql.NullString `json:"password" db:"password"`
 	Secret_protection1 sql.NullString `json:"secret_protection1" db:"secret_protection1"`
 	Secret_protection2 sql.NullString `json:"secret_protection2" db:"secret_protection2"`

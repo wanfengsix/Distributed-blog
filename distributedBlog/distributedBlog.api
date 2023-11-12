@@ -1,3 +1,5 @@
+syntax = "v1"
+
 type Request {
 	Name string `path:"name,options=you|me"`
 }
@@ -6,6 +8,20 @@ type Response {
 	Message string `json:"message"`
 }
 
+
+type LoginReq {
+    Username string `json:"username"`
+    Password string `json:"password"`
+}
+
+type LoginResp {
+    ID string `json:"id"`
+    Name string `json:"name"`
+}
+service user-api {
+    @handler login
+    post /user/login (LoginReq) returns (LoginResp)
+}
 service distributedBlog-api {
 	@handler DistributedBlogHandler
 	get /from/:name(Request) returns (Response)
