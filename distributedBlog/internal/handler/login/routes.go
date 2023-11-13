@@ -3,6 +3,7 @@ package login
 import (
 	"net/http"
 
+	"distributedBlog/internal/handler/base"
 	"distributedBlog/internal/svc"
 	"distributedBlog/internal/types"
 
@@ -19,6 +20,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 	)
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodOptions,
+				Path:    "/login",
+				Handler: base.Prefix_Managing,
+			},
+		},
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

@@ -16,6 +16,7 @@ func loginHandler(authReq *types.LoginTokenInfo) http.HandlerFunc {
 
 		//处理跨域请求
 		base.CORS_Managing(&w, r)
+		fmt.Fprintf(w, "Password is correct!")
 		//base.CORS_ALLOW_ALL(w, r)
 	}
 }
@@ -52,5 +53,12 @@ func PostHandler() http.HandlerFunc {
 		var a auth.Auth
 		a = *auth.GetAuth(username, password)
 		fmt.Println(a.Password_Right)
+		if a.Password_Right {
+			//发送正确到前端
+			base.GetDataHandler(&w, r, "Password is correct!")
+		} else {
+			//发送错误到前端
+			base.GetDataHandler(&w, r, "Password is incorrect!")
+		}
 	}
 }

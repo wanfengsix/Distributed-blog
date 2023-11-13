@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"distributedBlog/internal/const_values"
 	"encoding/hex"
+	"encoding/json"
 	"net/http"
 )
 
@@ -47,4 +48,21 @@ func Hash_encoder(in string) string {
 	hash := sha256.Sum256([]byte(in))
 	hashString := hex.EncodeToString(hash[:])
 	return hashString
+}
+
+// 将后端数据打包成json发送至前端
+func GetDataHandler(w *http.ResponseWriter, r *http.Request, str string) {
+	data := map[string]interface{}{
+		"message": str,
+		"count":   42,
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		http.Error(*w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	(*w).Header().Set("Content-Type", "application/json")
+	(*w).Write(jsonData)
 }

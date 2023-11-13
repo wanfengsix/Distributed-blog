@@ -57,8 +57,10 @@ func GetAuth(userName string, passWord string) *Auth { //获取Auth事务体
 	//校验密码
 	if newAuth.Password_IS_Right(passWord) {
 		newAuth.Password_Right = true
+
 	} else {
 		newAuth.Password_Right = false
+		//json
 	}
 	return newAuth
 

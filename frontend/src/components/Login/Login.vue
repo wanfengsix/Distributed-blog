@@ -43,8 +43,13 @@ export default {
       .then(response => {    
         // 处理成功的响应    
         console.log(response.data);    
-        // 在这里可以进行页面跳转或其他操作    
-      })    
+        // 在这里可以进行页面跳转或其他操作 
+      const message = response.data.message;  
+      const count = response.data.count;  
+      const popup = window.open("", "", "width=200,height=200");  
+      popup.document.write(`<h1>${message}</h1><p>Count: ${count}</p>`);  
+      popup.document.close();  
+     })      
       .catch(error => {    
         // 处理错误    
         console.error(error);    
