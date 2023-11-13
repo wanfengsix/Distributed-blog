@@ -42,7 +42,7 @@ func CORS_ALLOW_ALL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
-// 对于hash密码进行编码操作
+// 对于数据进行编码操作
 func Hash_encoder(in string) string {
 	hash := sha256.Sum256([]byte(in))
 	hashString := hex.EncodeToString(hash[:])
