@@ -4,6 +4,7 @@ import (
 	"distributedBlog/internal/config"
 	"distributedBlog/internal/handler"
 	"distributedBlog/internal/handler/login"
+	"distributedBlog/internal/handler/regist"
 	"distributedBlog/internal/svc"
 	"flag"
 	"fmt"
@@ -29,6 +30,7 @@ func main() {
 	//请求处理
 	handler.RegisterHandlers(server, ctx)
 	login.RegisterHandlers(server, ctx)
+	regist.RegisterHandlers(server, ctx)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

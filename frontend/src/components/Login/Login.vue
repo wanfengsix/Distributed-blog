@@ -1,16 +1,21 @@
 <template>
- <div Header >
-    <h1>{{ msg }}</h1>
- </div>    
- <form @submit.prevent="login">  
-      <div>  
+<div class="container">
+<div class="Header" >
+  <h1>dusha</h1>
+</div>    
+<form @submit.prevent="login">  
+      <div class="form-item">  
         <input type="text" id="username" placeholder="请输入用户名" v-model="username" required>  
       </div>  
-      <div>  
+      <div class="form-item">  
         <input type="password" id="password" placeholder="请输入密码:" v-model="password" required>  
+      </div>
+      <div class="auth">
+      <button type="submit">登陆</button>
+      <button @click.prevent="Go_Regist">注册</button>
       </div>  
-      <button type="submit">登陆</button>  
-    </form>  
+</form>  
+</div>
 </template>
 <script>
 import axios from 'axios'
@@ -21,13 +26,16 @@ export default {
     msg: String
   },  
   data() {  
-    return {  
+    return { 
       username: '',  
       password: ''  
     };  
   }, 
 
-  methods: {  
+  methods: {
+    Go_Regist(){
+      this.$router.push('/regist')
+    },  
     login() {
       const hashedPassword = CryptoJS.SHA256(this.password).toString(); 
       const data = {
@@ -42,13 +50,20 @@ export default {
       instance.post('http://127.0.0.1:8088/user/login', data)    
       .then(response => {    
         // 处理成功的响应    
-        console.log(response.data);    
+      console.log(response.data);
+      if(response.data.Success==true){
+        this.$router.push('/')   
+      }else{
         // 在这里可以进行页面跳转或其他操作 
-      const message = response.data.message;  
-      const count = response.data.count;  
-      const popup = window.open("", "", "width=200,height=200");  
-      popup.document.write(`<h1>${message}</h1><p>Count: ${count}</p>`);  
-      popup.document.close();  
+      const message = response.data.message;   
+      const popup = window.open("", "", "width=800,height=200");  
+      popup.document.write(`<h1>${message}</h1>`);  
+      popup.document.close();
+      // 设置3秒后关闭窗口  
+      setTimeout(function() {  
+        popup.close();  
+      }, 3000);   
+      }
      })      
       .catch(error => {    
         // 处理错误    
@@ -58,3 +73,32 @@ export default {
   } 
 };  
 </script>
+<style>
+  body{
+    background-image: url("../星空.jpg");
+  }
+  .container{
+    text-align: center;
+    justify-content: center;
+    
+  }
+  .Header{
+    font-family: "黑体";
+    font-size: 46px;
+    color:aliceblue;
+  }
+  input{
+    font-size: 40px;
+  }
+  .form-item{
+  margin-bottom: 20px;
+  }
+  button{
+    font-size: 45px;
+  }
+  .auth{
+    justify-content: center;
+    display: flex;
+    gap: 300px;
+  }
+</style>

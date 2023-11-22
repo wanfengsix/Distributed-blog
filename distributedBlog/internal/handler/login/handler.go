@@ -55,10 +55,13 @@ func PostHandler() http.HandlerFunc {
 		fmt.Println(a.Password_Right)
 		if a.Password_Right {
 			//发送正确到前端
-			base.GetDataHandler(&w, r, "Password is correct!")
-		} else {
+			base.GetDataHandler(&w, r, &types.LoginResponse{Success: true, Message: "Password is correct!"})
+		} else if !a.Is_Exist {
 			//发送错误到前端
-			base.GetDataHandler(&w, r, "Password is incorrect!")
+			base.GetDataHandler(&w, r, &types.LoginResponse{Success: false, Message: "User is not exist!", Code: 1001})
+		} else if !a.Password_Right {
+			//发送错误到前端
+			base.GetDataHandler(&w, r, &types.LoginResponse{Success: false, Message: "Password is incorrect!", Code: 1001})
 		}
 	}
 }

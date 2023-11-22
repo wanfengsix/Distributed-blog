@@ -7,3 +7,4 @@ const FRONTEND_ALL_DOMAIN = "*"
 const BACKEND_IP = "127.0.0.1"
 const BACKEND_PORT = ":8080"
 const BACKEND_SOURCE = "http://" + BACKEND_IP + BACKEND_PORT
+const LOCALHOST = "http://localhost:8080"

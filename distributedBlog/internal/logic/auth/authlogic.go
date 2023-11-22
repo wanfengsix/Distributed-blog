@@ -20,6 +20,7 @@ import (
 type Auth struct {
 	AuthBody       models.User
 	Password_Right bool
+	Is_Exist       bool
 }
 
 var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha?charset=utf8mb4&parseTime=True&loc=Local")
@@ -49,11 +50,21 @@ func (a *Auth) Password_IS_Right(t string) bool {
 
 func GetAuth(userName string, passWord string) *Auth { //获取Auth事务体
 	newAuth := new(Auth)
+	var A_list []*models.User
 	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where uid=?"
-	err := mysqlDB.QueryRowCtx(context.Background(), &newAuth.AuthBody, query, userName)
+	err := mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, userName)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+
 	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(A_list) == 0 {
+		newAuth.Is_Exist = false
+	} else {
+		newAuth.AuthBody = *A_list[0]
+		newAuth.Is_Exist = true
+	}
+
 	//校验密码
 	if newAuth.Password_IS_Right(passWord) {
 		newAuth.Password_Right = true
