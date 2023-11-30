@@ -3,10 +3,12 @@
 </template>
 
 <script>
+import Host from './components/Host/Host.vue'
 import Login from './components/Login/Login.vue'
 import Regist from './components/Regist/Regist.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
+    {path: '/', component:Host},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
 ]
@@ -23,10 +25,19 @@ export default {
   name: 'App',
   components: {
   },
-  router
+  router,
+  computed: {  
+    bgStyle() {  
+      return {  
+        'background-image': 'none', // 这将覆盖所有子组件的背景图片样式  
+      }  
+    }  
+  },  
 }
 </script>
 
-<style>
-
+<style scoped>
+.app{
+  background-color: aliceblue;
+}
 </style>

@@ -28,21 +28,18 @@
     </form>  
     </div>
     </template>
-    <script>
-    import axios from 'axios'
-    export default {
-      name: 'Regist_Page',
-      props: {
-        msg: String
-      },  
-      data() {  
-        return {  
-          username: '',  
-          password: '',
-          again_password:'',
-          password_protection1:'',
-          password_protection2:'',
-          password_protection3:''  
+<script>
+  import axios from 'axios'
+  export default {
+    name: 'Regist_Page',
+    data() {  
+      return {  
+        username: '',  
+        password: '',
+        again_password:'',
+        password_protection1:'',
+        password_protection2:'',
+        password_protection3:''  
         };  
       }, 
     
@@ -95,33 +92,48 @@
         }    
       } 
     };  
-    </script>
-    <style>
-      body{
-        background-image: url("../星空.jpg");
-      }
-      .container{
-        text-align: center;
-        justify-content: center;
-        
-      }
-      .Header{
-        font-family: "黑体";
-        font-size: 46px;
-        color:aliceblue;
-      }
-      input{
-        font-size: 40px;
-      }
-      .form-item{
-      margin-bottom: 20px;
-      }
-      button{
-        font-size: 45px;
-      }
-      .auth{
-        justify-content: center;
-        display: flex;
-        gap: 300px;
-      }
-    </style>
+</script>
+<style>
+.container {
+  background-image: url("../星空.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Header {
+  font-family: "黑体";
+  font-size: 46px;
+  color: aliceblue;
+}
+
+input {
+  font-size: 40px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-item {
+  margin-bottom: 20px;
+}
+
+button {
+  font-size: 45px;
+}
+
+.auth {
+  display: flex;
+  gap: 300px;
+  justify-content: center;
+}
+</style>

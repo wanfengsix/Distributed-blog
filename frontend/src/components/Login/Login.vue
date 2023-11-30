@@ -1,30 +1,72 @@
 <template>
-<div class="container">
-<div class="Header" >
-  <h1>dusha</h1>
-</div>    
-<form @submit.prevent="login">  
-      <div class="form-item">  
-        <input type="text" id="username" placeholder="请输入用户名" v-model="username" required>  
-      </div>  
-      <div class="form-item">  
-        <input type="password" id="password" placeholder="请输入密码:" v-model="password" required>  
+  <div class="container">
+    <div class="Header">
+      <h1>dusha</h1>
+    </div>
+    <form @submit.prevent="login" class="form">
+      <div class="form-item">
+        <input type="text" id="username" placeholder="请输入用户名" v-model="username" required>
+      </div>
+      <div class="form-item">
+        <input type="password" id="password" placeholder="请输入密码:" v-model="password" required>
       </div>
       <div class="auth">
-      <button type="submit">登陆</button>
-      <button @click.prevent="Go_Regist">注册</button>
-      </div>  
-</form>  
-</div>
+        <button type="submit">登陆</button>
+        <button @click.prevent="Go_Regist">注册</button>
+      </div>
+    </form>
+  </div>
 </template>
+
+<style scoped>
+.container {
+  background-image: url("../星空.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Header {
+  font-family: "黑体";
+  font-size: 46px;
+  color: aliceblue;
+}
+
+input {
+  font-size: 40px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-item {
+  margin-bottom: 20px;
+}
+
+button {
+  font-size: 45px;
+}
+
+.auth {
+  display: flex;
+  gap: 300px;
+}
+</style>
+
 <script>
 import axios from 'axios'
 import CryptoJS from 'crypto-js'
 export default {
   name: 'Login_Page',
-  props: {
-    msg: String
-  },  
   data() {  
     return { 
       username: '',  
@@ -73,32 +115,3 @@ export default {
   } 
 };  
 </script>
-<style>
-  body{
-    background-image: url("../星空.jpg");
-  }
-  .container{
-    text-align: center;
-    justify-content: center;
-    
-  }
-  .Header{
-    font-family: "黑体";
-    font-size: 46px;
-    color:aliceblue;
-  }
-  input{
-    font-size: 40px;
-  }
-  .form-item{
-  margin-bottom: 20px;
-  }
-  button{
-    font-size: 45px;
-  }
-  .auth{
-    justify-content: center;
-    display: flex;
-    gap: 300px;
-  }
-</style>
