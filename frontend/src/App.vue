@@ -12,7 +12,11 @@ const routes = [
     {path: '/', component:Host},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
-    {path:'/:username',component:Logined}
+    {path:'/:username',component:Logined,
+    meta: {
+        requiresAuth: true // 添加一个自定义元字段，标记需要登录才能访问的路由
+      }
+  }
 ]
   
   // 3. 创建路由实例并传递 `routes` 配置
@@ -22,6 +26,17 @@ const router = createRouter({
     // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
     history: createWebHistory(),
     routes, // `routes: routes` 的缩写
+})
+// 添加全局前置守卫
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isLoggedIn = localStorage.getItem('isLoggedIn')   
+
+  if (requiresAuth && !isLoggedIn) {
+    next('/login')           //重定向到登录
+  } else {
+    next()
+  }
 })
 export default {
   name: 'App',

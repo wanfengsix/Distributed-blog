@@ -29,7 +29,7 @@
         </div>
   
         <div class="navgationbarItemAvator">
-          <img class="imgAvator" src="img/profile.png">
+          <img class="imgAvator" :src="imageSrc" alt="Image from backend">
         </div>
           <div class="navgationbarItemLog"> 
               <a href="/">退出</a>
@@ -43,7 +43,7 @@
   
           <ol>
             <div class="articleListTiTle">
-              <img :src="imageSrc" alt="Image from backend" style="height: 20px">
+              <img  src="/img/list.png" style="height: 20px">
               文章榜
             </div>
   
@@ -155,6 +155,20 @@
   <script>
   export default {
     name: 'Host_Page_Logined',
+    data() {
+    return {
+      imageSrc: '', // 后端返回的头像图片路径
+    };
+  },
+  mounted() {
+    // 向后端请求头像图片数据，获取图片路径
+    fetch('/api/getAvatar')
+      .then(response => response.json())
+      .then(data => {
+        this.imageSrc = data.avatarSrc; // 保存图片路径到 data 中
+      })
+      .catch(error => console.error(error));
+  },
   };  
   </script>
   <style>
@@ -247,7 +261,8 @@
       width: 5%;
       border: 1px solid rgb(128, 128, 128);
       float: left;
-      text-align: center;
+      text-align: cent￼ 作者榜
+er;
     
       line-height: 100%;
       .imgNotifications{

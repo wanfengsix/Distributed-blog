@@ -94,7 +94,9 @@ export default {
         // 处理成功的响应    
       console.log(response.data);
       if(response.data.Success==true){
-        this.$router.push('/')   
+        //this.$router.push('/')
+        localStorage.setItem('isLoggedIn', true) // 设置登录状态为已登录   
+        this.$router.push(`/${this.username}`);  //跳转到用户名已经登录下的页面
       }else{
         // 在这里可以进行页面跳转或其他操作 
       const message = response.data.message;   
