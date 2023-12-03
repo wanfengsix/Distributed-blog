@@ -27,10 +27,6 @@
       <div class="navgationbarItemCreaterCenter">
        <p style="color: white;">创作者中心</p> 
       </div>
-
-      <div class="navgationbarItemAvator">
-        <img class="imgAvator" src="img/profile.png">
-      </div>
         <div class="navgationbarItemLog">
             
             <a href="login">登录</a>
@@ -164,7 +160,7 @@ body {
   padding: 0;
   background-color: #f2f2f2;
 }
-
+￼
 header {
   background-color: #333;
   color: #fff;

@@ -5,7 +5,7 @@ type LoginTokenInfo struct {
 	LoginReq
 }
 type LoginReq struct {
-	Username string `json:"username"`
+	Username string `json:"username" path:"username"`
 	Password string `json:"password"`
 }
 type LoginResponse struct {

@@ -7,10 +7,12 @@ import Host from './components/Host/Host.vue'
 import Login from './components/Login/Login.vue'
 import Regist from './components/Regist/Regist.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import Logined from './components/Host/Host_Logined.vue'
 const routes = [
     {path: '/', component:Host},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
+    {path:'/:username',component:Logined}
 ]
   
   // 3. 创建路由实例并传递 `routes` 配置

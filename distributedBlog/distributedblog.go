@@ -18,9 +18,11 @@ var configFile = flag.String("f", "etc/distributedblog-api.yaml", "the config fi
 func main() {
 	//参数传递
 	flag.Parse()
+
 	//配置加载
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+
 	//服务
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
@@ -31,6 +33,8 @@ func main() {
 	handler.RegisterHandlers(server, ctx)
 	login.RegisterHandlers(server, ctx)
 	regist.RegisterHandlers(server, ctx)
+
+	//服务器运行
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

@@ -50,4 +50,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 	)
 
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodOptions,
+				Path:    "/user/login/:username",
+				Handler: Prefix_login_managing(),
+			},
+		},
+	)
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/user/login/:username",
+				Handler: Rest_LoginHandler(serverCtx),
+			},
+		},
+	)
 }

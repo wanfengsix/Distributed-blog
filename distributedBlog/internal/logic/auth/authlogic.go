@@ -4,10 +4,12 @@ import (
 	"context"
 	"distributedBlog/internal/handler/base"
 	"distributedBlog/internal/models"
+	"distributedBlog/internal/svc"
 	"distributedBlog/internal/types"
 	"fmt"
 	"log"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -21,6 +23,63 @@ type Auth struct {
 	AuthBody       models.User
 	Password_Right bool
 	Is_Exist       bool
+}
+
+/*
+处理有关的auth请求逻辑体，由logx，ctx，svcctx组成。
+*/
+type AuthLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+func NewAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthLogic {
+	return &AuthLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+// 基于Restul API的登录处理
+func (a *AuthLogic) Login(req *types.LoginReq) (resp *types.LoginResponse, err error) {
+	newAuth := new(Auth)
+	res := new(types.LoginResponse)
+	resp = res
+	var A_list []*models.User
+	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where uid=?"
+	err = mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, req.Username)
+	if err != nil {
+		fmt.Println(err)
+
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(A_list) == 0 {
+		newAuth.Is_Exist = false
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+	} else {
+		newAuth.AuthBody = *A_list[0]
+		newAuth.Is_Exist = true
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+
+	//校验密码
+	if newAuth.Password_IS_Right(req.Password) {
+		newAuth.Password_Right = true
+
+	} else {
+		resp.Success = false
+		newAuth.Password_Right = false
+		//json
+		resp.Message = "Password Wrong!"
+	}
+
+	return
 }
 
 var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha?charset=utf8mb4&parseTime=True&loc=Local")

@@ -89,7 +89,7 @@ export default {
         withCredentials: true,
       });  
       // 将用户名和密码发送到后端    
-      instance.post('http://127.0.0.1:8088/user/login', data)    
+      instance.post('http://127.0.0.1:8088/user/login'+'/'+hashedPassword, data)    
       .then(response => {    
         // 处理成功的响应    
       console.log(response.data);
