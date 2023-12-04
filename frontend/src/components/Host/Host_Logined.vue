@@ -171,7 +171,7 @@
   },
   };  
   </script>
-  <style>
+  <style lang="less">
   body {
     font-family: Arial, sans-serif;
     margin: 0;

@@ -5,6 +5,7 @@
 <script>
 import Host from './components/Host/Host.vue'
 import Login from './components/Login/Login.vue'
+import Article from './components/Article/Article.vue'
 import Regist from './components/Regist/Regist.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import Logined from './components/Host/Host_Logined.vue'
@@ -12,6 +13,7 @@ const routes = [
     {path: '/', component:Host},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
+    {path:'/article',component:Article},
     {path:'/:username',component:Logined,
     meta: {
         requiresAuth: true // 添加一个自定义元字段，标记需要登录才能访问的路由

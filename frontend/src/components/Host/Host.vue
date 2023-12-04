@@ -105,7 +105,7 @@
       <div class="articleRecommendedList">
         <!-- 通过循环生成文章列表 -->
         <div class="article">
-          <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
+          <h3><a href="article">百度搜索内容HTAP表格存储系统</a></h3>
           <p>文章摘要或内容简介...</p>
         </div>
         <div class="article">
@@ -153,7 +153,7 @@ export default {
   name: 'Host_Page',
 };  
 </script>
-<style>
+<style lang="less">
 body {
   font-family: Arial, sans-serif;
   margin: 0;
