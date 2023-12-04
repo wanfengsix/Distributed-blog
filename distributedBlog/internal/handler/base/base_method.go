@@ -26,7 +26,7 @@ func Prefix_Managing(w http.ResponseWriter, r *http.Request) {
 	if !Is_Ours(origin) { //用于检验首部
 		return
 	}
-	if r.Method == "OPTIONS" || r.Method == "POST" {
+	if r.Method == "OPTIONS" || r.Method == "POST" || r.Method == "GET" {
 		// 这是预检请求 ，在POST请求也对其进行处理
 		(w).Header().Set("Access-Control-Allow-Origin", origin) // 允许指定来源的跨域请求
 		(w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")

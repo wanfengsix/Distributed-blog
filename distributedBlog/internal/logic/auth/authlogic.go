@@ -48,7 +48,7 @@ func (a *AuthLogic) Login(req *types.LoginReq) (resp *types.LoginResponse, err e
 	res := new(types.LoginResponse)
 	resp = res
 	var A_list []*models.User
-	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where uid=?"
+	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where u_name=?"
 	err = mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, req.Username)
 	if err != nil {
 		fmt.Println(err)
@@ -85,7 +85,7 @@ func (a *AuthLogic) Login(req *types.LoginReq) (resp *types.LoginResponse, err e
 var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha?charset=utf8mb4&parseTime=True&loc=Local")
 
 func (a *Auth) GetProtectionlist() *[][]byte { //返回用户所有秘保答案列表
-	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register"
+	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register"
 	err := mysqlDB.QueryRowCtx(context.Background(), &a.AuthBody, query)
 	if err != nil {
 		panic(err)
@@ -110,7 +110,7 @@ func (a *Auth) Password_IS_Right(t string) bool {
 func GetAuth(userName string, passWord string) *Auth { //获取Auth事务体
 	newAuth := new(Auth)
 	var A_list []*models.User
-	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where uid=?"
+	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where u_name=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, userName)
 	if err != nil {
 		fmt.Println(err)

@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	UID                sql.NullString `json:"uid" db:"uid"`
+	U_name             sql.NullString `json:"u_name" db:"u_name"`
 	Password           sql.NullString `json:"password" db:"password"`
 	Secret_protection1 sql.NullString `json:"secret_protection1" db:"secret_protection1"`
 	Secret_protection2 sql.NullString `json:"secret_protection2" db:"secret_protection2"`
@@ -14,5 +14,5 @@ type User struct {
 }
 
 func (u *User) TableName() string {
-	return "user"
+	return "register"
 }

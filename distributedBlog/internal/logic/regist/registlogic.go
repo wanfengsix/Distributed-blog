@@ -25,7 +25,7 @@ var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha
 func GetRegist(R types.RegistReq) *Regist { //获取Regist事务体
 	newRegist := new(Regist)
 	var R_list []*models.User
-	query := "select uid,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where uid=?"
+	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where u_name=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, R.Username)
 	if err != nil {
 		fmt.Println(err)
