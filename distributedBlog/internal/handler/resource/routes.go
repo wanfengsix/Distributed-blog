@@ -13,7 +13,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodOptions,
-				Path:    "/user/:type/:username",
+				Path:    "/user/:type/:name",
 				Handler: Prefix_resource_managing(),
 			},
 		},
@@ -22,7 +22,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/user/:type/:username",
+				Path:    "/user/:type/:name",
 				Handler: ResourceHandler(serverCtx),
 			},
 		},

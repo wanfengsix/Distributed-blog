@@ -42,6 +42,7 @@ CREATE TABLE `article` (
 
 LOCK TABLES `article` WRITE;
 /*!40000 ALTER TABLE `article` DISABLE KEYS */;
+INSERT INTO `article` VALUES ('0','听说前端出大事了','2023-12-05 00:00:00','0',0,0,'1.txt');
 /*!40000 ALTER TABLE `article` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +191,8 @@ CREATE TABLE `register` (
   `secret_protection2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `secret_protection3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `is_Admin` int NOT NULL,
-  PRIMARY KEY (`u_name`) USING BTREE
+  PRIMARY KEY (`u_name`) USING BTREE,
+  CONSTRAINT `fk` FOREIGN KEY (`u_name`) REFERENCES `user` (`u_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -200,7 +202,7 @@ CREATE TABLE `register` (
 
 LOCK TABLES `register` WRITE;
 /*!40000 ALTER TABLE `register` DISABLE KEYS */;
-INSERT INTO `register` VALUES ('1','2','4','5','6',0),('admin','admin','饭','万吨级哦','为单位登记哦',1);
+INSERT INTO `register` VALUES ('admin','admin','1','2','3',1);
 /*!40000 ALTER TABLE `register` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,6 +234,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('0','admin',0,0,0,0,0,0,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,7 +250,7 @@ CREATE TABLE `user_information` (
   `signature` varchar(255) DEFAULT NULL,
   `avatar_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`UID`),
-  CONSTRAINT `user_information_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `register` (`u_name`)
+  CONSTRAINT `user_information_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -257,7 +260,7 @@ CREATE TABLE `user_information` (
 
 LOCK TABLES `user_information` WRITE;
 /*!40000 ALTER TABLE `user_information` DISABLE KEYS */;
-INSERT INTO `user_information` VALUES ('admin','默默无闻','管理员头像.jpg');
+INSERT INTO `user_information` VALUES ('0','上善若水','管理员头像.jpg');
 /*!40000 ALTER TABLE `user_information` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -270,4 +273,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-05  1:18:01
+-- Dump completed on 2023-12-05 21:58:32

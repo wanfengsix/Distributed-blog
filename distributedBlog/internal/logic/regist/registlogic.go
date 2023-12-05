@@ -2,6 +2,7 @@ package regist
 
 import (
 	"context"
+	"distributedBlog/internal/const_values"
 	"distributedBlog/internal/models"
 	"distributedBlog/internal/types"
 	"fmt"
@@ -20,7 +21,7 @@ type Regist struct {
 	Is_Exist   bool
 }
 
-var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha?charset=utf8mb4&parseTime=True&loc=Local")
+var mysqlDB = sqlx.NewSqlConn("mysql", const_values.MYSQLCONNECTION)
 
 func GetRegist(R types.RegistReq) *Regist { //获取Regist事务体
 	newRegist := new(Regist)

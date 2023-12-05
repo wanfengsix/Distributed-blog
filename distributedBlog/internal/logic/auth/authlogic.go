@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"distributedBlog/internal/const_values"
 	"distributedBlog/internal/handler/base"
 	"distributedBlog/internal/models"
 	"distributedBlog/internal/svc"
@@ -82,7 +83,7 @@ func (a *AuthLogic) Login(req *types.LoginReq) (resp *types.LoginResponse, err e
 	return
 }
 
-var mysqlDB = sqlx.NewSqlConn("mysql", "root:xin365118@tcp(127.0.0.1:3306)/dusha?charset=utf8mb4&parseTime=True&loc=Local")
+var mysqlDB = sqlx.NewSqlConn("mysql", const_values.MYSQLCONNECTION)
 
 func (a *Auth) GetProtectionlist() *[][]byte { //返回用户所有秘保答案列表
 	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register"

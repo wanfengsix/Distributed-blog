@@ -1,9 +1,6 @@
 <template>
 	<head>
 		<meta charset="utf-8">
-		<link type="text/css" rel="stylesheet" href="css/css.css" />
-		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="js/base.js"></script>
 		<!--以下是页面独有JS,请不要放在公用php文件中-->
 
 		<!--以上是页面独有JS,请不要放在公用php文件中-->
@@ -233,6 +230,14 @@
 	</body>
 
 </template>
+
+<script>
+import axios from 'axios'
+import CryptoJS from 'crypto-js'
+export default {
+  name: 'Individual_Page',
+};  
+</script>
 <style>
 /*通用类*/
 * {
@@ -324,14 +329,14 @@ div.clear {
 }
 
 .head1 .geren ul li .a1 {
-	background: url(../images/fz.png)no-repeat left;
+	/*background: url(img/fz.png)no-repeat left;*/
 	background-color: #FFFFFF;
 	background-size: 18px;
 	background-position-x: 5px;
 }
 
 .head1 .geren ul li .a2 {
-	background: url(../images/grzx.png)no-repeat left;
+	/*background: url(img/grzx.png)no-repeat left;*/
 	background-color: #FFFFFF;
 	background-size: 18px;
 	background-position-x: 5px;
@@ -539,8 +544,9 @@ div.clear {
 
 .centen1 .right .xia .bg1{background-color: #FFFFFF;padding: 15px;margin-top: 20px;height: 800px;}
 .centen1 .right .xia .bg1 ul li{width: 100%;margin-top: 15px;}
-.centen1 .right .xia .bg1 ul li a{display: block;background: url(../images/grzx.png)no-repeat left;
+/*.centen1 .right .xia .bg1 ul li a{display: block;background: url(../images/grzx.png)no-repeat left;
 padding-left: 20px;
 background-size: 19px;
 text-align: left;padding-left: 30px;}	
+*/
 </style>
