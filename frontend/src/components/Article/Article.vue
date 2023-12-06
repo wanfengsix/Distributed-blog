@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div id="app">
     <div class="navgationbar">
@@ -22,14 +23,21 @@
         <p style="color: white">创作者中心</p>
       </div>
 
-      <div class="navgationbarItemAvator">
-        <img class="imgAvator" src="img/profile.png" />
+      <div v-if="isLoggedIn">
+        <div class="navgationbarItemAvator">
+            <img class="imgAvator" :src="imageSrc" alt="Image from backend">
+        </div>
+        <div class="navgationbarItemLog"> 
+          <button @click="logout">退出</button>
+        </div>
       </div>
-      <div class="navgationbarItemLog">
-        <router-link to="/login">登录</router-link>
-      </div>
-      <div class="navgationbarItemRegister">
-        <router-link to="/register">注册</router-link>
+      <div v-else>
+        <div class="navgationbarItemLog">
+          <a href="login">登录</a>
+        </div>
+        <div class="navgationbarItemRegister"> 
+            <a href="regist">注册</a>
+        </div>
       </div>
     </div>
 
@@ -129,6 +137,7 @@ export default {
       inputText: "",
       inputHistory: [],
       showComments: false,
+      isLoggedIn: localStorage.getItem("isLoggedIn"),
     };
   },
   computed: {
@@ -137,14 +146,20 @@ export default {
     },
   },
   methods: {
+    logout(){
+    this.isLoggedIn=false;
+
+  },
     showCommentsFangfa() {
       this.showComments = true;
+      this.inputHistory.unshift(this.inputText);
+      this.inputText ="";
     },
     handleInput() {
       // 将当前输入保存到历史记录中
-      this.inputHistory.unshift(this.inputText);
-      this.inputText = "";
-      this.showComments = false;
+      
+      
+      
     },
     handleFileChange(event) {
       const file = event.target.files[0];
