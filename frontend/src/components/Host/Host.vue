@@ -9,38 +9,40 @@
     <div class="navgationbar">
       <img class="imgLogo" src="img/logo.jpg" />
       <div class="navgationbarItemHome">
-        <img class="imgHome" src="img/home.png" alt="">
+        <img class="imgHome" src="img/home.png" alt="" />
         <a href="">首页</a>
       </div>
       <div class="navgationbarItemNotifications">
-        <img  class="imgNotifications" src="img/notifications.png" alt="">
+        <img class="imgNotifications" src="img/notifications.png" alt="" />
         <a href="#notifications">通知</a>
       </div>
       <div class="navgationbarItemProfile">
-        <img class="imgProfile" src="img/profile.png" alt="">
+        <img class="imgProfile" src="img/profile.png" alt="" />
         <a href="#profile">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
-        <input type="text" style=" width: 400px;"/>
+        <input type="text" style="width: 400px" />
       </div>
       <div class="navgationbarItemCreaterCenter">
-       <p style="color: white;">创作者中心</p>
+        <p style="color: white">创作者中心</p>
       </div>
-      <div v-if="isLoggedIn">
+      <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
-            <img class="imgAvator" :src="imageSrc" alt="Image from backend">
+          <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
         </div>
-        <div class="navgationbarItemLog"> 
-          <button @click="logout">退出</button>
+        <div class="navgationbarItemLog">
+          <button @click="logout" style="width: 200px; height: 50px;font-size: 30px;">
+            退出
+          </button>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="nologgedIn">
         <div class="navgationbarItemLog">
           <a href="login">登录</a>
         </div>
-        <div class="navgationbarItemRegister"> 
-            <a href="regist">注册</a>
+        <div class="navgationbarItemRegister">
+          <a href="regist">注册</a>
         </div>
       </div>
     </div>
@@ -50,7 +52,7 @@
 
         <ol>
           <div class="articleListTiTle">
-            <img src="img/list.png" style="height: 20px">
+            <img src="img/list.png" style="height: 20px" />
             文章榜
           </div>
 
@@ -78,9 +80,9 @@
       </div>
       <div class="authorList">
         <!-- 通过循环生成文章列表 -->
-      <ol>
+        <ol>
           <div class="authorListTiTle">
-            <img src="img/list.png" style="height: 20px">
+            <img src="img/list.png" style="height: 20px" />
             作者榜
           </div>
           <li class="authorListItem">
@@ -118,21 +120,21 @@
           <p>文章摘要或内容简介...</p>
         </div>
         <div class="article">
-            <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
-            <p>文章摘要或内容简介...</p>
-          </div>
-          <div class="article">
-            <h3><a href="#article1">听说前端出大事了</a></h3>
-            <p>文章摘要或内容简介...</p>
-          </div>
-          <div class="article">
-            <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
-            <p>文章摘要或内容简介...</p>
-          </div>
-          <div class="article">
-            <h3><a href="#article1">听说前端出大事了</a></h3>
-            <p>文章摘要或内容简介...</p>
-          </div>
+          <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
+        <div class="article">
+          <h3><a href="#article1">听说前端出大事了</a></h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
+        <div class="article">
+          <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
+        <div class="article">
+          <h3><a href="#article1">听说前端出大事了</a></h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
         <!-- 可以添加更多文章项 -->
       </div>
     </section>
@@ -151,42 +153,41 @@
       <p>&copy; 2023 个人博客系统</p>
     </footer>
   </body>
-  
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'Host_Page',
+  name: "Host_Page",
   data() {
     return {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
-      username:localStorage.getItem('username'),
-      imageSrc:""
+      username: localStorage.getItem("username"),
+      imageSrc: "",
     };
   },
   created() {
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
   },
-  methods:{
-  logout(){
-    this.isLoggedIn=false;
-
-  },
-  fetchAvatar() {
+  methods: {
+    logout() {
+      this.isLoggedIn = false;
+    },
+    fetchAvatar() {
       const instance = axios.create({
         withCredentials: true,
       });
-      instance.get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
-        .then(async response => {
-          console.log(response.data)
-          this.imageSrc = "data:image/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+      instance
+        .get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
+        .then(async (response) => {
+          console.log(response.data);
+          this.imageSrc = "data:image/png;base64," + response.data.data; // 更新imageSrc以显示头像
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
-  }
- }
-} 
+    },
+  },
+};
 </script>
 <style lang="less">
 body {
@@ -195,37 +196,36 @@ body {
   padding: 0;
   background-color: #f2f2f2;
 }
-.navgationbarItemAvator{
-      height: auto;
-      .imgAvator{
-          height: 100%;
-      }
-      margin-right: 30px; 
+.navgationbarItemAvator {
+  height: auto;
+  .imgAvator {
+    height: 100%;
   }
-  .navgationbarItemLog {
-    width: 20%;
-    border: 1px solid rgb(128, 128, 128);
-    float: left;
-    text-align: center;
-    line-height: 100%;
-    margin-right: 20px;
-  }
-  .navgationbarItemRegister{
-    width: 20%;
-    border: 1px solid rgb(128, 128, 128);
-    float: left;
-    text-align: center;
-    line-height: 100%;
-    margin-right: 70px;
-  }
+  margin-right: 30px;
+}
+.navgationbarItemLog {
+  width: 20%;
+  border: 1px solid rgb(128, 128, 128);
+  float: left;
+  text-align: center;
+  line-height: 100%;
+  margin-right: 20px;
+}
+.navgationbarItemRegister {
+  width: 20%;
+  border: 1px solid rgb(128, 128, 128);
+  float: left;
+  text-align: center;
+  line-height: 100%;
+  margin-right: 70px;
+}
 header {
   background-color: #333;
   color: #fff;
   padding: 10px;
-  text-align: center;    
-  imgProfile{
-
-}
+  text-align: center;
+  imgProfile {
+  }
 }
 
 nav {
@@ -279,9 +279,9 @@ section {
   height: 50px;
   padding: 0;
 
-  .imgLogo{
-      margin-right: 25px;
-      margin-left: 10px;
+  .imgLogo {
+    margin-right: 25px;
+    margin-left: 10px;
   }
 
   .navgationbarItemHome {
@@ -290,8 +290,8 @@ section {
     float: left;
     text-align: center;
     line-height: 100%;
-    
-    .imgHome{
+
+    .imgHome {
       height: 40%;
     }
   }
@@ -300,9 +300,9 @@ section {
     border: 1px solid rgb(128, 128, 128);
     float: left;
     text-align: center;
-  
+
     line-height: 100%;
-    .imgNotifications{
+    .imgNotifications {
       height: 40%;
     }
   }
@@ -313,35 +313,52 @@ section {
     text-align: center;
     line-height: 100%;
     margin-right: 300px;
-    .imgProfile{
+    .imgProfile {
       height: 40%;
     }
   }
   .navgationbarItemSearch {
-      .imgSearch {
+    .imgSearch {
       width: auto;
       height: 70%;
       margin-right: 20px;
-      
     }
-      margin-right: 200px;
-    
+    margin-right: 200px;
+
     display: flex;
     justify-content: flex-start;
-    input{
+    input {
       border-radius: 20%;
     }
   }
-  .navgationbarItemCreaterCenter{
-      background-color: red;
-      text-align: center;
-      width: 100px;
-      margin-right: 30px;
-     
-      imgProfile{
+  .navgationbarItemCreaterCenter {
+    background-color: red;
+    text-align: center;
+    width: 100px;
+    margin-right: 30px;
 
+    imgProfile {
+    }
   }
-}
+  .loggedIn {
+    display: flex;
+    justify-content: space-between;
+
+    .navgationbarItemAvator {
+      .imgAvator {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .navgationbarItemLog {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  .nologgedIn{
+    display: flex;
+    justify-content: space-between;
+  }
 }
 .articleRecommendedList {
   width: 50%;
@@ -353,11 +370,10 @@ section {
       justify-content: center;
       align-items: center; */
 
-
-      position: absolute;
-       top: 50%;
-       left: 50%;
-       transform: translate(-50%,-50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   margin-left: -50px;
   margin-top: -50px;
 }

@@ -23,20 +23,25 @@
         <p style="color: white">创作者中心</p>
       </div>
 
-      <div v-if="isLoggedIn">
+      <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
-            <img class="imgAvator" :src="imageSrc" alt="Image from backend">
+          <img class="imgAvator" src="img/temp.jpg" alt="Image from backend" />
         </div>
-        <div class="navgationbarItemLog"> 
-          <button @click="logout">退出</button>
+        <div class="navgationbarItemLog">
+          <button
+            @click="logout"
+            style="width: 200px; height: 50px; font-size: 30px"
+          >
+            退出
+          </button>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="nologgedIn">
         <div class="navgationbarItemLog">
           <a href="login">登录</a>
         </div>
-        <div class="navgationbarItemRegister"> 
-            <a href="regist">注册</a>
+        <div class="navgationbarItemRegister">
+          <a href="regist">注册</a>
         </div>
       </div>
     </div>
@@ -67,8 +72,15 @@
               v-model="inputText"
               @input="handleInput"
               placeholder="在这里输入文本"
-              style="width: 100px; height: 50px"
+              style="width: 100px; height: 50px;display:inline-block;vertical-align: top;"
             ></textarea>
+            <button
+              style="width: 100px; height: 50px; font-size: 20px;display:inline-block;vertical-align: top;"
+              class="sendComments"
+              @click="showCommentsFangfa"
+            >
+              发送评论
+            </button>
           </div>
 
           <div v-if="showComments">
@@ -80,13 +92,6 @@
               {{ text }}
             </div>
           </div>
-          <button
-            style="width: 100px; height: 50px; font-size: 20px"
-            class="sendComments"
-            @click="showCommentsFangfa"
-          >
-            发送评论
-          </button>
         </div>
       </div>
 
@@ -146,20 +151,16 @@ export default {
     },
   },
   methods: {
-    logout(){
-    this.isLoggedIn=false;
-
-  },
+    logout() {
+      this.isLoggedIn = false;
+    },
     showCommentsFangfa() {
       this.showComments = true;
       this.inputHistory.unshift(this.inputText);
-      this.inputText ="";
+      this.inputText = "";
     },
     handleInput() {
       // 将当前输入保存到历史记录中
-      
-      
-      
     },
     handleFileChange(event) {
       const file = event.target.files[0];
@@ -275,21 +276,41 @@ export default {
     imgProfile {
     }
   }
-  .navgationbarItemAvator {
-    height: auto;
-    .imgAvator {
-      height: 100%;
+
+  .loggedIn {
+    display: flex;
+    justify-content: space-between;
+
+    .navgationbarItemAvator {
+      .imgAvator {
+        width: 50px;
+        height: 50px;
+      }
     }
-    margin-right: 30px;
+    .navgationbarItemLog {
+      width: 50px;
+      height: 50px;
+    }
   }
-  .navgationbarItemLog {
-    width: 5%;
-    border: 1px solid rgb(128, 128, 128);
-    float: left;
-    text-align: center;
-    line-height: 100%;
-    margin-right: 20px;
+  .nologgedIn {
+    display: flex;
+    justify-content: space-between;
   }
+  // .navgationbarItemAvator {
+  //   height: auto;
+  //   .imgAvator {
+  //     height: 100%;
+  //   }
+  //   margin-right: 30px;
+  // }
+  // .navgationbarItemLog {
+  //   width: 5%;
+  //   border: 1px solid rgb(128, 128, 128);
+  //   float: left;
+  //   text-align: center;
+  //   line-height: 100%;
+  //   margin-right: 20px;
+  // }
   .navgationbarItemRegister {
     width: 5%;
     border: 1px solid rgb(128, 128, 128);
@@ -359,8 +380,10 @@ footer {
       .topComment {
         display: flex;
         justify-content: space-between;
+        align-items: space-between;
         .textInput {
           width: 300px;
+          height: 200px;
           padding: 10px;
           margin-top: 20px;
         }
@@ -368,7 +391,7 @@ footer {
           width: 100px;
           height: 50px;
         }
-      } 
+      }
 
       .displayText {
         margin-top: 10px;
