@@ -18,7 +18,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="img/profile.png" alt="" />
-        <a href="/individual">个人中心</a>
+        <a href="#profile">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
@@ -112,7 +112,7 @@
       <div class="articleRecommendedList">
         <!-- 通过循环生成文章列表 -->
         <div class="article">
-          <h3><a href="article">百度搜索内容HTAP表格存储系统</a></h3>
+          <h3><a href="article">{{articleHead}}</a></h3>
           <p>文章摘要或内容简介...</p>
         </div>
         <div class="article">
@@ -163,17 +163,18 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc: "",
+      articleHead:'',
+      articleId:'0',
     };
   },
   created() {
-    if (localStorage.getItem("isLoggedIn")!=false){
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
-	}
+    this.fetchArticle(); // 在页面加载时调用fetchArticle方法
+
   },
   methods: {
     logout() {
       this.isLoggedIn = false;
-      localStorage.setItem("isLoggedIn",false)
     },
     fetchAvatar() {
       const instance = axios.create({
@@ -189,6 +190,20 @@ export default {
           console.error(error);
         });
     },
+    fetchArticle(){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/head/${this.articleId}`) // 使用get请求获取文章内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleHead =  response.data.data; // 显示文章内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   },
 };
 </script>

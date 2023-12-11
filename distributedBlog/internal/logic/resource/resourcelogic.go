@@ -140,6 +140,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 	return
 
 }
+
 func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
 	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
@@ -181,6 +182,11 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		}
 	} else if req.Resource_type == "signature" {
 		GetResource_Signature(req, wd, resp) //对签名资源处理
+		if err != nil {
+			log.Println(err)
+		}
+	} else if req.Resource_type == "head" {
+		GetResource_Article_head(req, wd, resp) //对文章资源处理
 		if err != nil {
 			log.Println(err)
 		}
