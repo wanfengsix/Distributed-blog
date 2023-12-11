@@ -18,7 +18,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="img/profile.png" alt="" />
-        <a href="#profile">个人中心</a>
+        <a href="/individual">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
@@ -166,11 +166,14 @@ export default {
     };
   },
   created() {
+    if (localStorage.getItem("isLoggedIn")!=false){
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
+	}
   },
   methods: {
     logout() {
       this.isLoggedIn = false;
+      localStorage.setItem("isLoggedIn",false)
     },
     fetchAvatar() {
       const instance = axios.create({

@@ -33,15 +33,24 @@
 						<a href="###">创作者中心</a>
 					</div>
 
-
-					<div class="si">  
-                        <img v-bind:src="imageSrc" v-bind:style="imageStyle">  
-                    </div>  
-
-					<div class="wu">
-						<a href="#" @click="logout">退出登录</a>  
-					</div>
-
+					<div v-if="isLoggedIn" class="loggedIn">
+        <div class="navgationbarItemAvator">
+          <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
+        </div>
+        <div class="navgationbarItemLog">
+          <button @click="logout" style="width: 200px; height: 50px;font-size: 30px;">
+            退出
+          </button>
+        </div>
+      </div>
+      <div v-else class="nologgedIn">
+        <div class="navgationbarItemLog">
+          <a href="login">登录</a>
+        </div>
+        <div class="navgationbarItemRegister">
+          <a href="regist">注册</a>
+        </div>
+      </div>
 
 
 					<div class="clear">
@@ -231,12 +240,15 @@ export default {
 	name: 'Host_Page',
 	data() {
     return {
-		
+	  isLoggedIn: localStorage.getItem("isLoggedIn"),
+      username: localStorage.getItem("username"),
       imageSrc:""
     };
   },
   created() {
+	if (localStorage.getItem("isLoggedIn")!=false){
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
+	}
   },
   methods: {  
 	updateImage() {  
@@ -248,7 +260,7 @@ export default {
     } , 
     logout() {  
 		this.isLoggedIn=false;
-
+		localStorage.setItem("isLoggedIn",false)
       // 在这里编写退出登录的逻辑，比如清除本地存储的用户信息等。  
       // 这里只是一个示例，具体的实现取决于您的应用需求。  
     }  ,
