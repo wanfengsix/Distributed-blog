@@ -231,11 +231,7 @@ export default {
 	name: 'Host_Page',
 	data() {
     return {
-		imageSrc: 'path/to/image.png', // 更改为实际图片路径  
-      imageStyle: {  
-        width: '60px',  
-        borderRadius: '50%', 
-	  },// 更改为实际图片路径  
+		
       imageSrc:""
     };
   },
@@ -244,8 +240,7 @@ export default {
   },
   methods: {  
 	updateImage() {  
-      // 在这里更新 imageSrc 和 imageStyle 的值  
-      this.imageSrc = 'new/path/to/image.png';  
+      // 在这里更新 imageSrc 和 imageStyle 的值   
       this.imageStyle = {  
         width: '100px',  
         borderRadius: '75%', // 更改为实际图片路径  
@@ -264,7 +259,7 @@ export default {
       instance.get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
         .then(async response => {
           console.log(response.data)
-          this.imageSrc = "data:image/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+          this.imageSrc = "data:img/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
         })
         .catch(error => {
           console.error(error);
