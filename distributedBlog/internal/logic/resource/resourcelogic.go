@@ -78,6 +78,36 @@ func GetResource_Avatar(req *types.ResourceReq, wd string, resp *types.ResourceR
 	resp.Data = data_base64
 	return
 }
+
+// 先根据用户名查用户id,然后再查询
+func GetResource_Signature(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.AvatarResource
+	var user []*models.User_Total
+	prequery := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &user, prequery, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(user) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+	query := "select uid,signature,avatar_url from user_information where uid=?"
+	err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, user[0].UID)
+	if err != nil {
+		log.Println(err)
+	}
+	//查到用户签名后，将其赋值到回复
+	resp.Data = R_list[0].Signature.String
+	return
+}
 func GetResource_Article(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 
 	resource_type := "article"
@@ -130,7 +160,11 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		if err != nil {
 			log.Println(err)
 		}
+	} else if req.Resource_type == "signature" {
+		GetResource_Signature(req, wd, resp) //对签名资源处理
+		if err != nil {
+			log.Println(err)
+		}
 	}
-
 	return
 }

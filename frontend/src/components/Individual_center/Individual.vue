@@ -92,7 +92,7 @@
 								<h3>用户1772145090487</h3>
 								<img src="img/yh.png" >
 								<span>个性签名</span>
-								<p>现在的我,仰观宇宙之大,俯察品类之盛，所以由目骋怀,亦足以极视听之娱,信可乐也。</p>
+								<p>{{this.signature}}</p>
 							</div>
 							
 							<div class="you">
@@ -242,12 +242,15 @@ export default {
     return {
 	  isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
-      imageSrc:""
+      imageSrc:"",
+	  signature:""
+
     };
   },
   created() {
 	if (localStorage.getItem("isLoggedIn")!=false){
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
+	this.getSignature();    //在页面加载时调用获取签名的方法
 	}
   },
   methods: {  
@@ -272,6 +275,20 @@ export default {
         .then(async response => {
           console.log(response.data)
           this.imageSrc = "data:img/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  },
+  getSignature(){
+	const instance = axios.create({
+        withCredentials: true,
+      });
+	  //待修改为后续查看他人的UID，而不是用户自己的
+      instance.get(`http://127.0.0.1:8088/user/signature/${this.username}`) // 使用get请求获取头像图片文件
+        .then(async response => {
+          console.log(response.data)
+          this.signature = response.data.data; // 更新
         })
         .catch(error => {
           console.error(error);
