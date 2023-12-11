@@ -136,9 +136,28 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 			log.Fatalln(err)
 		}
 	}
-	var data_base64 string
-	data_base64 = base64.StdEncoding.EncodeToString(data)
-	resp.Data = data_base64
+	resp.Data = string(data)
+	return
+
+}
+func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,like_nums,comment_nums,article_url from article where Article_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+	resp.Data = R_list[0].Head.String
 	return
 
 }
