@@ -142,7 +142,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 }
 func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,like_nums,comment_nums,article_url from article where Article_ID=?"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 	if err != nil {
 		log.Println(err)
