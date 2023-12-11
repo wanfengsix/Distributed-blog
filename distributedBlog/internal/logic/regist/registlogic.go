@@ -42,6 +42,8 @@ func GetRegist(R types.RegistReq) *Regist { //获取Regist事务体
 
 	//如果不存在就插入一条用户注册数据，否则什么也不做
 	if !newRegist.Is_Exist {
+		prequery := "INSERT INTO user VALUES(?,?,0,0,0,0,0,0,0)"
+		mysqlDB.ExecCtx(context.Background(), prequery, R.Username, R.Username)
 		mysqlDB.ExecCtx(context.Background(), "INSERT INTO register VALUES (?,?,?,?,?,0)", R.Username, R.Password, R.Password_Protection1, R.Password_Protection2, R.Password_Protection3)
 	}
 	return newRegist
