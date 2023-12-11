@@ -440,9 +440,36 @@ div.clear {
 	text-align: center;
 }
 
-.head1 .si {
+.head1 .nologgedIn{
+	width: 30%;
+	float: right;
+	text-align: center;
+}
+.nologgedIn {  
+	display: flex;  
+	justify-content: space-between;  
+	align-items: center;
+	position: relative;  
+	top: -30px; /* 将整个导航栏向上移动20像素 */  
+  }  
+	
+  .navgationbarItemLog,  
+  .navgationbarItemRegister {  
+	display: inline-block;  
+	padding: 10px;  
+	font-size: 16px;  
+	width: 40%; /* 你可以根据需要调整宽度 */  
+  }  
+	
+  .navgationbarItemLog a,  
+  .navgationbarItemRegister a {  
+	display: block;  
+	width: 100%;  
+	text-align: center;  
+  }
+.head1 .loggedIn{
 	width: 10%;
-	float: left;
+	float: right;
 	text-align: center;
 }
 
