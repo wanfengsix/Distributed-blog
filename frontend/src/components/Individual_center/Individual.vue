@@ -1,10 +1,7 @@
 <template>
 	<head>
 		<meta charset="utf-8">
-		<!--以下是页面独有JS,请不要放在公用php文件中-->
-
-		<!--以上是页面独有JS,请不要放在公用php文件中-->
-		<title></title>
+		
 	</head>
 
 	<body>
@@ -17,8 +14,7 @@
 
 					<div class="geren">
 						<ul>
-							<li><a class="a1" href="###">首页</a></li>
-							<li><a class="a2" href="###">个人中心</a></li>
+							<li><a class="a1" href="/">首页</a></li>
 							<div class="clear">
 
 							</div>
@@ -38,13 +34,12 @@
 					</div>
 
 
-					<div class="si">
-						<img src="img/tx1.png">
-
-					</div>
+					<div class="si">  
+                        <img v-bind:src="imageSrc" v-bind:style="imageStyle">  
+                    </div>  
 
 					<div class="wu">
-						<a href="###">退出登录</a>
+						<a href="#" @click="logout">退出登录</a>  
 					</div>
 
 
@@ -230,13 +225,53 @@
 	</body>
 
 </template>
+<script>  
+import axios from 'axios';
+export default {  
+	name: 'Host_Page',
+	data() {
+    return {
+		imageSrc: 'path/to/image.png', // 更改为实际图片路径  
+      imageStyle: {  
+        width: '60px',  
+        borderRadius: '50%', 
+	  },// 更改为实际图片路径  
+      imageSrc:""
+    };
+  },
+  created() {
+    this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
+  },
+  methods: {  
+	updateImage() {  
+      // 在这里更新 imageSrc 和 imageStyle 的值  
+      this.imageSrc = 'new/path/to/image.png';  
+      this.imageStyle = {  
+        width: '100px',  
+        borderRadius: '75%', // 更改为实际图片路径  
+      };  
+    } , 
+    logout() {  
+		this.isLoggedIn=false;
 
-<script>
-import axios from 'axios'
-import CryptoJS from 'crypto-js'
-export default {
-  name: 'Individual_Page',
-};  
+      // 在这里编写退出登录的逻辑，比如清除本地存储的用户信息等。  
+      // 这里只是一个示例，具体的实现取决于您的应用需求。  
+    }  ,
+	fetchAvatar() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance.get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
+        .then(async response => {
+          console.log(response.data)
+          this.imageSrc = "data:image/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  }
+  }  
+}  
 </script>
 <style>
 /*通用类*/
@@ -329,14 +364,14 @@ div.clear {
 }
 
 .head1 .geren ul li .a1 {
-	/*background: url(img/fz.png)no-repeat left;*/
-	background-color: #FFFFFF;
+	/*background: url(../images/fz.png)no-repeat left;
+	*/background-color: #FFFFFF;
 	background-size: 18px;
 	background-position-x: 5px;
 }
 
 .head1 .geren ul li .a2 {
-	/*background: url(img/grzx.png)no-repeat left;*/
+	/*background: url(../images/grzx.png)no-repeat left;*/
 	background-color: #FFFFFF;
 	background-size: 18px;
 	background-position-x: 5px;
@@ -387,10 +422,11 @@ div.clear {
 	text-align: center;
 }
 
-.head1 .si img {
-	width: 60px;
-	border-radius: 100%;
+.si /*img[src="path/to/image.png"]*/ {  
+  width: 60px;  
+  border-radius: 50%;  
 }
+
 
 
 .head1 .wu {
@@ -544,9 +580,8 @@ div.clear {
 
 .centen1 .right .xia .bg1{background-color: #FFFFFF;padding: 15px;margin-top: 20px;height: 800px;}
 .centen1 .right .xia .bg1 ul li{width: 100%;margin-top: 15px;}
-/*.centen1 .right .xia .bg1 ul li a{display: block;background: url(../images/grzx.png)no-repeat left;
+.centen1 .right .xia .bg1 ul li a{display: block;background: url/*(../images/grzx.png)*/no-repeat left;
 padding-left: 20px;
 background-size: 19px;
 text-align: left;padding-left: 30px;}	
-*/
 </style>
