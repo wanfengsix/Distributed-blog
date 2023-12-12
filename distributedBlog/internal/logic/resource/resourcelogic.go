@@ -141,6 +141,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 
 }
 
+// 获取文章标题
 func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
 	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
@@ -152,13 +153,47 @@ func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.Res
 	if len(R_list) == 0 {
 		resp.Code = 404
 		resp.Success = false
-		resp.Message = "can't find user!"
+		resp.Message = "can't find article!"
 	} else {
 		resp.Code = 200
 		resp.Success = true
-		resp.Message = "find user!"
+		resp.Message = "find article!"
 	}
 	resp.Data = R_list[0].Head.String
+	return
+
+}
+
+// 获取文章列表
+func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_ARTICLE_NUM {
+		length = const_values.BIGGEST_ARTICLE_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find article!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
+	}
+	articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
+	for k, _ := range R_list {                             //拷贝
+		articleList[k].Article_ID = R_list[k].Article_ID.String
+		articleList[k].Head = R_list[k].Head.String
+	}
+	resp.ListData = articleList
 	return
 
 }
@@ -187,6 +222,11 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		}
 	} else if req.Resource_type == "head" {
 		GetResource_Article_head(req, wd, resp) //对文章头处理
+		if err != nil {
+			log.Println(err)
+		}
+	} else if req.Resource_type == "article-list" { //获取文章记录列表
+		GetResource_Article_list(req, wd, resp) //对文章头处理
 		if err != nil {
 			log.Println(err)
 		}
