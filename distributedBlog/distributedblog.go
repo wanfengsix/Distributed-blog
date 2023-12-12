@@ -3,6 +3,7 @@ package main
 import (
 	"distributedBlog/internal/config"
 	"distributedBlog/internal/handler"
+	"distributedBlog/internal/handler/comment"
 	"distributedBlog/internal/handler/login"
 	"distributedBlog/internal/handler/regist"
 	"distributedBlog/internal/handler/resource"
@@ -35,6 +36,7 @@ func main() {
 	login.RegisterHandlers(server, ctx)
 	regist.RegisterHandlers(server, ctx)
 	resource.RegisterHandlers(server, ctx)
+	comment.RegisterHandlers(server, ctx)
 	//服务器运行
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
