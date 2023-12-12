@@ -176,7 +176,7 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 			log.Println(err)
 		}
 	} else if req.Resource_type == "article" {
-		GetResource_Article(req, wd, resp) //对文章资源处理
+		GetResource_Article(req, wd, resp) //对文章体处理
 		if err != nil {
 			log.Println(err)
 		}
@@ -186,7 +186,7 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 			log.Println(err)
 		}
 	} else if req.Resource_type == "head" {
-		GetResource_Article_head(req, wd, resp) //对文章资源处理
+		GetResource_Article_head(req, wd, resp) //对文章头处理
 		if err != nil {
 			log.Println(err)
 		}

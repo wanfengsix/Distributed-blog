@@ -7,7 +7,7 @@ type ArticleResource struct {
 	Head         sql.NullString `json:"head" db:"head"`
 	Date         sql.NullString `json:"date" db:"date"`
 	UID          sql.NullString `json:"UID" db:"UID"`
-	Like_nums    int            `json:"likes_nums" db:"likes_nums"`
+	Likes_nums   int            `json:"likes_nums" db:"likes_nums"`
 	Comment_nums int            `json:"comment_nums" db:"comment_nums"`
 	Article_url  sql.NullString `json:"article_url" db:"article_url"`
 }

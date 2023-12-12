@@ -1,190 +1,142 @@
--- MySQL dump 10.13  Distrib 8.0.35, for Linux (x86_64)
---
--- Host: localhost    Database: dusha
--- ------------------------------------------------------
--- Server version	8.0.35-0ubuntu0.22.04.1
+/*
+ Navicat Premium Data Transfer
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+ Source Server         : DistributedBlog
+ Source Server Type    : MySQL
+ Source Server Version : 80100
+ Source Host           : localhost:3306
+ Source Schema         : dusha
 
---
--- Table structure for table `article`
---
+ Target Server Type    : MySQL
+ Target Server Version : 80100
+ File Encoding         : 65001
 
+ Date: 12/12/2023 20:15:10
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for article
+-- ----------------------------
 DROP TABLE IF EXISTS `article`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `article` (
-  `Article_ID` varchar(255) NOT NULL,
-  `head` varchar(255) DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
-  `UID` varchar(255) DEFAULT NULL,
-  `likes_nums` int DEFAULT NULL,
-  `comment_nums` int DEFAULT NULL,
-  `article_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`Article_ID`),
-  KEY `UID` (`UID`),
-  CONSTRAINT `article_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `article`  (
+  `Article_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `head` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `date` datetime NULL DEFAULT NULL,
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `likes_nums` int NULL DEFAULT NULL,
+  `comment_nums` int NULL DEFAULT NULL,
+  `article_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`Article_ID`) USING BTREE,
+  INDEX `UID`(`UID` ASC) USING BTREE,
+  CONSTRAINT `article_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `article`
---
+-- ----------------------------
+-- Records of article
+-- ----------------------------
+INSERT INTO `article` VALUES ('0', '前端出什么事了！', '2023-12-05 00:00:00', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('1', '百度', '2023-12-12 20:12:06', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('2', '阿里', '2023-12-12 20:13:03', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('3', '腾讯', '2023-12-12 20:13:22', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('4', '谷歌', '2023-12-12 20:13:39', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('5', '亚马逊', '2023-12-12 20:14:00', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('6', '马斯克', '2023-12-12 20:14:19', '0', 0, 0, '1.txt');
+INSERT INTO `article` VALUES ('7', 'spacex', '2023-12-12 20:14:38', '0', 0, 0, '1.txt');
 
-LOCK TABLES `article` WRITE;
-/*!40000 ALTER TABLE `article` DISABLE KEYS */;
-INSERT INTO `article` VALUES ('0','听说前端出大事了','2023-12-05 00:00:00','0',0,0,'1.txt');
-/*!40000 ALTER TABLE `article` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `comment`
---
-
+-- ----------------------------
+-- Table structure for comment
+-- ----------------------------
 DROP TABLE IF EXISTS `comment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `comment` (
-  `Comment_ID` varchar(255) NOT NULL,
-  `Comment_content` varchar(255) DEFAULT NULL,
-  `Article_ID` varchar(255) DEFAULT NULL,
-  `UID` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`Comment_ID`),
-  KEY `UID` (`UID`),
-  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`),
-  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`UID`) REFERENCES `article` (`Article_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `comment`  (
+  `Comment_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `Comment_content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `Article_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`Comment_ID`) USING BTREE,
+  INDEX `UID`(`UID` ASC) USING BTREE,
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`UID`) REFERENCES `article` (`Article_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `comment`
---
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
 
-LOCK TABLES `comment` WRITE;
-/*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-/*!40000 ALTER TABLE `comment` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `draft`
---
-
+-- ----------------------------
+-- Table structure for draft
+-- ----------------------------
 DROP TABLE IF EXISTS `draft`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `draft` (
-  `UID` varchar(255) NOT NULL,
-  `draft_date` datetime DEFAULT NULL,
-  `draft_head` varchar(255) DEFAULT NULL,
-  `draft_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`UID`),
-  CONSTRAINT `draft_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `draft`  (
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `draft_date` datetime NULL DEFAULT NULL,
+  `draft_head` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `draft_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`UID`) USING BTREE,
+  CONSTRAINT `draft_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `draft`
---
+-- ----------------------------
+-- Records of draft
+-- ----------------------------
 
-LOCK TABLES `draft` WRITE;
-/*!40000 ALTER TABLE `draft` DISABLE KEYS */;
-/*!40000 ALTER TABLE `draft` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `follow`
---
-
+-- ----------------------------
+-- Table structure for follow
+-- ----------------------------
 DROP TABLE IF EXISTS `follow`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `follow` (
-  `Followed_ID` varchar(255) NOT NULL,
-  `Follow_ID` varchar(255) NOT NULL,
-  PRIMARY KEY (`Followed_ID`,`Follow_ID`),
-  CONSTRAINT `follow_ibfk_1` FOREIGN KEY (`Followed_ID`) REFERENCES `user` (`UID`),
-  CONSTRAINT `follow_ibfk_2` FOREIGN KEY (`Followed_ID`) REFERENCES `user` (`UID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `follow`  (
+  `Followed_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `Follow_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`Followed_ID`, `Follow_ID`) USING BTREE,
+  CONSTRAINT `follow_ibfk_1` FOREIGN KEY (`Followed_ID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `follow_ibfk_2` FOREIGN KEY (`Followed_ID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `follow`
---
+-- ----------------------------
+-- Records of follow
+-- ----------------------------
 
-LOCK TABLES `follow` WRITE;
-/*!40000 ALTER TABLE `follow` DISABLE KEYS */;
-/*!40000 ALTER TABLE `follow` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `likes`
---
-
+-- ----------------------------
+-- Table structure for likes
+-- ----------------------------
 DROP TABLE IF EXISTS `likes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `likes` (
-  `UID` varchar(255) NOT NULL,
-  `Article_ID` varchar(255) NOT NULL,
-  PRIMARY KEY (`UID`,`Article_ID`),
-  KEY `Article_ID` (`Article_ID`),
-  CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`),
-  CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`Article_ID`) REFERENCES `article` (`Article_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `likes`  (
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `Article_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`UID`, `Article_ID`) USING BTREE,
+  INDEX `Article_ID`(`Article_ID` ASC) USING BTREE,
+  CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`Article_ID`) REFERENCES `article` (`Article_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `likes`
---
+-- ----------------------------
+-- Records of likes
+-- ----------------------------
 
-LOCK TABLES `likes` WRITE;
-/*!40000 ALTER TABLE `likes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `likes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `readed`
---
-
+-- ----------------------------
+-- Table structure for readed
+-- ----------------------------
 DROP TABLE IF EXISTS `readed`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `readed` (
-  `UID` varchar(255) NOT NULL,
-  `Article_ID` varchar(255) NOT NULL,
-  PRIMARY KEY (`UID`,`Article_ID`),
-  KEY `Article_ID` (`Article_ID`),
-  CONSTRAINT `readed_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`),
-  CONSTRAINT `readed_ibfk_2` FOREIGN KEY (`Article_ID`) REFERENCES `article` (`Article_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `readed`  (
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `Article_ID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`UID`, `Article_ID`) USING BTREE,
+  INDEX `Article_ID`(`Article_ID` ASC) USING BTREE,
+  CONSTRAINT `readed_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `readed_ibfk_2` FOREIGN KEY (`Article_ID`) REFERENCES `article` (`Article_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `readed`
---
+-- ----------------------------
+-- Records of readed
+-- ----------------------------
 
-LOCK TABLES `readed` WRITE;
-/*!40000 ALTER TABLE `readed` DISABLE KEYS */;
-/*!40000 ALTER TABLE `readed` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `register`
---
-
+-- ----------------------------
+-- Table structure for register
+-- ----------------------------
 DROP TABLE IF EXISTS `register`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `register` (
+CREATE TABLE `register`  (
   `u_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `secret_protection1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -192,85 +144,52 @@ CREATE TABLE `register` (
   `secret_protection3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `is_Admin` int NOT NULL,
   PRIMARY KEY (`u_name`) USING BTREE,
-  CONSTRAINT `fk` FOREIGN KEY (`u_name`) REFERENCES `user` (`u_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  CONSTRAINT `fk` FOREIGN KEY (`u_name`) REFERENCES `user` (`u_name`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `register`
---
+-- ----------------------------
+-- Records of register
+-- ----------------------------
+INSERT INTO `register` VALUES ('admin', 'admin', '1', '2', '3', 1);
 
-LOCK TABLES `register` WRITE;
-/*!40000 ALTER TABLE `register` DISABLE KEYS */;
-INSERT INTO `register` VALUES ('admin','admin','1','2','3',1);
-/*!40000 ALTER TABLE `register` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user`
---
-
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
 DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `UID` varchar(255) NOT NULL,
-  `u_name` varchar(255) DEFAULT NULL,
-  `following` int DEFAULT NULL,
-  `followed` int DEFAULT NULL,
-  `article_nums` int DEFAULT NULL,
-  `read_nums` int DEFAULT NULL,
-  `comment_nums` int DEFAULT NULL,
-  `likes_nums` int DEFAULT NULL,
-  `level` int DEFAULT NULL,
-  PRIMARY KEY (`UID`),
-  UNIQUE KEY `u_name` (`u_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `user`  (
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `u_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `following` int NULL DEFAULT NULL,
+  `followed` int NULL DEFAULT NULL,
+  `article_nums` int NULL DEFAULT NULL,
+  `read_nums` int NULL DEFAULT NULL,
+  `comment_nums` int NULL DEFAULT NULL,
+  `likes_nums` int NULL DEFAULT NULL,
+  `level` int NULL DEFAULT NULL,
+  PRIMARY KEY (`UID`) USING BTREE,
+  UNIQUE INDEX `u_name`(`u_name` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `user`
---
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES ('0', 'admin', 0, 0, 0, 0, 0, 0, 0);
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('0','admin',0,0,0,0,0,0,0);
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user_information`
---
-
+-- ----------------------------
+-- Table structure for user_information
+-- ----------------------------
 DROP TABLE IF EXISTS `user_information`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_information` (
-  `UID` varchar(255) NOT NULL,
-  `signature` varchar(255) DEFAULT NULL,
-  `avatar_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`UID`),
-  CONSTRAINT `user_information_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `user_information`  (
+  `UID` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `avatar_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`UID`) USING BTREE,
+  CONSTRAINT `user_information_ibfk_1` FOREIGN KEY (`UID`) REFERENCES `user` (`UID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
---
--- Dumping data for table `user_information`
---
+-- ----------------------------
+-- Records of user_information
+-- ----------------------------
+INSERT INTO `user_information` VALUES ('0', '上善若水', '管理员头像.jpg');
 
-LOCK TABLES `user_information` WRITE;
-/*!40000 ALTER TABLE `user_information` DISABLE KEYS */;
-INSERT INTO `user_information` VALUES ('0','上善若水','管理员头像.jpg');
-/*!40000 ALTER TABLE `user_information` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-12-05 21:58:32
+SET FOREIGN_KEY_CHECKS = 1;

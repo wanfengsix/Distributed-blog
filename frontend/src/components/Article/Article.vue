@@ -61,7 +61,7 @@
         <div class="article">
           <article>
             <h1>文章标题</h1>
-            <div v-html="articleContent"></div>
+            <div>{{ articleText }}</div>
           </article>
         </div>
 
@@ -72,10 +72,21 @@
               v-model="inputText"
               @input="handleInput"
               placeholder="在这里输入文本"
-              style="width: 100px; height: 50px;display:inline-block;vertical-align: top;"
+              style="
+                width: 100px;
+                height: 50px;
+                display: inline-block;
+                vertical-align: top;
+              "
             ></textarea>
             <button
-              style="width: 100px; height: 50px; font-size: 20px;display:inline-block;vertical-align: top;"
+              style="
+                width: 100px;
+                height: 50px;
+                font-size: 20px;
+                display: inline-block;
+                vertical-align: top;
+              "
               class="sendComments"
               @click="showCommentsFangfa"
             >
@@ -134,6 +145,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -143,6 +155,8 @@ export default {
       inputHistory: [],
       showComments: false,
       isLoggedIn: localStorage.getItem("isLoggedIn"),
+      articleText: "",
+      articleId: "0",
     };
   },
   computed: {
@@ -151,6 +165,20 @@ export default {
     },
   },
   methods: {
+    fetchArticle() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article/${this.articleId}`) // 使用get请求获取文章内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleText = response.data.data; // 显示文章内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     logout() {
       this.isLoggedIn = false;
     },
@@ -181,26 +209,27 @@ export default {
     toggleFollow() {
       this.isFollowed = !this.isFollowed;
     },
-    loadDefaultFile() {
-      // 读取默认文件，假设默认文件名为default.txt
-      const defaultFilePath = "default.txt";
+    // loadDefaultFile() {
+    //   // 读取默认文件，假设默认文件名为default.txt
+    //   const defaultFilePath = "default.txt";
 
-      // 使用XMLHttpRequest从同级目录下读取默认文件
-      const xhr = new XMLHttpRequest();
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          this.articleContent = xhr.responseText;
-        } else {
-          console.error("Failed to load the default file.");
-        }
-      };
-      xhr.open("GET", defaultFilePath, true);
-      xhr.send();
-    },
+    //   // 使用XMLHttpRequest从同级目录下读取默认文件
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.onload = () => {
+    //     if (xhr.status === 200) {
+    //       this.articleContent = xhr.responseText;
+    //     } else {
+    //       console.error("Failed to load the default file.");
+    //     }
+    //   };
+    //   xhr.open("GET", defaultFilePath, true);
+    //   xhr.send();
+    // },
   },
   created() {
     // 在实例创建时触发loadDefaultFile()函数
-    this.loadDefaultFile();
+    // this.loadDefaultFile();
+    this.fetchArticle();
   },
 };
 </script>

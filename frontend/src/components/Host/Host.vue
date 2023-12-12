@@ -18,7 +18,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="img/profile.png" alt="" />
-        <a href="#profile">个人中心</a>
+        <a href="/individual">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
@@ -169,7 +169,7 @@ export default {
   },
   created() {
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
-    this.fetchArticle(); // 在页面加载时调用fetchArticle方法
+    this.fetchArticleHead(); // 在页面加载时调用fetchArticle方法
 
   },
   methods: {
@@ -190,12 +190,12 @@ export default {
           console.error(error);
         });
     },
-    fetchArticle(){
+    fetchArticleHead(){
       const instance = axios.create({
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/head/${this.articleId}`) // 使用get请求获取文章内容
+        .get(`http://127.0.0.1:8088/user/head/${this.articleId}`) // 使用get请求获取文章标题
         .then(async (response) => {
           console.log(response.data);
           this.articleHead =  response.data.data; // 显示文章内容
