@@ -9,7 +9,7 @@
 			<div class="main">
 				<div class="head1">
 					<div class="logo">
-						<img src="img/logo.png">
+						<img src="../../../public/img/logo.png">
 					</div>
 
 					<div class="geren">
@@ -24,7 +24,7 @@
 
 					<div class="input">
 						<input class="b1" type="text" name="" id="" value="" />
-						<a class="b2" href="###"><img src="img/fdj.png"></a>
+						<a class="b2" href="###"><img src="../../../public/img/fdj.png"></a>
 					</div>
 
 
@@ -33,17 +33,19 @@
 						<a href="###">创作者中心</a>
 					</div>
 
-					<div v-if="isLoggedIn" class="loggedIn">
-        <div class="navgationbarItemAvator">
-          <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
+					<div v-if="isLoggedIn" class="loggedI">
+        <div class="navgationbarItemAvat">
+          <img class="imgAvat" :src="imageSrc" alt="Image from backend" />
         </div>
-        <div class="navgationbarItemLog">
+
+		
+		<div class="navigationbarItemLo" style="position: relative;">  
           <button @click="logout" style="width: 200px; height: 50px;font-size: 30px;">
             退出
           </button>
         </div>
       </div>
-      <div v-else class="nologgedIn">
+      <div v-else class="nologgedI">
         <div class="navgationbarItemLog">
           <a href="login">登录</a>
         </div>
@@ -85,13 +87,13 @@
 					<div class="zhong">
 						<div class="shang">
 							<div class="zuo">
-								<img src="img/tx2.png" >
+								<img src="../../../public/img/tx2.png" >
 							</div>
 							
 							<div class="zhong">
 								<h3>用户1772145090487</h3>
-								<img src="img/yh.png" >
-								<span>个性签名</span>
+								<img src="../../../public/img/yh.png" >
+								<span>个性g签名</span>
 								<p>{{this.signature}}</p>
 							</div>
 							
@@ -118,7 +120,7 @@
 								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
 							</div>
 							<div class="er">
-								<img src="img/xff.png" >
+								<img src="../../../public/img/xff.png" >
 							</div>
 							
 							<div class="san">
@@ -140,7 +142,7 @@
 								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
 							</div>
 							<div class="er">
-								<img src="img/xff.png" >
+								<img src="../../../public/img/xff.png" >
 							</div>
 							
 							<div class="san">
@@ -164,7 +166,7 @@
 								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
 							</div>
 							<div class="er">
-								<img src="img/xff.png" >
+								<img src="../../../public/img/xff.png" >
 							</div>
 							
 							<div class="san">
@@ -255,10 +257,10 @@ export default {
   },
   methods: {  
 	updateImage() {  
-      // 在这里更新 imageSrc 和 imageStyle 的值   
+      // 在这里更新 imageSrc 的值   
       this.imageStyle = {  
-        width: '100px',  
-        borderRadius: '75%', // 更改为实际图片路径  
+        width: '10px',  
+        borderRadius: '75%', 
       };  
     } , 
     logout() {  
@@ -439,13 +441,28 @@ div.clear {
 	line-height: 30px;
 	text-align: center;
 }
-
-.head1 .nologgedIn{
+.navgationbarItemAvat{  
+	width: 50px; /* 设置头像的宽度 */  
+	height: 50px; /* 设置头像的高度 */  
+	border-radius: 50%; /* 设置头像的边框半径为50%，使其呈现圆形 */  
+	margin-left: -100px; /* 将头像向左移动10像素 */
+  }  
+	
+  .imgAvat {  
+	width: 100%; /* 设置图片的宽度为100% */  
+	height: 100%; /* 设置图片的高度为100% */  
+  }
+  
+  .navigationbarItemLo button {  
+	position: relative;  
+	top: -50px; /* 调整为适合你的距离 */  
+  }
+.head1 .nologgedI{
 	width: 30%;
 	float: right;
 	text-align: center;
 }
-.nologgedIn {  
+.nologgedI {  
 	display: flex;  
 	justify-content: space-between;  
 	align-items: center;
@@ -453,7 +470,13 @@ div.clear {
 	top: -30px; /* 将整个导航栏向上移动20像素 */  
   }  
 	
-  .navgationbarItemLog,  
+
+  .navgationbarItemLog {
+	display: inline-block;  
+	padding: 10px;  
+	font-size: 16px;  
+	width: 40%; /* 你可以根据需要调整宽度 */  
+  }
   .navgationbarItemRegister {  
 	display: inline-block;  
 	padding: 10px;  
@@ -461,18 +484,13 @@ div.clear {
 	width: 40%; /* 你可以根据需要调整宽度 */  
   }  
 	
-  .navgationbarItemLog a,  
-  .navgationbarItemRegister a {  
-	display: block;  
-	width: 100%;  
-	text-align: center;  
-  }
-.head1 .loggedIn{
+ 
+
+  .head1 .loggedI{
 	width: 10%;
 	float: right;
 	text-align: center;
 }
-
 .si /*img[src="path/to/image.png"]*/ {  
   width: 60px;  
   border-radius: 50%;  
