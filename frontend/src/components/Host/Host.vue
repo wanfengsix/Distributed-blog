@@ -32,7 +32,10 @@
           <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
         </div>
         <div class="navgationbarItemLog">
-          <button @click="logout" style="width: 200px; height: 50px;font-size: 30px;">
+          <button
+            @click="logout"
+            style="width: 200px; height: 50px; font-size: 30px"
+          >
             退出
           </button>
         </div>
@@ -111,30 +114,14 @@
 
       <div class="articleRecommendedList">
         <!-- 通过循环生成文章列表 -->
-        <div class="article">
-          <h3><a href="article">{{articleHead}}</a></h3>
+        <div class="article" v-for="(item, index) in articleList.article_list" :key="index">
+          <h3>
+            <a :href="'article/'+item.article_id">{{ item.head }}</a>
+          </h3>
           <p>文章摘要或内容简介...</p>
         </div>
-        <div class="article">
-          <h3><a href="#article1">听说前端出大事了</a></h3>
-          <p>文章摘要或内容简介...</p>
-        </div>
-        <div class="article">
-          <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
-          <p>文章摘要或内容简介...</p>
-        </div>
-        <div class="article">
-          <h3><a href="#article1">听说前端出大事了</a></h3>
-          <p>文章摘要或内容简介...</p>
-        </div>
-        <div class="article">
-          <h3><a href="#article1">百度搜索内容HTAP表格存储系统</a></h3>
-          <p>文章摘要或内容简介...</p>
-        </div>
-        <div class="article">
-          <h3><a href="#article1">听说前端出大事了</a></h3>
-          <p>文章摘要或内容简介...</p>
-        </div>
+        
+
         <!-- 可以添加更多文章项 -->
       </div>
     </section>
@@ -163,14 +150,17 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc: "",
-      articleHead:'',
-      articleId:'0',
+      
+      articleId: "0",
+      // articleList:[Head:0,Article_ID:0]
+      articleList:''
+
     };
   },
   created() {
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.fetchArticleHead(); // 在页面加载时调用fetchArticle方法
-
+    this.fetchArticleList()
   },
   methods: {
     logout() {
@@ -190,7 +180,7 @@ export default {
           console.error(error);
         });
     },
-    fetchArticleHead(){
+    fetchArticleHead() {
       const instance = axios.create({
         withCredentials: true,
       });
@@ -198,12 +188,29 @@ export default {
         .get(`http://127.0.0.1:8088/user/head/${this.articleId}`) // 使用get请求获取文章标题
         .then(async (response) => {
           console.log(response.data);
-          this.articleHead =  response.data.data; // 显示文章内容
+          this.articleHead = response.data.data; // 显示文章内容
         })
         .catch((error) => {
           console.error(error);
         });
-    }
+    },
+    fetchArticleList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-list/${this.articleId}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleList = response.data; // 显示文章内容
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+          
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
   },
 };
 </script>
@@ -373,7 +380,7 @@ section {
       height: 50px;
     }
   }
-  .nologgedIn{
+  .nologgedIn {
     display: flex;
     justify-content: space-between;
   }

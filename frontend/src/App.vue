@@ -13,7 +13,7 @@ const routes = [
     {path: '/', component:Host},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
-    {path:'/article',component:Article},
+    {path:'/article/:articleId',component:Article},
     {path:'/individual',component:Individual}
 ]
   

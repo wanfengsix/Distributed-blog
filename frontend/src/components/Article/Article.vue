@@ -2,21 +2,21 @@
 <template>
   <div id="app">
     <div class="navgationbar">
-      <img class="imgLogo" src="img/logo.jpg" />
+      <img class="imgLogo" src="../../../public/img/logo.jpg" />
       <div class="navgationbarItemHome">
-        <img class="imgHome" src="img/home.png" alt="" />
+        <img class="imgHome" src="../../../public/img/home.png" alt="" />
         <router-link to="/home">首页</router-link>
       </div>
       <div class="navgationbarItemNotifications">
-        <img class="imgNotifications" src="img/notifications.png" alt="" />
+        <img class="imgNotifications" src="../../../public/img/notifications.png" alt="" />
         <router-link to="/notifications">通知</router-link>
       </div>
       <div class="navgationbarItemProfile">
-        <img class="imgProfile" src="img/profile.png" alt="" />
+        <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
         <router-link to="/profile">个人中心</router-link>
       </div>
       <div class="navgationbarItemSearch">
-        <img class="imgSearch" src="img/search.png" />
+        <img class="imgSearch" src="../../../public/img/search.png" />
         <input type="text" style="width: 400px" />
       </div>
       <div class="navgationbarItemCreaterCenter">
@@ -25,7 +25,7 @@
 
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
-          <img class="imgAvator" src="img/temp.jpg" alt="Image from backend" />
+          <img class="imgAvator" src="../../../public/img/temp.jpg" alt="Image from backend" />
         </div>
         <div class="navgationbarItemLog">
           <button
@@ -49,11 +49,11 @@
     <div class="Box">
       <div class="leftBox">
         <div class="like">
-          <img class="imgLike" src="img/like.png" alt="" />
+          <img class="imgLike" src="../../../public/img/like.png" alt="" />
         </div>
 
         <div class="collect">
-          <img class="imgCollect" src="img/collect.png" alt="" />
+          <img class="imgCollect" src="../../../public/img/collect.png" alt="" />
         </div>
       </div>
 
@@ -108,12 +108,12 @@
 
       <div class="rightBox">
         <div class="personalInfo">
-          <img class="imgIcon" src="img/personalIcon.jpg" alt="" />
+          <img class="imgIcon" src="../../../public/img/personalIcon.jpg" alt="" />
 
           <div class="rightPersonalInfo">
             <p class="personalName">用户1772145090587</p>
 
-            <img class="imgGrade" src="img/grade1.png" alt="" />
+            <img class="imgGrade" src="../../../public/img/grade1.png" alt="" />
           </div>
         </div>
         <div class="articleInfo">
@@ -156,7 +156,7 @@ export default {
       showComments: false,
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       articleText: "",
-      articleId: "0",
+      articleId: this.$route.params.articleId,
     };
   },
   computed: {
@@ -165,6 +165,7 @@ export default {
     },
   },
   methods: {
+  
     fetchArticle() {
       const instance = axios.create({
         withCredentials: true,
