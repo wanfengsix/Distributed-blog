@@ -8,7 +8,11 @@
         <router-link to="/home">首页</router-link>
       </div>
       <div class="navgationbarItemNotifications">
-        <img class="imgNotifications" src="../../../public/img/notifications.png" alt="" />
+        <img
+          class="imgNotifications"
+          src="../../../public/img/notifications.png"
+          alt=""
+        />
         <router-link to="/notifications">通知</router-link>
       </div>
       <div class="navgationbarItemProfile">
@@ -25,7 +29,11 @@
 
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
-          <img class="imgAvator" src="../../../public/img/temp.jpg" alt="Image from backend" />
+          <img
+            class="imgAvator"
+            src="../../../public/img/temp.jpg"
+            alt="Image from backend"
+          />
         </div>
         <div class="navgationbarItemLog">
           <button
@@ -53,7 +61,11 @@
         </div>
 
         <div class="collect">
-          <img class="imgCollect" src="../../../public/img/collect.png" alt="" />
+          <img
+            class="imgCollect"
+            src="../../../public/img/collect.png"
+            alt=""
+          />
         </div>
       </div>
 
@@ -70,7 +82,6 @@
             <textarea
               class="textInput"
               v-model="inputText"
-              @input="handleInput"
               placeholder="在这里输入文本"
               style="
                 width: 100px;
@@ -88,7 +99,7 @@
                 vertical-align: top;
               "
               class="sendComments"
-              @click="showCommentsFangfa"
+              @click="fetchComment"
             >
               发送评论
             </button>
@@ -108,7 +119,11 @@
 
       <div class="rightBox">
         <div class="personalInfo">
-          <img class="imgIcon" src="../../../public/img/personalIcon.jpg" alt="" />
+          <img
+            class="imgIcon"
+            src="../../../public/img/personalIcon.jpg"
+            alt=""
+          />
 
           <div class="rightPersonalInfo">
             <p class="personalName">用户1772145090587</p>
@@ -157,15 +172,62 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       articleText: "",
       articleId: this.$route.params.articleId,
+      uid: "0",
+      time: "",
+      
     };
   },
+
   computed: {
     buttonText() {
       return this.isFollowed ? "已关注" : "关注";
     },
   },
   methods: {
-  
+    fetchComment() {
+      var date = new Date();
+      this.time =
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1) +
+        "-" +
+        date.getDate() +
+        " " +
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        date.getSeconds();
+      const data = {
+        Comment_ID: this.uid + this.time,
+        Comment_content: this.inputHistory.join,
+        Article_ID: this.articleId,
+        UID: this.uid,  
+       
+        
+      };
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      // 将comment体发送到后端
+      instance
+        .post("http://127.0.0.1:8088/comment/" +  data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            alert("您已评论成功");
+            this.showCommentsFangfa()
+          } else {
+            alert("评论失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
+
     fetchArticle() {
       const instance = axios.create({
         withCredentials: true,
@@ -186,11 +248,9 @@ export default {
     showCommentsFangfa() {
       this.showComments = true;
       this.inputHistory.unshift(this.inputText);
-      this.inputText = "";
+      this.inputText = ""; //inputText会显现在输入框中 所以要清空
     },
-    handleInput() {
-      // 将当前输入保存到历史记录中
-    },
+
     handleFileChange(event) {
       const file = event.target.files[0];
 
@@ -227,6 +287,7 @@ export default {
     //   xhr.send();
     // },
   },
+
   created() {
     // 在实例创建时触发loadDefaultFile()函数
     // this.loadDefaultFile();

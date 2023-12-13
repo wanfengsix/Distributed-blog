@@ -78,12 +78,14 @@ func PostHandler() http.HandlerFunc {
 			http.Error(w, "Failed to read request body", http.StatusBadRequest)
 			return
 		}
+
 		var loginData types.LoginReq             // 定义用于存储解析后的JSON数据的结构体
 		err3 := json.Unmarshal(body, &loginData) // 解析JSON数据
 		if err3 != nil {
 			http.Error(w, "Failed to parse JSON", http.StatusBadRequest)
 			return
 		}
+
 		username := loginData.Username // 获取解析后的用户名
 		password := loginData.Password // 获取解析后的密码
 		fmt.Println("用户名:" + username)
