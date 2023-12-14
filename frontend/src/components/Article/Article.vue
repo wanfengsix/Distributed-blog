@@ -511,34 +511,46 @@ footer {
   .middleBox {
     
     width: 700px;
-    .comentArea {
+    .commentArea {
       .topComment {
         display: flex;
         justify-content: space-between;
         align-items: space-between;
+        vertical-align: text-top;
         .textInput {
           width: 300px;
           height: 200px;
           padding: 10px;
           margin-top: 20px;
+          vertical-align: text-top;
+          
         }
         .sendComments {
           width: 100px;
           height: 50px;
+          vertical-align: text-top;
         }
       }
       .bottomComment {
-
+        display: flex;
+        justify-content: flex-start;
+        align-items: space-between;
+        
         .userImgBox{
           height: 50px;
           width: 50px;
+          margin: 10px;
         }
         .commentBox {
+
           height: 50px;
-          width:50px;
+          width:500px;
+          margin: 10px;
         }
 
       }
+      
+      
     }
   }
   .rightBox {
