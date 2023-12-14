@@ -43,7 +43,7 @@ func (l *LikesLogic) Likes(req *types.LikesReq) (resp *types.LikesResponse, err 
 	//获取用户ID,根据请求用户名查询
 	var A_list []*models.User_Total
 	var UID string
-	query := "select u_name,password,secret_protection1,secret_protection2,secret_protection3,is_Admin from register where u_name=?"
+	query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
 	err = mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, req.U_name)
 	if err != nil {
 		log.Println(err)

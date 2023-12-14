@@ -186,7 +186,7 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       articleText: "",
       articleId: this.$route.params.articleId,
-      uid: "0",
+      u_name: localStorage.getItem("username"),
       time: "",
       imageSrc: "",
       commentList: "",
@@ -219,7 +219,7 @@ export default {
         Comment_ID: this.uid + this.time,
         Comment_content: this.inputHistory,
         Article_ID: this.articleId,
-        UID: this.uid,
+        u_name: this.u_name,
       };
       const instance = axios.create({
         withCredentials: true,
@@ -528,20 +528,14 @@ footer {
         }
       }
       .bottomComment {
-        display: flex;
-        justify-content: space-between;  
-        flex-wrap: nowrap;
-        flex-flow: row;
 
         .userImgBox{
           height: 50px;
           width: 50px;
         }
         .commentBox {
-          display: flex;
-          align-items: center;
-          flex-flow: column;
           height: 50px;
+          width:50px;
         }
 
       }
