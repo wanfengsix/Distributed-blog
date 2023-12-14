@@ -376,8 +376,7 @@ section {
       }
     }
     .navgationbarItemLog {
-      width: 50px;
-      height: 50px;
+    border: 0;
     }
   }
   .nologgedIn {
