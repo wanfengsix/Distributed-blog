@@ -17,11 +17,6 @@ func Prefix_comment_managing() http.HandlerFunc {
 
 func CommentHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
 		//处理跨域请求
 		base.Prefix_Managing(w, r)
 		if r.Method != "POST" {

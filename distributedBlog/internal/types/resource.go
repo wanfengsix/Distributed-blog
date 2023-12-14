@@ -3,6 +3,7 @@ package types
 type ResourceReq struct {
 	Name          string `json:"name" path:"name"`
 	Resource_type string `json:"resource_type" path:"type"`
+	Post_data     string `json:"post_data"` //仅在POST请求用到
 }
 type Article_list_item struct {
 	Head       string `json:"head"`

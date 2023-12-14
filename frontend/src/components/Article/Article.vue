@@ -167,7 +167,7 @@ export default {
       articleContent: "",
       isFollowed: false,
       inputText: "",
-      inputHistory: [],
+      inputHistory: "",
       showComments: false,
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       articleText: "",
@@ -200,18 +200,17 @@ export default {
         date.getSeconds();
       const data = {
         Comment_ID: this.uid + this.time,
-        Comment_content: this.inputHistory.join,
+        Comment_content: this.inputHistory,
         Article_ID: this.articleId,
         UID: this.uid,  
        
-        
       };
       const instance = axios.create({
         withCredentials: true,
       });
       // 将comment体发送到后端
       instance
-        .post("http://127.0.0.1:8088/comment/" +  data)
+        .post("http://127.0.0.1:8088/comment" ,data)
         .then((response) => {
           // 处理成功的响应
           console.log(response.data);
@@ -247,7 +246,7 @@ export default {
     },
     showCommentsFangfa() {
       this.showComments = true;
-      this.inputHistory.unshift(this.inputText);
+      this.inputHistory=this.inputText;
       this.inputText = ""; //inputText会显现在输入框中 所以要清空
     },
 

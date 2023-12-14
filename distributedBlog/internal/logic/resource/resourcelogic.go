@@ -108,6 +108,36 @@ func GetResource_Signature(req *types.ResourceReq, wd string, resp *types.Resour
 	resp.Data = R_list[0].Signature.String
 	return
 }
+
+// 先根据用户名查用户id,然后再修改user_information表,进行个性签名修改
+func PostResource_Signature(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.AvatarResource
+	var user []*models.User_Total
+	prequery := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &user, prequery, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(user) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+	query := "update user_information set signature=? where uid=?"
+	err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Post_data, user[0].UID)
+	if err != nil {
+		log.Println(err)
+	}
+	//查到用户签名后，将其赋值到回复
+	resp.Data = "signature update success!"
+	return
+}
 func GetResource_Article(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 
 	resource_type := "article"
@@ -230,6 +260,33 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		if err != nil {
 			log.Println(err)
 		}
+	}
+	return
+}
+
+// 处理发送的资源
+func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
+	res := new(types.ResourceResponse)
+	resp = res
+	//给绝对路径赋值
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+
+	if req.Resource_type == "avatar" {
+
+	} else if req.Resource_type == "article" {
+
+	} else if req.Resource_type == "signature" {
+		PostResource_Signature(req, wd, resp) //对签名资源处理
+		if err != nil {
+			log.Println(err)
+		}
+	} else if req.Resource_type == "head" {
+
+	} else if req.Resource_type == "article-list" { //获取文章记录列表
+
 	}
 	return
 }

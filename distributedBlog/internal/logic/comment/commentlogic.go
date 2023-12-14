@@ -60,5 +60,8 @@ func (c *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentRespon
 		log.Println(err)
 		return
 	}
+	resp.Success = true
+	resp.Message = "comment success!"
+	resp.Code = 200
 	return
 }
