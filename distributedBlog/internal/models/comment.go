@@ -8,3 +8,7 @@ type Comment struct {
 	Article_ID      sql.NullString `db:"Article_ID"`
 	UID             sql.NullString `db:"UID"`
 }
+
+func (c *Comment) TableName() string {
+	return "comment"
+}

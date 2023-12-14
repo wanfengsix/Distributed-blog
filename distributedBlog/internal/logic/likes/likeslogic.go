@@ -1,4 +1,4 @@
-package comment
+package likes
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 /*
 定义评论逻辑体
 */
-type CommentLogic struct {
+type LikesLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -23,8 +23,8 @@ type CommentLogic struct {
 
 var mysqlDB = sqlx.NewSqlConn("mysql", const_values.MYSQLCONNECTION)
 
-func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLogic {
-	return &CommentLogic{
+func NewLikesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikesLogic {
+	return &LikesLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
@@ -32,13 +32,13 @@ func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLo
 }
 
 /*
-评论事务:
-用户在前端以指定UID，文章ID，评论内容，评论ID（目前默认UID+日期）向后端发送请求，
-后端分别对用户表添加评论数，文章表添加评论数，评论表添加评论记录
+点赞事务:
+用户在前端以指定UID，文章ID向后端发送请求，
+后端分别对用户表添加点赞数，文章表添加点赞数，点赞表添加点赞记录
 */
 
-func (c *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentResponse, err error) {
-	res := new(types.CommentResponse)
+func (l *LikesLogic) Likes(req *types.LikesReq) (resp *types.LikesResponse, err error) {
+	res := new(types.LikesResponse)
 	resp = res
 	//获取用户ID,根据请求用户名查询
 	var A_list []*models.User_Total
@@ -47,7 +47,6 @@ func (c *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentRespon
 	err = mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, req.U_name)
 	if err != nil {
 		log.Println(err)
-
 	}
 	//检验会不会查询的到,如果查询不到，那么就返回不存在
 	if len(A_list) == 0 {
@@ -62,28 +61,28 @@ func (c *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentRespon
 		UID = A_list[0].UID.String
 	}
 	//先更新用户评论数
-	user_query := "UPDATE user SET comment_nums = comment_nums + 1 WHERE UID = ?"
+	user_query := "UPDATE user SET likes_nums = likes_nums + 1 WHERE UID = ?"
 	_, err1 := mysqlDB.ExecCtx(context.Background(), user_query, UID)
 	if err1 != nil {
 		log.Println(err)
 		return
 	}
 	//在更新文章评论数
-	article_query := "UPDATE article SET comment_nums = comment_nums + 1 WHERE Article_ID = ?"
+	article_query := "UPDATE article SET likes_nums = likes_nums + 1 WHERE Article_ID = ?"
 	_, err1 = mysqlDB.ExecCtx(context.Background(), article_query, req.Article_ID)
 	if err1 != nil {
 		log.Println(err)
 		return
 	}
-	//最后插入评论
-	comment_query := "INSERT INTO comment VALUES(?,?,?,?)"
-	_, err1 = mysqlDB.ExecCtx(context.Background(), comment_query, req.Comment_ID, req.Comment_content, req.Article_ID, UID)
+	//最后插入点赞记录
+	likes_query := "INSERT INTO likes VALUES(?,?)"
+	_, err1 = mysqlDB.ExecCtx(context.Background(), likes_query, UID, req.Article_ID)
 	if err1 != nil {
 		log.Println(err)
 		return
 	}
 	resp.Success = true
-	resp.Message = "comment success!"
+	resp.Message = "likes success!"
 	resp.Code = 200
 	return
 }

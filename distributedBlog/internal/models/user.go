@@ -13,3 +13,7 @@ type User_Total struct {
 	Likes_nums   int            `json:"likes_nums" db:"likes_nums"`
 	Level        int            `json:"level" db:"level"`
 }
+
+func (u *User_Total) TableName() string {
+	return "user"
+}

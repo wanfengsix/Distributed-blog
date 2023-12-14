@@ -7,3 +7,7 @@ type AvatarResource struct {
 	Signature  sql.NullString `json:"signature" db:"signature"`
 	Avatar_url sql.NullString `json:"avatar_url" db:"avatar_url"`
 }
+
+func (a *AvatarResource) TableName() string {
+	return "user_information"
+}

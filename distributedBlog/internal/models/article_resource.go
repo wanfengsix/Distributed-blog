@@ -11,3 +11,7 @@ type ArticleResource struct {
 	Comment_nums int            `json:"comment_nums" db:"comment_nums"`
 	Article_url  sql.NullString `json:"article_url" db:"article_url"`
 }
+
+func (a *ArticleResource) TableName() string {
+	return "article"
+}

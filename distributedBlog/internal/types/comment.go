@@ -5,7 +5,7 @@ type CommentReq struct {
 
 	Comment_content string `json:"Comment_content"`
 	Article_ID      string `json:"Article_ID"`
-	UID             string `json:"UID"`
+	U_name          string `json:"u_name"`
 }
 type CommentResponse struct {
 	Success bool
