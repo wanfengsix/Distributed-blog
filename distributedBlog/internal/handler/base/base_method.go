@@ -14,7 +14,7 @@ func Is_Ours(origin string) bool {
 	if origin[:len(const_values.BACKEND_SOURCE)] == const_values.BACKEND_SOURCE {
 		return true
 	}
-	if origin[:len(const_values.BACKEND_SOURCE)] == const_values.LOCALHOST {
+	if origin[:len(const_values.LOCALHOST)] == const_values.LOCALHOST {
 		return true
 	}
 	return false

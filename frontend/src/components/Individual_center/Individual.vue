@@ -90,16 +90,17 @@
 								<img src="../../../public/img/tx2.png" >
 							</div>
 							
-							<div class="zhong">
-								<h3>用户1772145090487</h3>
-								<img src="../../../public/img/yh.png" >
-								<span>个性g签名</span>
-								<p>{{this.signature}}</p>
-							</div>
-							
-							<div class="you">
-								<a href="###">设置</a>
-							</div>
+							<div class="zhong">  
+								<h3>用户1772145090487</h3>  
+								<img src="../../../public/img/yh.png" alt="avatar">  
+								<span>个性签名</span>  
+								<input v-model="signature" v-if="isSetting" type="text" placeholder="请输入个性签名">  
+								<p v-else>{{signature}}</p>  
+							  </div>  
+							  <div class="you">  
+								<button v-if="!isSetting" @click="isSetting = true">设置</button>  
+								<button v-else @click="sendSignature()">完成</button>  
+							  </div>  
 							
 							<div class="clear">
 								
@@ -237,7 +238,7 @@
 
 </template>
 <script>  
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 export default {  
 	name: 'Host_Page',
 	data() {
@@ -245,7 +246,8 @@ export default {
 	  isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc:"",
-	  signature:""
+	  signature:"",
+	  isSetting: false ,
 
     };
   },
@@ -263,6 +265,34 @@ export default {
         borderRadius: '75%', 
       };  
     } , 
+	sendSignature() {  
+      const data ={
+		post_data: this.signature,
+	  };
+	  const instance = axios.create({
+        withCredentials: true,
+      });
+	  //将signature发送到后端
+	  instance
+.post(`http://127.0.0.1:8088/user/signature/${this.username}`,data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+			this.isSetting = false; // 更新isSetting的值，使文本框变为不可编辑状态  
+
+            alert("您已修改成功");
+            
+          } else {
+            alert("修改失败");
+          }
+		  this.$forceUpdate(); // 强制Vue组件重新渲染  
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },  
     logout() {  
 		this.isLoggedIn=false;
 		localStorage.setItem("isLoggedIn",false)
