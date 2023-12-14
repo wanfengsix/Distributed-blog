@@ -105,13 +105,27 @@
             </button>
           </div>
 
-          <div v-if="showComments">
-            <div
-              v-for="(text, index) in inputHistory"
-              :key="index"
-              class="displayText"
-            >
-              {{ text }}
+          <!-- <div class="bottomComment" v-if="showComments" v-for="(item, index) in commentList.commentList" :key="index"> -->
+          <div class="bottomComment" v-if="showComments">
+          
+            <div class="userImgBox">
+              <img
+                class="userImg"
+                :src="imageSrc"
+                alt=""
+                style="width: 50px; height: 50px"
+              />
+            </div>
+            <div class="commentBox">
+              <div class="userName">{{ username }}</div>
+          
+              <div class="comment">
+                {{ inputHistory }}
+              </div>
+              
+              <div class="commentTime">
+                {{ time }}
+              </div>
             </div>
           </div>
         </div>
@@ -174,7 +188,10 @@ export default {
       articleId: this.$route.params.articleId,
       uid: "0",
       time: "",
-      
+      imageSrc: "",
+      commentList: "",
+
+      username: localStorage.getItem("username"),
     };
   },
 
@@ -202,27 +219,40 @@ export default {
         Comment_ID: this.uid + this.time,
         Comment_content: this.inputHistory,
         Article_ID: this.articleId,
-        UID: this.uid,  
-       
+        UID: this.uid,
       };
       const instance = axios.create({
         withCredentials: true,
       });
       // 将comment体发送到后端
       instance
-        .post("http://127.0.0.1:8088/comment" ,data)
+        .post("http://127.0.0.1:8088/comment", data)
         .then((response) => {
           // 处理成功的响应
           console.log(response.data);
           if (response.data.Success == true) {
             alert("您已评论成功");
-            this.showCommentsFangfa()
+            this.showCommentsFangfa();
           } else {
             alert("评论失败");
           }
         })
         .catch((error) => {
           // 处理错误
+          console.error(error);
+        });
+    },
+    getCommentList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/comment/${this.articleId}`) // 使用get请求获取commentList内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.commentList = response.data.data; // 显示文章内容
+        })
+        .catch((error) => {
           console.error(error);
         });
     },
@@ -246,10 +276,24 @@ export default {
     },
     showCommentsFangfa() {
       this.showComments = true;
-      this.inputHistory=this.inputText;
+      this.inputHistory = this.inputText;
       this.inputText = ""; //inputText会显现在输入框中 所以要清空
+      this.fetchAvatar();
     },
-
+    fetchAvatar() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
+        .then(async (response) => {
+          console.log(response.data);
+          this.imageSrc = "data:image/png;base64," + response.data.data; // 更新imageSrc以显示头像
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     handleFileChange(event) {
       const file = event.target.files[0];
 
@@ -465,6 +509,7 @@ footer {
     }
   }
   .middleBox {
+    
     width: 700px;
     .comentArea {
       .topComment {
@@ -482,11 +527,23 @@ footer {
           height: 50px;
         }
       }
+      .bottomComment {
+        display: flex;
+        justify-content: space-between;  
+        flex-wrap: nowrap;
+        flex-flow: row;
 
-      .displayText {
-        margin-top: 10px;
-        border: 1px solid #ccc;
-        padding: 10px;
+        .userImgBox{
+          height: 50px;
+          width: 50px;
+        }
+        .commentBox {
+          display: flex;
+          align-items: center;
+          flex-flow: column;
+          height: 50px;
+        }
+
       }
     }
   }
