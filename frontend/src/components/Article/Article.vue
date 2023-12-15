@@ -26,30 +26,29 @@
       <div class="navgationbarItemCreaterCenter">
         <p style="color: white">创作者中心</p>
       </div>
-
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
-          <img
-            class="imgAvator"
-            src="../../../public/img/temp.jpg"
-            alt="Image from backend"
-          />
+          <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
+
         </div>
-        <div class="navgationbarItemLog">
+       
           <button
             @click="logout"
-            style="width: 200px; height: 50px; font-size: 30px"
+            class="navgationbarItemLogOut"
+            style="width: 200px; height: 50px; font-size: 30px  margin-left: 300px; "
           >
             退出
           </button>
-        </div>
+        
       </div>
       <div v-else class="nologgedIn">
-        <div class="navgationbarItemLog">
-          <a href="login">登录</a>
-        </div>
-        <div class="navgationbarItemRegister">
-          <a href="regist">注册</a>
+        <div class="navgationbarItemRight">
+          <div class="navgationbarItemLog">
+            <a href="login">登录</a>
+          </div>
+          <div class="navgationbarItemRegister">
+            <a href="regist">注册</a>
+          </div>
         </div>
       </div>
     </div>
@@ -203,7 +202,7 @@ export default {
       time: "",
       imageSrc: "",
       commentList: "",
-      likeNums:'',
+      likeNums:'0',
       collectNums:'0',
       username: localStorage.getItem("username"),
       isLiked:false,
@@ -457,7 +456,7 @@ this.isCollected=!this.isCollected;
     background-color: red;
     text-align: center;
     width: 100px;
-    margin-right: 30px;
+    margin-right: 300px;
 
     imgProfile {
     }
@@ -465,22 +464,38 @@ this.isCollected=!this.isCollected;
 
   .loggedIn {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 
     .navgationbarItemAvator {
       .imgAvator {
         width: 50px;
         height: 50px;
       }
-    }
-    .navgationbarItemLog {
-      width: 50px;
-      height: 50px;
+    } 
+    .navgationbarItemLogOut {
+      
+      position: absolute;
+      right: 100px;
+      top: 0;
+      
+      
     }
   }
   .nologgedIn {
     display: flex;
     justify-content: space-between;
+    .navgationbarItemRight {
+      display: flex;
+
+      width: 50px;  
+      height: 50px;
+      position: absolute;
+      right: 100px;
+      top: 0;
+      .logOutButton{
+        margin-left: 300px;
+      }
+    }
   }
   // .navgationbarItemAvator {
   //   height: auto;

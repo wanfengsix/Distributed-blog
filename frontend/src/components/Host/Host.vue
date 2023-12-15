@@ -31,21 +31,23 @@
         <div class="navgationbarItemAvator">
           <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
         </div>
-        <div class="navgationbarItemLog">
-          <button
-            @click="logout"
-            style="width: 200px; height: 50px; font-size: 30px"
-          >
-            退出
-          </button>
-        </div>
+
+        <button
+          @click="logout"
+          class="navgationbarItemLogOut"
+          style="width: 200px; height: 50px; font-size: 20px  margin-left: 300px; "
+        >
+          退出
+        </button>
       </div>
       <div v-else class="nologgedIn">
-        <div class="navgationbarItemLog">
-          <a href="login">登录</a>
-        </div>
-        <div class="navgationbarItemRegister">
-          <a href="regist">注册</a>
+        <div class="navgationbarItemRight">
+          <div class="navgationbarItemLog">
+            <a href="login">登录</a>
+          </div>
+          <div class="navgationbarItemRegister">
+            <a href="regist">注册</a>
+          </div>
         </div>
       </div>
     </div>
@@ -114,13 +116,16 @@
 
       <div class="articleRecommendedList">
         <!-- 通过循环生成文章列表 -->
-        <div class="article" v-for="(item, index) in articleList.article_list" :key="index">
+        <div
+          class="article"
+          v-for="(item, index) in articleList.article_list"
+          :key="index"
+        >
           <h3>
-            <a :href="'article/'+item.article_id">{{ item.head }}</a>
+            <a :href="'article/' + item.article_id">{{ item.head }}</a>
           </h3>
           <p>文章摘要或内容简介...</p>
         </div>
-        
 
         <!-- 可以添加更多文章项 -->
       </div>
@@ -150,17 +155,16 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc: "",
-      
+
       articleId: "0",
       // articleList:[Head:0,Article_ID:0]
-      articleList:''
-
+      articleList: "",
     };
   },
   created() {
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.fetchArticleHead(); // 在页面加载时调用fetchArticle方法
-    this.fetchArticleList()
+    this.fetchArticleList();
   },
   methods: {
     logout() {
@@ -205,7 +209,6 @@ export default {
           this.articleList = response.data; // 显示文章内容
 
           // this.articleList = make([]interface{},len(response.data.articleList))
-          
         })
         .catch((error) => {
           console.error(error);
@@ -343,12 +346,15 @@ section {
     }
   }
   .navgationbarItemSearch {
+    position: absolute;
+    top: 0;
+    left: 36%;
+    height: 50px;
     .imgSearch {
       width: auto;
       height: 70%;
       margin-right: 20px;
     }
-    margin-right: 200px;
 
     display: flex;
     justify-content: flex-start;
@@ -361,27 +367,50 @@ section {
     text-align: center;
     width: 100px;
     margin-right: 30px;
+    height: 50px;
 
-    imgProfile {
-    }
+    position: absolute;
+    top: 0;
+    left: 65%;
+    height: 50px;
   }
   .loggedIn {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 
     .navgationbarItemAvator {
       .imgAvator {
         width: 50px;
         height: 50px;
+        right: 400px;
+        position: absolute;
+        top: 0;
+        left: 75%;
+        height: 50px;
       }
     }
-    .navgationbarItemLog {
-    border: 0;
+    .navgationbarItemLogOut {
+      position: absolute;
+      top: 0;
+      left: 85%;
+      height: 50px;
     }
   }
   .nologgedIn {
     display: flex;
     justify-content: space-between;
+    .navgationbarItemRight {
+      display: flex;
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 0;
+      left: 85%;
+      height: 50px;
+      .navgationbarItemLog{
+
+      }
+    }
   }
 }
 .articleRecommendedList {
