@@ -10,7 +10,7 @@
       <img class="imgLogo" src="img/logo.jpg" />
       <div class="navgationbarItemHome">
         <img class="imgHome" src="img/home.png" alt="" />
-        <a href="">首页</a>
+        <a href="/">首页</a>
       </div>
       <div class="navgationbarItemNotifications">
         <img class="imgNotifications" src="img/notifications.png" alt="" />

@@ -5,7 +5,7 @@
       <img class="imgLogo" src="../../../public/img/logo.jpg" />
       <div class="navgationbarItemHome">
         <img class="imgHome" src="../../../public/img/home.png" alt="" />
-        <router-link to="/home">首页</router-link>
+        <router-link to="/">首页</router-link>
       </div>
       <div class="navgationbarItemNotifications">
         <img
@@ -57,15 +57,27 @@
     <div class="Box">
       <div class="leftBox">
         <div class="like">
-          <img class="imgLike" src="../../../public/img/like.png" alt="" />
+          <img v-if="!isLiked" class="imgLike" src="../../../public/img/like.png" alt="" @click="changeImgLike();fetchLikes();"/>
+          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="changeImgLike();cancelLikes();"/>
+          <div>{{ likeNums }}</div>
         </div>
 
         <div class="collect">
           <img
+          v-if="!isCollected"
             class="imgCollect"
             src="../../../public/img/collect.png"
             alt=""
+            @click="changeImgCollect();  "
           />
+          <img
+          v-if="isCollected"
+            class="imgCollect"
+            src="../../../public/img/collected.png"
+            alt=""
+            @click="changeImgCollect"
+          />
+          <div>{{ collectNums }}</div>
         </div>
       </div>
 
@@ -84,7 +96,7 @@
               v-model="inputText"
               placeholder="在这里输入文本"
               style="
-                width: 100px;
+                width: 550px;
                 height: 50px;
                 display: inline-block;
                 vertical-align: top;
@@ -93,7 +105,7 @@
             <button
               style="
                 width: 100px;
-                height: 50px;
+                height: 70px;
                 font-size: 20px;
                 display: inline-block;
                 vertical-align: top;
@@ -187,11 +199,15 @@ export default {
       articleText: "",
       articleId: this.$route.params.articleId,
       u_name: localStorage.getItem("username"),
+     
       time: "",
       imageSrc: "",
       commentList: "",
-
+      likeNums:'',
+      collectNums:'0',
       username: localStorage.getItem("username"),
+      isLiked:false,
+      isCollected:false,
     };
   },
 
@@ -201,6 +217,42 @@ export default {
     },
   },
   methods: {
+    fetchLikes(){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      const data={
+        u_name:this.u_name,
+        Article_ID:this.articleId,
+      }
+      instance
+        .post("http://127.0.0.1:8088/likes", data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            alert("您已点赞成功");
+            this.likeNums=this.likeNums+1;
+          } else {
+            alert("点赞失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+
+    },
+    cancelLikes(){
+      this.likeNums=this.likeNums-1;
+
+    },
+    changeImgLike(){
+this.isLiked=!this.isLiked;
+    },
+    changeImgCollect(){
+this.isCollected=!this.isCollected;
+    },
     fetchComment() {
       var date = new Date();
       this.time =
@@ -499,36 +551,53 @@ footer {
     flex-flow: column;
     padding: 40px 40px;
     border: 1px solid gray;
-    .imgLike {
+
+
+    .like{
+      display: flex;
+      justify-content: center;
+   align-items: center;
+   flex-flow: column;
+
+      .imgLike {
       width: 50px;
       height: 50px;
     }
-    .imgCollect {
+    }
+
+    .collect{
+      display: flex;
+      justify-content: center;
+   align-items: center;
+   flex-flow: column;
+      .imgCollect {
       width: 50px;
       height: 50px;
     }
+    }
+
+    
+    
   }
   .middleBox {
     
     width: 700px;
     .commentArea {
       .topComment {
-        display: flex;
-        justify-content: space-between;
-        align-items: space-between;
-        vertical-align: text-top;
+      
         .textInput {
           width: 300px;
           height: 200px;
           padding: 10px;
-          margin-top: 20px;
-          vertical-align: text-top;
+          margin-right: 2 0px;
+        
+          
           
         }
         .sendComments {
           width: 100px;
           height: 50px;
-          vertical-align: text-top;
+          
         }
       }
       .bottomComment {
