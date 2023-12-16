@@ -165,10 +165,22 @@ export default {
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.fetchArticleHead(); // 在页面加载时调用fetchArticle方法
     this.fetchArticleList();
+    this.getLoggedIn();
   },
   methods: {
+    getLoggedIn(){
+      this.isLoggedIn=localStorage.getItem("isLoggedIn");
+      console.log( localStorage.getItem("isLoggedIn"));
+      
+
+    },
+    
     logout() {
       this.isLoggedIn = false;
+      localStorage.setItem('isLoggedIn',this.isLoggedIn)
+      console.log( localStorage.getItem("isLoggedIn"));
+      
+
     },
     fetchAvatar() {
       const instance = axios.create({

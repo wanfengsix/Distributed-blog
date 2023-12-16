@@ -138,6 +138,8 @@ func PostResource_Signature(req *types.ResourceReq, wd string, resp *types.Resou
 	resp.Data = "signature update success!"
 	return
 }
+
+// 获取文章内容
 func GetResource_Article(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 
 	resource_type := "article"
@@ -223,9 +225,44 @@ func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.Res
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
 	}
-	resp.ListData = articleList
+	resp.ArticleListData = articleList
 	return
 
+}
+
+// 获取评论列表
+func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.CommentResource
+	query := "select Comment_ID,Comment_content,Article_ID,UID from comment where Article_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_ARTICLE_NUM {
+		length = const_values.BIGGEST_ARTICLE_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find Comment!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find Comment!"
+	}
+	commentList := make([]types.Comment_list_item, length) //创建指定长度的文章集合
+	for k, _ := range R_list {                             //拷贝
+		commentList[k].Comment_ID = R_list[k].Comment_ID.String
+		commentList[k].Comment_content = R_list[k].Comment_content.String
+		commentList[k].UID = R_list[k].UID.String
+
+	}
+	resp.CommentListData = commentList
+	return
 }
 func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
 	res := new(types.ResourceResponse)
@@ -260,7 +297,13 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		if err != nil {
 			log.Println(err)
 		}
+	} else if req.Resource_type == "comment-list" { //获取评论列表
+		GetResource_Comment_list(req, wd, resp) //对文章头处理
+		if err != nil {
+			log.Println(err)
+		}
 	}
+
 	return
 }
 
@@ -286,6 +329,8 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 	} else if req.Resource_type == "head" {
 
 	} else if req.Resource_type == "article-list" { //获取文章记录列表
+
+	} else if req.Resource_type == "comment-list" { //获取文章记录列表
 
 	}
 	return

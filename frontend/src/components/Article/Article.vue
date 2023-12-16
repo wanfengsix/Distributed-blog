@@ -29,22 +29,20 @@
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
           <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
-
         </div>
-       
-          <button
-            @click="logout"
-            class="navgationbarItemLogOut"
-            style="width: 200px; height: 50px; font-size: 30px  margin-left: 300px; "
-          >
-            退出
-          </button>
-        
+
+        <button
+          @click="logout"
+          class="navgationbarItemLogOut"
+          style="width: 200px; height: 50px; font-size: 20px  margin-left: 300px; "
+        >
+          退出
+        </button>
       </div>
       <div v-else class="nologgedIn">
         <div class="navgationbarItemRight">
           <div class="navgationbarItemLog">
-            <a href="login">登录</a>
+            <a href="../Login">登录</a>
           </div>
           <div class="navgationbarItemRegister">
             <a href="regist">注册</a>
@@ -198,7 +196,7 @@ export default {
       articleText: "",
       articleId: this.$route.params.articleId,
       u_name: localStorage.getItem("username"),
-     
+      uid:'0',
       time: "",
       imageSrc: "",
       commentList: "",
@@ -243,7 +241,30 @@ export default {
 
     },
     cancelLikes(){
-      this.likeNums=this.likeNums-1;
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      const data={
+        u_name:this.u_name,
+        Article_ID:this.articleId,
+      }
+      instance
+        .post("http://127.0.0.1:8088/likes", data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            alert("您已取消点赞");
+            this.likeNums=this.likeNums-1;
+
+          } else {
+            alert("取消点赞失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
 
     },
     changeImgLike(){
@@ -297,11 +318,12 @@ this.isCollected=!this.isCollected;
       const instance = axios.create({
         withCredentials: true,
       });
+      
       instance
-        .get(`http://127.0.0.1:8088/comment/${this.articleId}`) // 使用get请求获取commentList内容
+        .get(`http://127.0.0.1:8088/user/comment-list/${this.articleId}`) // 使用get请求获取commentList内容
         .then(async (response) => {
           console.log(response.data);
-          this.commentList = response.data.data; // 显示文章内容
+          this.commentList = response.data; // 显示评论列表内容
         })
         .catch((error) => {
           console.error(error);
@@ -324,6 +346,7 @@ this.isCollected=!this.isCollected;
     },
     logout() {
       this.isLoggedIn = false;
+      localStorage.setItem('isLoggedIn',this.isLoggedIn)
     },
     showCommentsFangfa() {
       this.showComments = true;
@@ -385,7 +408,10 @@ this.isCollected=!this.isCollected;
   created() {
     // 在实例创建时触发loadDefaultFile()函数
     // this.loadDefaultFile();
-    this.fetchArticle();
+    this.fetchArticle();  
+    this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
+    this.getCommentList();
+
   },
 };
 </script>
@@ -470,15 +496,18 @@ this.isCollected=!this.isCollected;
       .imgAvator {
         width: 50px;
         height: 50px;
+        right: 400px;
+        position: absolute;
+        top: 0;
+        left: 75%;
+        height: 50px;
       }
-    } 
+    }
     .navgationbarItemLogOut {
-      
       position: absolute;
-      right: 100px;
       top: 0;
-      
-      
+      left: 85%;
+      height: 50px;
     }
   }
   .nologgedIn {
@@ -486,14 +515,14 @@ this.isCollected=!this.isCollected;
     justify-content: space-between;
     .navgationbarItemRight {
       display: flex;
-
-      width: 50px;  
+      width: 50px;
       height: 50px;
       position: absolute;
-      right: 100px;
       top: 0;
-      .logOutButton{
-        margin-left: 300px;
+      left: 85%;
+      height: 50px;
+      .navgationbarItemLog{
+
       }
     }
   }
