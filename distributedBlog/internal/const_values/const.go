@@ -11,4 +11,4 @@ const LOCALHOST = "http://localhost:8080"
 const DATABASE = "dusha"
 const PASSWORD = "xin365118"
 const MYSQLCONNECTION = "root:" + PASSWORD + "@tcp(127.0.0.1:3306)/" + DATABASE + "?charset=utf8mb4&parseTime=True&loc=Local"
-const BIGGEST_ARTICLE_NUM = 8
+const BIGGEST_LIST_NUM = 8

@@ -72,6 +72,8 @@
         // 处理成功的响应    
       console.log(response.data);
       if(response.data.Success==true){
+        localStorage.setItem('isLoggedIn', true) // 设置登录状态为已登录   
+        localStorage.setItem('username',this.username)  //传入用户名
         this.$router.push('/')   
       }else{
         // 在这里可以进行页面跳转或其他操作 

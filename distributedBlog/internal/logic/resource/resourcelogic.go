@@ -206,8 +206,8 @@ func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.Res
 		log.Println(err)
 	}
 	var length int
-	if len(R_list) >= const_values.BIGGEST_ARTICLE_NUM {
-		length = const_values.BIGGEST_ARTICLE_NUM
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
 	} else {
 		length = len(R_list)
 	}
@@ -240,8 +240,8 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 		log.Println(err)
 	}
 	var length int
-	if len(R_list) >= const_values.BIGGEST_ARTICLE_NUM {
-		length = const_values.BIGGEST_ARTICLE_NUM
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
 	} else {
 		length = len(R_list)
 	}
@@ -358,7 +358,7 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 
 	} else if req.Resource_type == "article-list" { //获取文章记录列表
 
-	} else if req.Resource_type == "comment-list" { //获取文章记录列表
+	} else if req.Resource_type == "comment-list" { //获取文章评论列表
 
 	}
 	return
