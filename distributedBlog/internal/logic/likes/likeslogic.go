@@ -34,9 +34,60 @@ func NewLikesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikesLogic 
 /*
 点赞事务:
 用户在前端以指定U_name，文章ID向后端发送请求，
-后端分别对用户表添加点赞数，文章表添加点赞数，点赞表添加点赞记录
+后端分别对为点赞用户表添加点赞数，文章表添加点赞数，点赞表添加点赞记录，点赞用户做逆操作
 */
-
+func SubmitLikes(req *types.LikesReq, resp *types.LikesResponse, UID string) {
+	// 先更新点赞数
+	user_query := "UPDATE user SET likes_nums = likes_nums + 1 WHERE UID = ?"
+	_, err1 := mysqlDB.ExecCtx(context.Background(), user_query, UID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	// 在更新文章点赞数
+	article_query := "UPDATE article SET likes_nums = likes_nums + 1 WHERE Article_ID = ?"
+	_, err1 = mysqlDB.ExecCtx(context.Background(), article_query, req.Article_ID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	// 最后插入点赞记录
+	likes_query := "INSERT INTO likes VALUES(?,?)"
+	_, err1 = mysqlDB.ExecCtx(context.Background(), likes_query, UID, req.Article_ID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	resp.Success = true
+	resp.Message = "likes success!"
+	resp.Code = 200
+}
+func CancelLikes(req *types.LikesReq, resp *types.LikesResponse, UID string) {
+	// 先更新点赞数
+	user_query := "UPDATE user SET likes_nums = likes_nums - 1 WHERE UID = ?"
+	_, err1 := mysqlDB.ExecCtx(context.Background(), user_query, UID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	// 在更新文章点赞数
+	article_query := "UPDATE article SET likes_nums = likes_nums - 1 WHERE Article_ID = ?"
+	_, err1 = mysqlDB.ExecCtx(context.Background(), article_query, req.Article_ID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	// 最后删除点赞记录
+	likes_query := "DELETE likes WHERE UID=? AND Article_ID=?"
+	_, err1 = mysqlDB.ExecCtx(context.Background(), likes_query, UID, req.Article_ID)
+	if err1 != nil {
+		log.Println(err1)
+		return
+	}
+	resp.Success = true
+	resp.Message = "unlikes success!"
+	resp.Code = 200
+}
 func (l *LikesLogic) Likes(req *types.LikesReq) (resp *types.LikesResponse, err error) {
 	res := new(types.LikesResponse)
 	resp = res
@@ -60,29 +111,20 @@ func (l *LikesLogic) Likes(req *types.LikesReq) (resp *types.LikesResponse, err 
 		resp.Message = "find user!"
 		UID = A_list[0].UID.String
 	}
-	//先更新点赞数
-	user_query := "UPDATE user SET likes_nums = likes_nums + 1 WHERE UID = ?"
-	_, err1 := mysqlDB.ExecCtx(context.Background(), user_query, UID)
+	//校验是否已经具备点赞关系
+	liked_query := "SELECT UID ,Article_ID WHERE UID=? AND Article_ID=?"
+	var L_list []*models.Likes
+	err1 := mysqlDB.QueryRowCtx(context.Background(), &L_list, liked_query, UID, req.Article_ID)
 	if err1 != nil {
-		log.Println(err)
+		log.Println(err1)
 		return
 	}
-	//在更新文章点赞数
-	article_query := "UPDATE article SET likes_nums = likes_nums + 1 WHERE Article_ID = ?"
-	_, err1 = mysqlDB.ExecCtx(context.Background(), article_query, req.Article_ID)
-	if err1 != nil {
-		log.Println(err)
-		return
+	//如果已经具备点赞关系，要执行取消点赞操作
+	if len(L_list) != 0 {
+		CancelLikes(req, resp, UID)
+	} else {
+		SubmitLikes(req, resp, UID)
 	}
-	//最后插入点赞记录
-	likes_query := "INSERT INTO likes VALUES(?,?)"
-	_, err1 = mysqlDB.ExecCtx(context.Background(), likes_query, UID, req.Article_ID)
-	if err1 != nil {
-		log.Println(err)
-		return
-	}
-	resp.Success = true
-	resp.Message = "likes success!"
-	resp.Code = 200
+
 	return
 }

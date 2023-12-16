@@ -177,9 +177,8 @@ export default {
     
     logout() {
       this.isLoggedIn = false;
-      localStorage.setItem('isLoggedIn',this.isLoggedIn)
-      console.log( localStorage.getItem("isLoggedIn"));
-      
+      localStorage.removeItem('isLoggedIn')
+      localStorage.removeItem('username')
 
     },
     fetchAvatar() {

@@ -21,6 +21,6 @@ type ResourceResponse struct {
 	Message         string              `json:"message"`
 	Code            int                 `json:"code"`
 	Data            string              `json:"data" `
-	ArticleListData []Article_list_item `json:"article_list"` //只有请求列表集合用到
-	CommentListData []Comment_list_item `json:"comment_list"`
+	ArticleListData []Article_list_item `json:"article_list"` //只有请求文章列表集合用到
+	CommentListData []Comment_list_item `json:"comment_list"` //只有请求评论列表集合用到
 }

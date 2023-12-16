@@ -346,7 +346,9 @@ this.isCollected=!this.isCollected;
     },
     logout() {
       this.isLoggedIn = false;
-      localStorage.setItem('isLoggedIn',this.isLoggedIn)
+      //localStorage.setItem('isLoggedIn',this.isLoggedIn)
+      localStorage.removeItem('isLoggedIn')
+      localStorage.removeItem('username')
     },
     showCommentsFangfa() {
       this.showComments = true;

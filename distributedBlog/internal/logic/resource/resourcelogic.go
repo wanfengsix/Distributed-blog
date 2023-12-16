@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -221,7 +222,7 @@ func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.Res
 		resp.Message = "find article!"
 	}
 	articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
-	for k, _ := range R_list {                             //拷贝
+	for k := 0; k < length; k++ {                          //拷贝
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
 	}
@@ -255,7 +256,7 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 		resp.Message = "find Comment!"
 	}
 	commentList := make([]types.Comment_list_item, length) //创建指定长度的文章集合
-	for k, _ := range R_list {                             //拷贝
+	for k := 0; k < length; k++ {                          //拷贝
 		commentList[k].Comment_ID = R_list[k].Comment_ID.String
 		commentList[k].Comment_content = R_list[k].Comment_content.String
 		commentList[k].UID = R_list[k].UID.String
@@ -264,6 +265,29 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 	resp.CommentListData = commentList
 	return
 }
+
+// 获取文章点赞数，通过查询article表获取
+func GetResource_likes_nums_article(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	err1 := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
+	if err1 != nil {
+		log.Println(err1)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find Article!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find Article!"
+	}
+	resp.Data = strconv.Itoa(R_list[0].Likes_nums) //转换为字符串
+	return
+}
+
 func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
 	res := new(types.ResourceResponse)
 	resp = res
@@ -293,17 +317,21 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 			log.Println(err)
 		}
 	} else if req.Resource_type == "article-list" { //获取文章记录列表
-		GetResource_Article_list(req, wd, resp) //对文章头处理
+		GetResource_Article_list(req, wd, resp) //对文章列表处理
 		if err != nil {
 			log.Println(err)
 		}
 	} else if req.Resource_type == "comment-list" { //获取评论列表
-		GetResource_Comment_list(req, wd, resp) //对文章头处理
+		GetResource_Comment_list(req, wd, resp) //对评论列表处理
+		if err != nil {
+			log.Println(err)
+		}
+	} else if req.Resource_type == "likes-nums-article" { //获取文章的点赞数
+		GetResource_likes_nums_article(req, wd, resp) //对文章的点赞数处理
 		if err != nil {
 			log.Println(err)
 		}
 	}
-
 	return
 }
 

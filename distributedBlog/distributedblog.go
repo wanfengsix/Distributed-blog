@@ -8,6 +8,7 @@ import (
 	"distributedBlog/internal/handler/login"
 	"distributedBlog/internal/handler/regist"
 	"distributedBlog/internal/handler/resource"
+	"distributedBlog/internal/handler/user"
 	"distributedBlog/internal/svc"
 	"flag"
 	"fmt"
@@ -39,6 +40,7 @@ func main() {
 	resource.RegisterHandlers(server, ctx)
 	comment.RegisterHandlers(server, ctx)
 	likes.RegisterHandlers(server, ctx)
+	user.RegisterHandlers(server, ctx)
 	//服务器运行
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
