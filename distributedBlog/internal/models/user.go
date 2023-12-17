@@ -6,7 +6,7 @@ type User_Total struct {
 	UID          sql.NullString `json:"uid" db:"uid"`
 	U_name       sql.NullString `json:"u_name" db:"u_name"`
 	Following    int            `json:"following" db:"following"`
-	Folloed      int            `json:"followed" db:"followed"`
+	Followed     int            `json:"followed" db:"followed"`
 	Article_nums int            `json:"article_nums" db:"article_nums"`
 	Read_nums    int            `json:"read_nums" db:"read_nums"`
 	Comment_nums int            `json:"comment_nums" db:"comment_nums"`

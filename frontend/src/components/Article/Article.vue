@@ -17,7 +17,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
-        <router-link to="/profile">个人中心</router-link>
+        <router-link to="/individual">个人中心</router-link>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="../../../public/img/search.png" />
@@ -45,7 +45,7 @@
             <a href="../Login">登录</a>
           </div>
           <div class="navgationbarItemRegister">
-            <a href="regist">注册</a>
+            <a href="../regist">注册</a>
           </div>
         </div>
       </div>
@@ -54,21 +54,33 @@
     <div class="Box">
       <div class="leftBox">
         <div class="like">
-          <img v-if="!isLiked" class="imgLike" src="../../../public/img/like.png" alt="" @click="fetchLikes();"/>
-          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="fetchLikes();"/>
+          <img
+            v-if="!isLiked"
+            class="imgLike"
+            src="../../../public/img/like.png"
+            alt=""
+            @click="fetchLikes()"
+          />
+          <img
+            v-if="isLiked"
+            class="imgLike"
+            src="../../../public/img/liked.png"
+            alt=""
+            @click="fetchLikes()"
+          />
           <div>{{ likeNums }}</div>
         </div>
 
         <div class="collect">
           <img
-          v-if="!isCollected"
+            v-if="!isCollected"
             class="imgCollect"
             src="../../../public/img/collect.png"
             alt=""
-            @click="changeImgCollect();  "
+            @click="changeImgCollect()"
           />
           <img
-          v-if="isCollected"
+            v-if="isCollected"
             class="imgCollect"
             src="../../../public/img/collected.png"
             alt=""
@@ -115,9 +127,11 @@
           </div>
 
           <!-- <div class="bottomComment" v-if="showComments" v-for="(item, index) in commentList.commentList" :key="index"> -->
-          <div class="bottomComment" v-for="(item, index) in commentList.comment_list"
-          :key="index" >
-          
+          <div
+            class="bottomComment"
+            v-for="(item, index) in commentList.comment_list"
+            :key="index"
+          >
             <div class="userImgBox">
               <img
                 class="userImg"
@@ -128,11 +142,11 @@
             </div>
             <div class="commentBox">
               <div class="userName">{{ item.UID }}</div>
-          
+
               <div class="comment">
                 {{ item.Comment_content }}
               </div>
-              
+
               <div class="commentTime">
                 {{ time }}
               </div>
@@ -150,22 +164,22 @@
           />
 
           <div class="rightPersonalInfo">
-            <p class="personalName">用户1772145090587</p>
+            <p class="personalName">{{ u_name }}</p>
 
             <img class="imgGrade" src="../../../public/img/grade1.png" alt="" />
           </div>
         </div>
         <div class="articleInfo">
           <div class="numbers">
-            <p>5</p>
+            <p>{{ article_nums }}</p>
             <p>文章</p>
           </div>
           <div class="reads">
-            <p>5</p>
+            <p>{{ read_nums }}</p>
             <p>阅读</p>
           </div>
           <div class="fans">
-            <p>5</p>
+            <p>{{ followed }}</p>
             <p>粉丝</p>
           </div>
         </div>
@@ -196,16 +210,20 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       articleText: "",
       articleId: this.$route.params.articleId,
-      u_name: localStorage.getItem("username"),
-      uid:'0',
+      u_name: "",
+      uid: "",
       time: "",
       imageSrc: "",
       commentList: "",
-      likeNums:'',
-      collectNums:'0',
+      likeNums: "",
+      collectNums: "0",
       username: localStorage.getItem("username"),
-      isLiked:false,
-      isCollected:false,
+      isLiked: false,
+      isCollected: false,
+      article_nums: "",
+      read_nums: "",
+      followed: "",
+      level: "",
     };
   },
 
@@ -215,27 +233,46 @@ export default {
     },
   },
   methods: {
-    GetLiked(){
-      const data ={
-    name:this.username,
-    resource_type:"islike",
-		post_data: this.articleId,
-	  };
-	  const instance = axios.create({
+    getUser_Total() {
+      const instance = axios.create({
         withCredentials: true,
       });
-	  //将post_data发送到后端
-	  instance
-.post(`http://127.0.0.1:8088/user/islike/${this.username}`,data)
+
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/Article_ID/${this.articleId}`) // 使用get请求获取commentList内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.article_nums = response.data.data.article_nums; // 显示评论列表内容
+          this.read_nums = response.data.data.read_nums;
+          this.followed = response.data.data.followed;
+          this.u_name = response.data.data.u_name.String;
+          this.uid = response.data.data.uid;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    GetLiked() {
+      const data = {
+        name: this.username,
+        resource_type: "islike",
+        post_data: this.articleId,
+      };
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      //将post_data发送到后端
+      instance
+        .post(`http://127.0.0.1:8088/user/islike/${this.username}`, data)
         .then((response) => {
           // 处理成功的响应
           console.log(response.data);
           if (response.data.Success == true) {
             console.log("获取点赞状态成功");
-            if (response.data.message=="true"){
-            this.isLiked=true
-            }else{
-              this.isLiked=false
+            if (response.data.message == "true") {
+              this.isLiked = true;
+            } else {
+              this.isLiked = false;
             }
           } else {
             console.log("获取点赞状态失败");
@@ -246,11 +283,77 @@ export default {
           console.error(error);
         });
     },
-    getLikes(){
+    getFollow(){
+      const data = {
+        name: this.username,
+        resource_type: "isFollow",
+        post_data: this.uid,
+      };
       const instance = axios.create({
         withCredentials: true,
       });
-      
+      //将post_data发送到后端
+      instance
+        .post(`http://127.0.0.1:8088/user/isFollow/${this.username}`, data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            console.log("获取关注状态成功");
+            if (response.data.message == "true") {
+              this.isFollowed = true;
+            } else {
+              this.isFollowed = false;
+            }
+          } else {
+            console.log("获取关注状态失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
+    fetchFollow() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      const data = {
+        u_name: this.u_name,
+        username: this.username,
+      };
+      instance
+        .post("http://127.0.0.1:8088/follow", data)
+        .then((response) => {
+          // 处理成功的响应
+          if (response.data.Success == true) {
+            if (response.data.message == "unFollowd success!") {
+              //更新页面关注状态
+              this.isFollowed = false;
+            } else {
+              this.isFollowed = true;
+            }
+            if (this.isFollowed == true) {
+              alert("您已关注成功");
+            } else {
+              alert("取消关注成功！");
+            }
+            console.log(response.data);
+            this.getFollow();
+          } else {
+            alert("关注失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
+    getLikes() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+
       instance
         .get(`http://127.0.0.1:8088/user/likes-nums-article/${this.articleId}`) // 使用get请求获取commentList内容
         .then(async (response) => {
@@ -261,28 +364,29 @@ export default {
           console.error(error);
         });
     },
-    fetchLikes(){
+    fetchLikes() {
       const instance = axios.create({
         withCredentials: true,
       });
-      const data={
-        u_name:this.u_name,
-        Article_ID:this.articleId,
-      }
+      const data = {
+        u_name: this.u_name,
+        Article_ID: this.articleId,
+      };
       instance
         .post("http://127.0.0.1:8088/likes", data)
         .then((response) => {
           // 处理成功的响应
           if (response.data.Success == true) {
-            if (response.data.message=="unlikes success!"){  //更新页面点赞状态
-              this.isLiked=false
-            }else{
-              this.isLiked=true
+            if (response.data.message == "unlikes success!") {
+              //更新页面点赞状态
+              this.isLiked = false;
+            } else {
+              this.isLiked = true;
             }
-            if (this.isLiked==true){
-            alert("您已点赞成功");
-            }else{
-              alert("取消点赞成功！")
+            if (this.isLiked == true) {
+              alert("您已点赞成功");
+            } else {
+              alert("取消点赞成功！");
             }
             console.log(response.data);
             this.getLikes();
@@ -294,10 +398,9 @@ export default {
           // 处理错误
           console.error(error);
         });
-
     },
-    changeImgCollect(){
-this.isCollected=!this.isCollected;
+    changeImgCollect() {
+      this.isCollected = !this.isCollected;
     },
     fetchComment() {
       var date = new Date();
@@ -317,7 +420,7 @@ this.isCollected=!this.isCollected;
         Comment_ID: this.uid + this.time,
         Comment_content: this.inputHistory,
         Article_ID: this.articleId,
-        u_name: this.u_name,
+        u_name: this.username,
       };
       const instance = axios.create({
         withCredentials: true,
@@ -345,7 +448,7 @@ this.isCollected=!this.isCollected;
       const instance = axios.create({
         withCredentials: true,
       });
-      
+
       instance
         .get(`http://127.0.0.1:8088/user/comment-list/${this.articleId}`) // 使用get请求获取commentList内容
         .then(async (response) => {
@@ -374,8 +477,8 @@ this.isCollected=!this.isCollected;
     logout() {
       this.isLoggedIn = false;
       //localStorage.setItem('isLoggedIn',this.isLoggedIn)
-      localStorage.removeItem('isLoggedIn')
-      localStorage.removeItem('username')
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
     },
     showCommentsFangfa() {
       this.showComments = true;
@@ -404,22 +507,22 @@ this.isCollected=!this.isCollected;
         const reader = new FileReader();
 
         reader.onload = () => {
-              // loadDefaultFile() {
-    //   // 读取默认文件，假设默认文件名为default.txt
-    //   const defaultFilePath = "default.txt";
+          // loadDefaultFile() {
+          //   // 读取默认文件，假设默认文件名为default.txt
+          //   const defaultFilePath = "default.txt";
 
-    //   // 使用XMLHttpRequest从同级目录下读取默认文件
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.onload = () => {
-    //     if (xhr.status === 200) {
-    //       this.articleContent = xhr.responseText;
-    //     } else {
-    //       console.error("Failed to load the default file.");
-    //     }
-    //   };
-    //   xhr.open("GET", defaultFilePath, true);
-    //   xhr.send();
-    // },// 将文本内容绑定到Vue数据
+          //   // 使用XMLHttpRequest从同级目录下读取默认文件
+          //   const xhr = new XMLHttpRequest();
+          //   xhr.onload = () => {
+          //     if (xhr.status === 200) {
+          //       this.articleContent = xhr.responseText;
+          //     } else {
+          //       console.error("Failed to load the default file.");
+          //     }
+          //   };
+          //   xhr.open("GET", defaultFilePath, true);
+          //   xhr.send();
+          // },// 将文本内容绑定到Vue数据
           this.articleContent = reader.result;
           console.log(this.articleContent);
         };
@@ -428,20 +531,18 @@ this.isCollected=!this.isCollected;
         reader.readAsText(file);
       }
     },
-    toggleFollow() {
-      this.isFollowed = !this.isFollowed;
-    },
     
   },
 
   created() {
     // 在实例创建时触发loadDefaultFile()函数
     // this.loadDefaultFile();
-    this.fetchArticle();  
+    this.fetchArticle();
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.getCommentList();
     this.getLikes();
     this.GetLiked();
+    this.getUser_Total();
   },
 };
 </script>
@@ -551,8 +652,7 @@ this.isCollected=!this.isCollected;
       top: 0;
       left: 85%;
       height: 50px;
-      .navgationbarItemLog{
-
+      .navgationbarItemLog {
       }
     }
   }
@@ -626,74 +726,60 @@ footer {
     padding: 40px 40px;
     border: 1px solid gray;
 
-
-    .like{
+    .like {
       display: flex;
       justify-content: center;
-   align-items: center;
-   flex-flow: column;
+      align-items: center;
+      flex-flow: column;
 
       .imgLike {
-      width: 50px;
-      height: 50px;
-    }
+        width: 50px;
+        height: 50px;
+      }
     }
 
-    .collect{
+    .collect {
       display: flex;
       justify-content: center;
-   align-items: center;
-   flex-flow: column;
+      align-items: center;
+      flex-flow: column;
       .imgCollect {
-      width: 50px;
-      height: 50px;
+        width: 50px;
+        height: 50px;
+      }
     }
-    }
-
-    
-    
   }
   .middleBox {
-    
     width: 700px;
     .commentArea {
       .topComment {
-      
         .textInput {
           width: 300px;
           height: 200px;
           padding: 10px;
           margin-right: 2 0px;
-        
-          
-          
         }
         .sendComments {
           width: 100px;
           height: 50px;
-          
         }
       }
       .bottomComment {
         display: flex;
         justify-content: flex-start;
         align-items: space-between;
-        
-        .userImgBox{
+
+        .userImgBox {
           height: 50px;
           width: 50px;
           margin: 10px;
         }
         .commentBox {
-
           height: 50px;
-          width:500px;
+          width: 500px;
           margin: 10px;
         }
-
       }
-      
-      
     }
   }
   .rightBox {
