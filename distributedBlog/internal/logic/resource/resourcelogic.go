@@ -278,11 +278,11 @@ func GetResource_likes_nums_article(req *types.ResourceReq, wd string, resp *typ
 	if len(R_list) == 0 {
 		resp.Code = 404
 		resp.Success = false
-		resp.Message = "can't find Article!"
+		resp.Message = "can't find Article Or Likes!"
 	} else {
 		resp.Code = 200
 		resp.Success = true
-		resp.Message = "find Article!"
+		resp.Message = "find Article Or Likes!"
 	}
 	resp.Data = strconv.Itoa(R_list[0].Likes_nums) //转换为字符串
 	return

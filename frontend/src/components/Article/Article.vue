@@ -55,7 +55,7 @@
       <div class="leftBox">
         <div class="like">
           <img v-if="!isLiked" class="imgLike" src="../../../public/img/like.png" alt="" @click="changeImgLike();fetchLikes();"/>
-          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="changeImgLike();cancelLikes();"/>
+          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="changeImgLike();fetchLikes();"/>
           <div>{{ likeNums }}</div>
         </div>
 
@@ -115,7 +115,8 @@
           </div>
 
           <!-- <div class="bottomComment" v-if="showComments" v-for="(item, index) in commentList.commentList" :key="index"> -->
-          <div class="bottomComment" v-if="showComments">
+          <div class="bottomComment" v-for="(item, index) in commentList.comment_list"
+          :key="index" >
           
             <div class="userImgBox">
               <img
@@ -126,10 +127,10 @@
               />
             </div>
             <div class="commentBox">
-              <div class="userName">{{ username }}</div>
+              <div class="userName">{{ item.UID }}</div>
           
               <div class="comment">
-                {{ inputHistory }}
+                {{ item.Comment_content }}
               </div>
               
               <div class="commentTime">
@@ -200,7 +201,7 @@ export default {
       time: "",
       imageSrc: "",
       commentList: "",
-      likeNums:'0',
+      likeNums:'',
       collectNums:'0',
       username: localStorage.getItem("username"),
       isLiked:false,
@@ -214,6 +215,21 @@ export default {
     },
   },
   methods: {
+    getLikes(){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      
+      instance
+        .get(`http://127.0.0.1:8088/user/likes-nums-article/${this.articleId}`) // 使用get请求获取commentList内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.likeNums = response.data.data; // 显示评论列表内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     fetchLikes(){
       const instance = axios.create({
         withCredentials: true,
@@ -226,10 +242,11 @@ export default {
         .post("http://127.0.0.1:8088/likes", data)
         .then((response) => {
           // 处理成功的响应
-          console.log(response.data);
+          
           if (response.data.Success == true) {
             alert("您已点赞成功");
-            this.likeNums=this.likeNums+1;
+            console.log(response.data);
+            this.getLikes();
           } else {
             alert("点赞失败");
           }
@@ -305,6 +322,7 @@ this.isCollected=!this.isCollected;
           if (response.data.Success == true) {
             alert("您已评论成功");
             this.showCommentsFangfa();
+            this.getCommentList();
           } else {
             alert("评论失败");
           }
@@ -413,6 +431,7 @@ this.isCollected=!this.isCollected;
     this.fetchArticle();  
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.getCommentList();
+    this.getLikes();
 
   },
 };

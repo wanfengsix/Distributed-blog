@@ -103,12 +103,12 @@ func (l *LikesLogic) Likes(req *types.LikesReq) (resp *types.LikesResponse, err 
 	if len(A_list) == 0 {
 		resp.Code = 404
 		resp.Success = false
-		resp.Message = "can't find user!"
+		resp.Message = "can't find user!1111"
 		return
 	} else {
 		resp.Code = 200
 		resp.Success = true
-		resp.Message = "find user!"
+		resp.Message = "find user!1111"
 		UID = A_list[0].UID.String
 	}
 	//校验是否已经具备点赞关系
