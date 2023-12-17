@@ -267,6 +267,8 @@ export default {
     } , 
 	sendSignature() {  
       const data ={
+		name:this.username,
+		resource_type:"signature",
 		post_data: this.signature,
 	  };
 	  const instance = axios.create({

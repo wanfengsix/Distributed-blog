@@ -54,8 +54,8 @@
     <div class="Box">
       <div class="leftBox">
         <div class="like">
-          <img v-if="!isLiked" class="imgLike" src="../../../public/img/like.png" alt="" @click="changeImgLike();fetchLikes();"/>
-          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="changeImgLike();fetchLikes();"/>
+          <img v-if="!isLiked" class="imgLike" src="../../../public/img/like.png" alt="" @click="fetchLikes();"/>
+          <img v-if="isLiked" class="imgLike" src="../../../public/img/liked.png" alt="" @click="fetchLikes();"/>
           <div>{{ likeNums }}</div>
         </div>
 
@@ -215,6 +215,37 @@ export default {
     },
   },
   methods: {
+    GetLiked(){
+      const data ={
+    name:this.username,
+    resource_type:"islike",
+		post_data: this.articleId,
+	  };
+	  const instance = axios.create({
+        withCredentials: true,
+      });
+	  //将post_data发送到后端
+	  instance
+.post(`http://127.0.0.1:8088/user/islike/${this.username}`,data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            console.log("获取点赞状态成功");
+            if (response.data.message=="true"){
+            this.isLiked=true
+            }else{
+              this.isLiked=false
+            }
+          } else {
+            console.log("获取点赞状态失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
     getLikes(){
       const instance = axios.create({
         withCredentials: true,
@@ -242,9 +273,17 @@ export default {
         .post("http://127.0.0.1:8088/likes", data)
         .then((response) => {
           // 处理成功的响应
-          
           if (response.data.Success == true) {
+            if (response.data.message=="unlikes success!"){  //更新页面点赞状态
+              this.isLiked=false
+            }else{
+              this.isLiked=true
+            }
+            if (this.isLiked==true){
             alert("您已点赞成功");
+            }else{
+              alert("取消点赞成功！")
+            }
             console.log(response.data);
             this.getLikes();
           } else {
@@ -256,36 +295,6 @@ export default {
           console.error(error);
         });
 
-    },
-    cancelLikes(){
-      const instance = axios.create({
-        withCredentials: true,
-      });
-      const data={
-        u_name:this.u_name,
-        Article_ID:this.articleId,
-      }
-      instance
-        .post("http://127.0.0.1:8088/likes", data)
-        .then((response) => {
-          // 处理成功的响应
-          console.log(response.data);
-          if (response.data.Success == true) {
-            alert("您已取消点赞");
-            this.likeNums=this.likeNums-1;
-
-          } else {
-            alert("取消点赞失败");
-          }
-        })
-        .catch((error) => {
-          // 处理错误
-          console.error(error);
-        });
-
-    },
-    changeImgLike(){
-this.isLiked=!this.isLiked;
     },
     changeImgCollect(){
 this.isCollected=!this.isCollected;
@@ -395,19 +404,7 @@ this.isCollected=!this.isCollected;
         const reader = new FileReader();
 
         reader.onload = () => {
-          // 将文本内容绑定到Vue数据
-          this.articleContent = reader.result;
-          console.log(this.articleContent);
-        };
-
-        // 以文本格式读取文件
-        reader.readAsText(file);
-      }
-    },
-    toggleFollow() {
-      this.isFollowed = !this.isFollowed;
-    },
-    // loadDefaultFile() {
+              // loadDefaultFile() {
     //   // 读取默认文件，假设默认文件名为default.txt
     //   const defaultFilePath = "default.txt";
 
@@ -422,7 +419,19 @@ this.isCollected=!this.isCollected;
     //   };
     //   xhr.open("GET", defaultFilePath, true);
     //   xhr.send();
-    // },
+    // },// 将文本内容绑定到Vue数据
+          this.articleContent = reader.result;
+          console.log(this.articleContent);
+        };
+
+        // 以文本格式读取文件
+        reader.readAsText(file);
+      }
+    },
+    toggleFollow() {
+      this.isFollowed = !this.isFollowed;
+    },
+    
   },
 
   created() {
@@ -432,7 +441,7 @@ this.isCollected=!this.isCollected;
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
     this.getCommentList();
     this.getLikes();
-
+    this.GetLiked();
   },
 };
 </script>

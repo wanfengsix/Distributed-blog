@@ -335,6 +335,44 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 	return
 }
 
+// 获取用户对文章的点赞状态，先通过用户名查UID，通过查询likes表获取
+func GetResource_isliked(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	//获取u_name,根据请求用户名查询
+	var A_list []*models.User_Total
+	var UID string
+	query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &A_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(A_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+		UID = A_list[0].UID.String
+	}
+	//校验是否已经具备点赞关系
+	liked_query := "SELECT uid ,Article_ID from likes WHERE UID=? AND Article_ID=?"
+	var L_list []*models.Likes
+	err1 := mysqlDB.QueryRowsCtx(context.Background(), &L_list, liked_query, UID, req.Post_data)
+	if err1 != nil { //即使没有结果报错，也不能返回
+		log.Println(err1)
+	}
+	//如果已经具备点赞关系，要对信息赋值
+	if len(L_list) != 0 {
+		resp.Message = "true"
+	} else {
+		resp.Message = "false"
+	}
+	return
+}
+
 // 处理发送的资源
 func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
 	res := new(types.ResourceResponse)
@@ -360,6 +398,11 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 
 	} else if req.Resource_type == "comment-list" { //获取文章评论列表
 
+	} else if req.Resource_type == "islike" { //获取用户对文章的点赞状态
+		GetResource_isliked(req, wd, resp) //对文章的点赞数处理
+		if err != nil {
+			log.Println(err)
+		}
 	}
 	return
 }
