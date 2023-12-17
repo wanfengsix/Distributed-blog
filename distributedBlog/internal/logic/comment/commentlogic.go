@@ -7,6 +7,7 @@ import (
 	"distributedBlog/internal/svc"
 	"distributedBlog/internal/types"
 	"log"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -76,10 +77,12 @@ func (c *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentRespon
 		return
 	}
 	//最后插入评论
-	comment_query := "INSERT INTO comment VALUES(?,?,?,?)"
-	_, err1 = mysqlDB.ExecCtx(context.Background(), comment_query, req.Comment_ID, req.Comment_content, req.Article_ID, UID)
+	comment_query := "INSERT INTO comment VALUES(?,?,?,?,?)"
+	mysqlDateFormat := "2006-01-02"
+	time_now := time.Now().Format(mysqlDateFormat)
+	_, err1 = mysqlDB.ExecCtx(context.Background(), comment_query, req.Comment_ID, req.Comment_content, req.Article_ID, UID, time_now)
 	if err1 != nil {
-		log.Println(err)
+		log.Println(err1)
 		return
 	}
 	resp.Success = true

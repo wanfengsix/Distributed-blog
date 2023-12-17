@@ -233,8 +233,8 @@ func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.Res
 
 // 获取评论列表
 func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
-	var R_list []*models.CommentResource
-	query := "select Comment_ID,Comment_content,Article_ID,UID from comment where Article_ID=?"
+	var R_list []*models.Comment
+	query := "select Comment_ID,Comment_content,Article_ID,UID,date from comment where Article_ID=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 	if err != nil {
 		log.Println(err)
@@ -260,7 +260,7 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 		commentList[k].Comment_ID = R_list[k].Comment_ID.String
 		commentList[k].Comment_content = R_list[k].Comment_content.String
 		commentList[k].UID = R_list[k].UID.String
-
+		commentList[k].Date = R_list[k].Date.String
 	}
 	resp.CommentListData = commentList
 	return

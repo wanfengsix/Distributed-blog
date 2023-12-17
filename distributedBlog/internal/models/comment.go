@@ -7,6 +7,7 @@ type Comment struct {
 	Comment_content sql.NullString `db:"Comment_content"`
 	Article_ID      sql.NullString `db:"Article_ID"`
 	UID             sql.NullString `db:"UID"`
+	Date            sql.NullString `db:"date"`
 }
 
 func (c *Comment) TableName() string {

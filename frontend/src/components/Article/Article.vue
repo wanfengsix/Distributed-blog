@@ -184,7 +184,7 @@
           </div>
         </div>
         <div class="follow">
-          <button class="followButton" @click="toggleFollow">
+          <button class="followButton" @click="fetchFollow">
             {{ buttonText }}
           </button>
         </div>
@@ -246,11 +246,13 @@ export default {
           this.read_nums = response.data.data.read_nums;
           this.followed = response.data.data.followed;
           this.u_name = response.data.data.u_name.String;
-          this.uid = response.data.data.uid;
+          this.uid = response.data.data.uid.String;
+          this.getFollow();
         })
         .catch((error) => {
           console.error(error);
         });
+     
     },
     GetLiked() {
       const data = {
@@ -284,6 +286,8 @@ export default {
         });
     },
     getFollow(){
+      console.log("作者用户id"+this.uid)
+        console.log("当前用户名"+this.username)
       const data = {
         name: this.username,
         resource_type: "isFollow",
@@ -327,7 +331,7 @@ export default {
         .then((response) => {
           // 处理成功的响应
           if (response.data.Success == true) {
-            if (response.data.message == "unFollowd success!") {
+            if (response.data.message == "false") {
               //更新页面关注状态
               this.isFollowed = false;
             } else {
@@ -338,6 +342,7 @@ export default {
             } else {
               alert("取消关注成功！");
             }
+            console.log("关注|取消关注成功！")
             console.log(response.data);
             this.getFollow();
           } else {
@@ -543,6 +548,7 @@ export default {
     this.getLikes();
     this.GetLiked();
     this.getUser_Total();
+    
   },
 };
 </script>

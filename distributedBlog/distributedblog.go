@@ -4,6 +4,7 @@ import (
 	"distributedBlog/internal/config"
 	"distributedBlog/internal/handler"
 	"distributedBlog/internal/handler/comment"
+	"distributedBlog/internal/handler/follow"
 	"distributedBlog/internal/handler/likes"
 	"distributedBlog/internal/handler/login"
 	"distributedBlog/internal/handler/regist"
@@ -41,6 +42,7 @@ func main() {
 	comment.RegisterHandlers(server, ctx)
 	likes.RegisterHandlers(server, ctx)
 	user.RegisterHandlers(server, ctx)
+	follow.RegisterHandlers(server, ctx)
 	//服务器运行
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

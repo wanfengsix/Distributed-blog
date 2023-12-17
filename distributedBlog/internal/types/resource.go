@@ -15,6 +15,7 @@ type Comment_list_item struct {
 	Comment_ID      string `json:"Comment_ID"`
 	Comment_content string `json:"Comment_content"`
 	UID             string `json:"UID"`
+	Date            string `json:"date"`
 }
 type ResourceResponse struct {
 	Success         bool
