@@ -8,5 +8,6 @@ type SearchResponse struct {
 	Message   string              `json:"message"`
 	Code      int                 `json:"code"`
 	ListData  []Article_list_item `json:"data" `
-	CacheData string              `json:"cachedata"`
+	CacheHead string              `json:"cachehead"`
+	CacheId   string              `json:"cachedataid"`
 }

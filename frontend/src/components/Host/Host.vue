@@ -22,7 +22,7 @@
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
-        <input type="text" style="width: 400px" />
+        <input type="text" style="width: 400px" v-model="searchQuery" @click="getSearchList" />
       </div>
       <div class="navgationbarItemCreaterCenter">
         <p style="color: white">创作者中心</p>
@@ -77,10 +77,10 @@
       <div class="authorList">
         <div class="authorListTiTle">
           <img src="img/list.png" style="height: 20px" />
-          文章榜
+          作者榜
         </div>
         <div
-          class="authorList"
+          class="authorListBottom"
           v-for="(item, index) in authorList.author_list"
           :key="index"
         >
@@ -140,6 +140,8 @@ export default {
       articleList: "",
       articleListLeft: "",
       authorList: "",
+      searchQuery:"",
+      searchArticleList:"",
     };
   },
   created() {
@@ -151,6 +153,23 @@ export default {
     this.getAuthorList();
   },
   methods: {
+    
+    getSearchList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/search/${this.searchQuery}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+          console.log(response.data);
+         
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     getLoggedIn() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn");
       console.log(localStorage.getItem("isLoggedIn"));

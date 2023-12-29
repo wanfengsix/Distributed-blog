@@ -53,12 +53,16 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url FROM article WHERE head LIKE CONCAT('%', ?, '%')"
 
 	//redisquery := strings.ReplaceAll(query, "?", req.Name)
-	key := "search:" + req.Name // 设置 Redis 缓存的键名
-	v, err := rds.GetCtx(context.Background(), key)
+	keyHead := "searchhead:" + req.Name // 设置 Redis 缓存的键名
+	keyId := "searchId:" + req.Name
+	vHead, err := rds.GetCtx(context.Background(), keyHead)
+	vId, err := rds.GetCtx(context.Background(), keyId)
 	if err == nil {
-		resp.CacheData = v
+		resp.CacheHead = vHead
+		resp.CacheId = vId
 	}
-	if v == "" { //没有缓存，那么就查询
+
+	if vHead == "" || vId == "" { //没有缓存，那么就查询
 		err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 		if err != nil {
 			log.Println(err)
@@ -84,7 +88,8 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 			articleList[k].Article_ID = R_list[k].Article_ID.String
 			articleList[k].Head = R_list[k].Head.String
 			//将内容放入缓存
-			rds.SetCtx(context.Background(), key, articleList[k].Head)
+			rds.SetCtx(context.Background(), keyHead, articleList[k].Head)
+			rds.SetCtx(context.Background(), keyId, articleList[k].Article_ID)
 		}
 		resp.ListData = articleList
 	}
