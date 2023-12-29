@@ -52,70 +52,49 @@
       </div>
     </div>
     <section id="home">
+      <!-- 通过循环生成左边文章列表 -->
       <div class="articleList">
-        <!-- 通过循环生成文章列表 -->
-
-        <ol>
-          <div class="articleListTiTle">
-            <img src="img/list.png" style="height: 20px" />
-            文章榜
-          </div>
-
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
+        <div class="articleListTiTle">
+          <img src="img/list.png" style="height: 20px" />
+          文章榜
+        </div>
+        <div
+          class="articleListLeft"
+          v-for="(item, index) in articleListLeft.article_list"
+          :key="index"
+        >
+          <li>
+            <a class="articleListItem" :href="'article/' + item.article_id">{{
+              item.head
+            }}</a>
           </li>
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
-          </li>
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
-          </li>
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
-          </li>
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
-          </li>
-          <li class="articleListItem">
-            <h3><a class="articleItemTitle" href="#article1">文章标题</a></h3>
-          </li>
-        </ol>
+        </div>
         <li class="articleListMore">...查看更多</li>
-        <!-- 可以添加更多文章项 -->
       </div>
+
+      <!-- 循环生成作者榜 -->
+
       <div class="authorList">
-        <!-- 通过循环生成文章列表 -->
-        <ol>
-          <div class="authorListTiTle">
-            <img src="img/list.png" style="height: 20px" />
-            作者榜
-          </div>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖显东</a></h3>
+        <div class="authorListTiTle">
+          <img src="img/list.png" style="height: 20px" />
+          文章榜
+        </div>
+        <div
+          class="authorList"
+          v-for="(item, index) in authorList.author_list"
+          :key="index"
+        >
+          <li>
+            <a class="authorListItem" :href="'individual/' + item.UID">{{
+              item.name
+            }}</a>
           </li>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖雪峰</a></h3>
-          </li>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖显东</a></h3>
-          </li>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖雪峰</a></h3>
-          </li>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖显东</a></h3>
-          </li>
-          <li class="authorListItem">
-            <h3><a class="authorItemName" href="#article1">廖雪峰</a></h3>
-          </li>
-          <li class="authorListMore">...查看更多</li>
-        </ol>
-
-        <!-- 可以添加更多文章项 -->
+        </div>
+        <li class="authorListMore">...查看更多</li>
       </div>
 
+      <!-- 通过循环生成中间文章列表 -->
       <div class="articleRecommendedList">
-        <!-- 通过循环生成文章列表 -->
         <div
           class="article"
           v-for="(item, index) in articleList.article_list"
@@ -159,6 +138,8 @@ export default {
       articleId: "0",
       // articleList:[Head:0,Article_ID:0]
       articleList: "",
+      articleListLeft: "",
+      authorList: "",
     };
   },
   created() {
@@ -166,20 +147,50 @@ export default {
     this.fetchArticleHead(); // 在页面加载时调用fetchArticle方法
     this.fetchArticleList();
     this.getLoggedIn();
+    this.getArticleList();
+    this.getAuthorList();
   },
   methods: {
-    getLoggedIn(){
-      this.isLoggedIn=localStorage.getItem("isLoggedIn");
-      console.log( localStorage.getItem("isLoggedIn"));
-      
-
+    getLoggedIn() {
+      this.isLoggedIn = localStorage.getItem("isLoggedIn");
+      console.log(localStorage.getItem("isLoggedIn"));
     },
-    
+    getArticleList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-rank/${this.articleId}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleListLeft = response.data; // 显示文章内容
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    getAuthorList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/author-rank/${this.articleId}`) // 使用get请求获取作者榜
+        .then(async (response) => {
+          console.log("-----------", response.data);
+          this.authorList = response.data; // 显示文章内容
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     logout() {
       this.isLoggedIn = false;
-      localStorage.removeItem('isLoggedIn')
-      localStorage.removeItem('username')
-
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
     },
     fetchAvatar() {
       const instance = axios.create({
@@ -418,8 +429,7 @@ section {
       top: 0;
       left: 85%;
       height: 50px;
-      .navgationbarItemLog{
-
+      .navgationbarItemLog {
       }
     }
   }

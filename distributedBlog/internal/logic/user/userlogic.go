@@ -46,7 +46,32 @@ func (u *UserLogic) User(req *types.UserReq) (resp *types.UserResponse, err erro
 		FollowingList_By_U_name(req, resp)
 	} else if req.Type == "followed-list" { //根据用户名获取粉丝列表
 		FollowedList_By_U_name(req, resp)
+	} else if req.Type == "uid" { //关注用户
+		GetUser_By_UID(req, resp)
 	}
+	return
+}
+
+func GetUser_By_UID(req *types.UserReq, resp *types.UserResponse) {
+	//根据U_name查UID
+	var U_list []*models.User_Total
+	query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where UID=?"
+	err2 := mysqlDB.QueryRowsCtx(context.Background(), &U_list, query, req.Value)
+	if err2 != nil {
+		log.Println(err2)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(U_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+	resp.Data = *U_list[0]
 	return
 }
 
