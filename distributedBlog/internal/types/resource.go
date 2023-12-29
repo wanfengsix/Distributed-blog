@@ -17,6 +17,10 @@ type Comment_list_item struct {
 	UID             string `json:"UID"`
 	Date            string `json:"date"`
 }
+type Author_list_item struct {
+	Name string `json:"name"`
+	UID  string `json:"UID"`
+}
 type ResourceResponse struct {
 	Success         bool
 	Message         string              `json:"message"`
@@ -24,4 +28,5 @@ type ResourceResponse struct {
 	Data            string              `json:"data" `
 	ArticleListData []Article_list_item `json:"article_list"` //只有请求文章列表集合用到
 	CommentListData []Comment_list_item `json:"comment_list"` //只有请求评论列表集合用到
+	AuthorListData  []Author_list_item  `json:"author_list"`  //只有请求作者列表集合用到
 }

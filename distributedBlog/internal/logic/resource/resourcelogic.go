@@ -331,8 +331,87 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 		if err != nil {
 			log.Println(err)
 		}
+	} else if req.Resource_type == "author-rank" { //作者榜
+		GetResource_Author_Rank(req, resp)
+		if err != nil {
+			log.Println(err)
+		}
+
+	} else if req.Resource_type == "article-rank" { //作者榜
+		GetResource_Article_Rank(req, resp)
+		if err != nil {
+			log.Println(err)
+		}
+
 	}
 	return
+}
+
+// 获取作者榜，根据粉丝数来递减查询，取前8位
+func GetResource_Author_Rank(req *types.ResourceReq, resp *types.ResourceResponse) {
+	var R_list []*models.User_Total
+	query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user order by followed DESC"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find author!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find author!"
+	}
+	authorList := make([]types.Author_list_item, length) //创建指定长度的文章集合
+	for k := 0; k < length; k++ {                        //拷贝
+		authorList[k].Name = R_list[k].U_name.String
+		authorList[k].UID = R_list[k].UID.String
+	}
+	resp.AuthorListData = authorList
+	return
+}
+
+// 获取作者榜，根据粉丝数来递减查询，取前8位
+func GetResource_Article_Rank(req *types.ResourceReq, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article order by likes_nums DESC"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find article!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
+	}
+	articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
+	for k := 0; k < length; k++ {                          //拷贝
+		articleList[k].Article_ID = R_list[k].Article_ID.String
+		articleList[k].Head = R_list[k].Head.String
+	}
+	resp.ArticleListData = articleList
+	return
+
 }
 
 // 获取用户对文章的点赞状态，先通过用户名查UID，通过查询likes表获取
