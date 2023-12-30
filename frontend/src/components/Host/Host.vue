@@ -18,7 +18,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="img/profile.png" alt="" />
-        <a href="/individual">个人中心</a>
+        <a :href="'individual/'+ this.uid">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
@@ -134,6 +134,7 @@ export default {
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc: "",
+      uid:"",
 
       articleId: "0",
       // articleList:[Head:0,Article_ID:0]
@@ -151,6 +152,8 @@ export default {
     this.getLoggedIn();
     this.getArticleList();
     this.getAuthorList();
+    this.getuid();
+    
   },
   methods: {
     
@@ -173,6 +176,21 @@ export default {
     getLoggedIn() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn");
       console.log(localStorage.getItem("isLoggedIn"));
+    },
+    getuid(){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+	  
+      instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.username}`) 
+        .then(async response => {
+          console.log(response.data)
+          this.uid = response.data.data.uid.String; // 获取uid
+        })
+        .catch(error => {
+          console.error(error);
+        });
+
     },
     getArticleList() {
       const instance = axios.create({
@@ -255,6 +273,7 @@ export default {
           console.error(error);
         });
     },
+    
   },
 };
 </script>

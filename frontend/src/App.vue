@@ -14,7 +14,7 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
     {path:'/article/:articleId',component:Article},
-    {path:'/individual',component:Individual,}
+    {path:'/individual/:uid',component:Individual,}
 ]
   
   // 3. 创建路由实例并传递 `routes` 配置
@@ -56,3 +56,4 @@ export default {
   background-color: aliceblue;
 }
 </style>
+

@@ -87,12 +87,12 @@
 					<div class="zhong">
 						<div class="shang">
 							<div class="zuo">
-								<img src="../../../public/img/tx2.png" >
+								<img :src="imageSrca" >
 							</div>
 							
 							<div class="zhong">  
-								<h3>用户1772145090487</h3>  
-								<img src="../../../public/img/yh.png" alt="avatar">  
+								<h3>{{u_name}}</h3>  
+								<h3>LV.{{level}}</h3>  
 								<span>个性签名</span>  
 								<input v-model="signature" v-if="isSetting" type="text" placeholder="请输入个性签名">  
 								<p v-else>{{signature}}</p>  
@@ -104,82 +104,30 @@
 							
 							<div class="clear">
 								
-							</div>
-							
 						</div>
+							
+					</div>
 						
 						
 						<div class="xia">
-						<ul>
-							<li>
-							<div class="yi">
-								<h3>鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点</h3>
-								<p>弹性伸缩具有应突发、省成本、自动化的业务价值。平台侧将各业务零散
-								、闲置资源进行整合,形成一个大规模资源池，通过弹性调度、
-								库存管控技术在公司运营成本和业务体感中寻求较好的平衡。</p>
-								<span>微信云</span> <span>2021-</span> <span>13</span> <span>13</span> <span>2.9</span><br>
-								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
-							</div>
-							<div class="er">
-								<img src="../../../public/img/xff.png" >
-							</div>
-							
-							<div class="san">
-								<a href="###">修改</a>
-								<a href="###">删除</a>
+						
+							<div class="articleRecommendedLis">
+								<!-- 通过循环生成文章列表 -->
+								<div
+								  class="article"
+								  v-for="(item, index) in articleList.article_list"
+								  :key="index"
+								>
+								  <h3>
+									<a :href="'article/' + item.article_id">{{ item.head }}</a>
+								  </h3>
+								  <p>文章摘要或内容简介...</p>
+								</div>
 							</div>
 							<div class="clear">
-								
+
 							</div>
-							</li>
-							
-							<li>
-							<div class="yi">
-								<h3>鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点</h3>
-								<p>弹性伸缩具有应突发、省成本、自动化的业务价值。平台侧将各业务零散
-								、闲置资源进行整合,形成一个大规模资源池，通过弹性调度、
-								库存管控技术在公司运营成本和业务体感中寻求较好的平衡。</p>
-								<span>微信云</span> <span>2021-</span> <span>13</span> <span>13</span> <span>2.9</span><br>
-								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
-							</div>
-							<div class="er">
-								<img src="../../../public/img/xff.png" >
-							</div>
-							
-							<div class="san">
-								<a href="###">修改</a>
-								<a href="###">删除</a>
-							</div>
-							<div class="clear">
-								
-							</div>
-							</li>
-							
-							
-							
-							<li>
-							<div class="yi">
-								<h3>鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点</h3>
-								<p>弹性伸缩具有应突发、省成本、自动化的业务价值。平台侧将各业务零散
-								、闲置资源进行整合,形成一个大规模资源池，通过弹性调度、
-								库存管控技术在公司运营成本和业务体感中寻求较好的平衡。</p>
-								<span>微信云</span> <span>2021-</span> <span>13</span> <span>13</span> <span>2.9</span><br>
-								<span>开发</span>   <span>03-24</span> <span>24</span> <span>24</span> <span>万</span>
-							</div>
-							<div class="er">
-								<img src="../../../public/img/xff.png" >
-							</div>
-							
-							<div class="san">
-								<a href="###">修改</a>
-								<a href="###">删除</a>
-							</div>
-							<div class="clear">
-								
-							</div>
-							</li>
-							
-						</ul>
+						
 							
 						</div>
 						
@@ -188,41 +136,35 @@
 					<div class="right">
 						<div class="shang">
 							<h3>关注了 &nbsp;&nbsp;丨&nbsp;&nbsp; 关注者<br></h3>
-							<span>22</span> <span>5034</span>
+							<span>{{ following }}</span> <span>{{ followed }}</span>
 						</div>
 						
-						<div class="xia">
-							<h3>关注列表&nbsp;&nbsp;粉丝列表</h3>
-							
-							<div class="bg1">
-								<ul>
-									<li><a href="###">dusha</a></li>
-									
-									<li><a href="###">廖显东</a></li>
-									
-									<li><a href="###">廖雪峰</a></li>
-									
-									<li><a href="###">李沐</a></li>
-									
-									
-									<li><a href="###">梅启铭</a></li>
-									
-									<li><a href="###">Linus</a></li>
-									
-									<li><a href="###">乔治布鲁斯</a></li>
-								
-								</ul>
-							</div>
-							
-							
-						</div>
+						<div class="xia">  
+							  
+							<div class="lists-container">  
+							  <div class="list followers-list">  
+								<h4>关注列表</h4>  
+								<ul>  
+								  <li v-for="follower in followersList" :key="follower.UID">  
+									<a :href="follower.UID">{{ follower.u_name }}</a>
+								  </li>  
+								</ul>  
+							  </div>  
+							  <div class="list fans-list">  
+								<h4>粉丝列表</h4>  
+								<ul>  
+								  <li v-for="fan in fansList" :key="fan.UID">  
+									<a :href="fan.UID">{{ fan.u_name }}</a>
+								  </li>  
+								</ul>  
+							  </div>  
+							</div>  
+						  </div>
 						
 						
 					</div>
 
-					<div class="clear">
-
-					</div>
+					
 
 
 
@@ -246,15 +188,32 @@ export default {
 	  isLoggedIn: localStorage.getItem("isLoggedIn"),
       username: localStorage.getItem("username"),
       imageSrc:"",
+	  imageSrca:"",
 	  signature:"",
 	  isSetting: false ,
-
+	  articleId: "0",
+	  articleList: "",
+	  level:0,
+	  following: 0,
+	  followed: 0,
+	  followersList:[], // 关注列表数据  
+      fansList:[] , // 粉丝列表数据  
+	  uid: this.$route.params.uid,
+	  u_name:"",
     };
   },
   created() {
 	if (localStorage.getItem("isLoggedIn")!=false){
     this.fetchAvatar(); // 在页面加载时调用fetchAvatar方法
-	this.getSignature();    //在页面加载时调用获取签名的方法
+
+    //this.fetchArticleList();
+	//this.getfollowing();
+	//this.getfollowed();
+	this.getfollowers_list();
+	this.getfans_list();
+	this.getu_name();
+	
+
 	}
   },
   methods: {  
@@ -267,19 +226,20 @@ export default {
     } , 
 	sendSignature() {  
       const data ={
-		name:this.username,
+		name:this.u_name,
 		resource_type:"signature",
 		post_data: this.signature,
+
 	  };
 	  const instance = axios.create({
         withCredentials: true,
       });
 	  //将signature发送到后端
 	  instance
-.post(`http://127.0.0.1:8088/user/signature/${this.username}`,data)
+.post(`http://127.0.0.1:8088/user/signature/${this.u_name}`,data)
         .then((response) => {
           // 处理成功的响应
-          console.log(response.data);
+          
           if (response.data.Success == true) {
 			this.isSetting = false; // 更新isSetting的值，使文本框变为不可编辑状态  
 
@@ -307,8 +267,22 @@ export default {
       });
       instance.get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
         .then(async response => {
-          console.log(response.data)
+         
           this.imageSrc = "data:img/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  },
+  fetchAvatara() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance.get(`http://127.0.0.1:8088/user/avatar/${this.u_name}`) // 使用get请求获取头像图片文件
+        .then(async response => {
+        
+          this.imageSrca = "data:img/png;base64,"+response.data.data; // 更新imageSrc以显示头像  
+		  
         })
         .catch(error => {
           console.error(error);
@@ -318,16 +292,110 @@ export default {
 	const instance = axios.create({
         withCredentials: true,
       });
-	  //待修改为后续查看他人的UID，而不是用户自己的
-      instance.get(`http://127.0.0.1:8088/user/signature/${this.username}`) // 使用get请求获取头像图片文件
+      instance.get(`http://127.0.0.1:8088/user/signature/${this.u_name}`) // 
         .then(async response => {
-          console.log(response.data)
+         
           this.signature = response.data.data; // 更新
         })
         .catch(error => {
           console.error(error);
         });
-  }
+  },
+  /*
+  getfollowing(){
+	const instance = axios.create({
+        withCredentials: true,
+      });
+	  
+      instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.username}`) 
+        .then(async response => {
+          console.log(response.data)
+          this.following = response.data.data.following; // 更新关注者数量
+		  this.followed=response.data.data.followed  
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  },
+  getfollowed(){
+	const instance = axios.create({
+        withCredentials: true,
+      });
+	  console.log(this.u_name)
+      instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.u_name}`) 
+        .then(async response => {
+          console.log(response.data)
+          this.followed = response.data.data.followed; // 更新粉丝数量
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  },
+  */
+	fetchArticleList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-list/${this.u_name}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+         
+          this.articleList = response.data; // 显示文章内容
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+	getfollowers_list() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/following-list/${this.username}`) // 使用get请求获取关注列表
+        .then(async (response) => {
+         
+          this.followersList = response.data.List; // 显示关注列表
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+	getfans_list() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/followed-list/${this.username}`) // 使用get请求获取粉丝列表
+        .then(async (response) => {
+        
+          this.fansList = response.data.List; // 显示粉丝列表
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+	getu_name() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/uid/${this.uid}`) // 使用get请求获取u_name
+        .then(async (response) => {
+          this.u_name = response.data.data.u_name.String; //返回u_name值
+		  this.followed=response.data.data.followed;
+		  this.following =response.data.data.following;
+		  this.level=response.data.data.level;
+		  this.getSignature();    
+		  this.fetchArticleList();
+		  this.fetchAvatara();
+		 
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
   }  
 }  
 </script>
@@ -533,8 +601,11 @@ div.clear {
 .head1 .wu {
 	width: 10%;
 	float: left;
-	margin-top: 10px;
+	margin-top: 1000px;
 }
+.articleRecommendedLis {  
+	margin-top: 50px; /* 调整这个值来控制向下移动的距离 */  
+  }
 
 .head1 .wu a {
 	display: block;
@@ -547,7 +618,14 @@ div.clear {
 	border-radius: 15px;
 }
 
-
+.lists-container {  
+	display: flex; /* 使用Flex布局 */  
+	justify-content: space-between; /* 使两个列表水平排列，并在它们之间添加间距 */  
+  }  
+	
+  .list {  
+	width: 45%; /* 控制每个列表的宽度 */  
+  }
 .centen {
 	background-color: #F5E9D9;
 	margin-top: 50px;
