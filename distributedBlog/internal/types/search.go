@@ -9,5 +9,5 @@ type SearchResponse struct {
 	Code      int                 `json:"code"`
 	ListData  []Article_list_item `json:"data" `
 	CacheHead string              `json:"cachehead"`
-	CacheId   string              `json:"cachedataid"`
+	CacheId   string              `json:"cacheid"`
 }

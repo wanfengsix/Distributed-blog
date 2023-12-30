@@ -22,7 +22,12 @@
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="img/search.png" />
-        <input type="text" style="width: 400px" v-model="searchQuery" @click="getSearchList" />
+        <input
+          type="text"
+          style="width: 400px"
+          v-model="searchQuery"
+          @click="getSearchList"
+        />
       </div>
       <div class="navgationbarItemCreaterCenter">
         <p style="color: white">创作者中心</p>
@@ -94,7 +99,7 @@
       </div>
 
       <!-- 通过循环生成中间文章列表 -->
-      <div class="articleRecommendedList">
+      <div class="articleRecommendedList" v-if="!isSearched">
         <div
           class="article"
           v-for="(item, index) in articleList.article_list"
@@ -107,6 +112,14 @@
         </div>
 
         <!-- 可以添加更多文章项 -->
+      </div>
+
+      <!-- 搜索后的结果 -->
+      <div class="articleRecommendedList" v-else>
+        <h3>
+          <a :href="'article/' +searchArticleId">{{ searchArticleHead }}</a>
+        </h3>
+       
       </div>
     </section>
 
@@ -141,8 +154,10 @@ export default {
       articleList: "",
       articleListLeft: "",
       authorList: "",
-      searchQuery:"",
-      searchArticleList:"",
+      searchQuery: "",
+      searchArticleHead: "",
+      isSearched: false,
+      searchArticleId:"",
     };
   },
   created() {
@@ -154,9 +169,12 @@ export default {
     this.getAuthorList();
     this.getuid();
     
+    this.setIsSearched();
   },
   methods: {
-    
+    setIsSearched() {
+      this.isSearched = false;
+    },
     getSearchList() {
       const instance = axios.create({
         withCredentials: true,
@@ -165,13 +183,15 @@ export default {
         .get(`http://127.0.0.1:8088/search/${this.searchQuery}`) // 使用get请求获取文章标题
         .then(async (response) => {
           console.log(response.data);
-         
-
+          this.searchArticleHead = response.data.cachehead; // 显示文章内容
+         this.searchArticleId=response.data.cacheid
+         console.log("-----------",this.searchArticleId)
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
         .catch((error) => {
           console.error(error);
         });
+      this.isSearched = true;
     },
     getLoggedIn() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -215,7 +235,7 @@ export default {
       instance
         .get(`http://127.0.0.1:8088/user/author-rank/${this.articleId}`) // 使用get请求获取作者榜
         .then(async (response) => {
-          console.log("-----------", response.data);
+          console.log( response.data);
           this.authorList = response.data; // 显示文章内容
 
           // this.articleList = make([]interface{},len(response.data.articleList))
