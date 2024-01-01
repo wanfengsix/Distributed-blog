@@ -117,13 +117,13 @@
 
       <!-- 搜索后的结果 -->
       <div class="articleRecommendedList" v-else>
-        <h3 class="article">
+        <!-- <h3 class="article">
           <a :href="'article/' +searchArticleId">{{ searchArticleHead }}</a>
           <p>文章摘要或内容简介...</p>
-        </h3>
+        </h3> -->
         <div
           class="article"
-          v-for="(item, index) in articleList.article_list"
+          v-for="(item, index) in searchList"
           :key="index"
         >
           <h3>
@@ -167,9 +167,8 @@ export default {
       articleListLeft: "",
       authorList: "",
       searchQuery: "",
-      searchArticleHead: "",
+      searchList:"",
       isSearched: false,
-      searchArticleId:"",
     };
   },
   created() {
@@ -195,8 +194,8 @@ export default {
         .get(`http://127.0.0.1:8088/search/${this.searchQuery}`) // 使用get请求获取文章标题
         .then(async (response) => {
           console.log(response.data);
-          this.searchArticleHead = response.data.cachehead; // 显示文章内容
-         this.searchArticleId=response.data.cacheid
+          this.searchList = response.data.data; // 显示文章内容
+        
          
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
@@ -249,7 +248,6 @@ export default {
         .then(async (response) => {
           console.log( response.data);
           this.authorList = response.data; // 显示文章内容
-
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
         .catch((error) => {
