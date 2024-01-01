@@ -6,6 +6,7 @@ import (
 	"distributedBlog/internal/models"
 	"distributedBlog/internal/svc"
 	"distributedBlog/internal/types"
+	"encoding/json"
 	"log"
 	"time"
 
@@ -53,16 +54,16 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url FROM article WHERE head LIKE CONCAT('%', ?, '%')"
 
 	//redisquery := strings.ReplaceAll(query, "?", req.Name)
-	keyHead := "searchhead:" + req.Name // 设置 Redis 缓存的键名
-	keyId := "searchId:" + req.Name
-	vHead, err := rds.GetCtx(context.Background(), keyHead)
-	vId, err := rds.GetCtx(context.Background(), keyId)
-	if err == nil {
-		resp.CacheHead = vHead
-		resp.CacheId = vId
-	}
 
-	if vHead == "" || vId == "" { //没有缓存，那么就查询
+	key := "search:" + req.Name // 设置 Redis 缓存的键名
+	v, err := rds.GetCtx(context.Background(), key)
+	if err == nil {
+		err = json.Unmarshal([]byte(v), &resp.ListData)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	if v == "" { //没有缓存，那么就查询
 		err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 		if err != nil {
 			log.Println(err)
@@ -87,11 +88,18 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 		for k := 0; k < length; k++ {                          //拷贝
 			articleList[k].Article_ID = R_list[k].Article_ID.String
 			articleList[k].Head = R_list[k].Head.String
-			//将内容放入缓存
-			rds.SetCtx(context.Background(), keyHead, articleList[k].Head)
-			rds.SetCtx(context.Background(), keyId, articleList[k].Article_ID)
 		}
+		//将内容放入缓存
+		jsondata, err2 := json.Marshal(articleList)
+		if err2 != nil {
+			log.Panicln(err2)
+		}
+		rds.SetCtx(context.Background(), key, string(jsondata))
 		resp.ListData = articleList
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
 	}
 	return
 }

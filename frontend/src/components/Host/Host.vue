@@ -115,12 +115,18 @@
       </div>
 
       <!-- 搜索后的结果 -->
-      <div class="articleRecommendedList" v-else>
-        <h3>
-          <a :href="'article/' +searchArticleId">{{ searchArticleHead }}</a>
-        </h3>
-       
-      </div>
+        <div class="articleRecommendedList" v-else>
+        <div
+          class="search"
+          v-for="(item, index) in searchList"
+          :key="index"
+        >
+          <h3>
+            <a :href="'article/' + item.article_id">{{ item.head }}</a>
+          </h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
+        </div>
     </section>
 
     <!-- <section id="notifications">
@@ -155,9 +161,8 @@ export default {
       articleListLeft: "",
       authorList: "",
       searchQuery: "",
-      searchArticleHead: "",
+      searchList:"",
       isSearched: false,
-      searchArticleId:"",
     };
   },
   created() {
@@ -183,9 +188,8 @@ export default {
         .get(`http://127.0.0.1:8088/search/${this.searchQuery}`) // 使用get请求获取文章标题
         .then(async (response) => {
           console.log(response.data);
-          this.searchArticleHead = response.data.cachehead; // 显示文章内容
-         this.searchArticleId=response.data.cacheid
-         console.log("-----------",this.searchArticleId)
+          this.searchList = response.data.data//将缓存数据转换为json
+          console.log("-----------",this.searchList)
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
         .catch((error) => {
@@ -237,7 +241,6 @@ export default {
         .then(async (response) => {
           console.log( response.data);
           this.authorList = response.data; // 显示文章内容
-
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
         .catch((error) => {
