@@ -11,6 +11,7 @@ import (
 	"distributedBlog/internal/handler/resource"
 	"distributedBlog/internal/handler/search"
 	"distributedBlog/internal/handler/user"
+	"distributedBlog/internal/handler/write"
 	"distributedBlog/internal/svc"
 	"flag"
 	"fmt"
@@ -45,6 +46,7 @@ func main() {
 	user.RegisterHandlers(server, ctx)
 	follow.RegisterHandlers(server, ctx)
 	search.RegisterHandlers(server, ctx)
+	write.RegisterHandlers(server, ctx)
 	//服务器运行
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

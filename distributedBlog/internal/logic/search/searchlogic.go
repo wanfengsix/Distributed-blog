@@ -16,7 +16,7 @@ import (
 )
 
 /*
-定义资源逻辑体
+定义搜索逻辑体
 */
 type SearchLogic struct {
 	logx.Logger
@@ -82,7 +82,7 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 		} else {
 			resp.Code = 200
 			resp.Success = true
-			resp.Message = "find article!"
+			resp.Message = "database find article!"
 		}
 		articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
 		for k := 0; k < length; k++ {                          //拷贝
@@ -95,11 +95,18 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 			log.Panicln(err2)
 		}
 		rds.SetCtx(context.Background(), key, string(jsondata))
+		// 设置缓存过期时间（过期时间为5秒）
+		expiration := 5
+		err = rds.ExpireCtx(context.Background(), key, expiration)
+		if err != nil {
+			log.Println("Error setting expiration time:", err)
+			return
+		}
 		resp.ListData = articleList
 	} else {
 		resp.Code = 200
 		resp.Success = true
-		resp.Message = "find article!"
+		resp.Message = "cache find article!"
 	}
 	return
 }
