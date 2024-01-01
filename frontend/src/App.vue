@@ -9,12 +9,15 @@ import Article from './components/Article/Article.vue'
 import Regist from './components/Regist/Regist.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import Individual from './components/Individual_center/Individual.vue'
+import Editor from './components/Editor/Editor.vue'
 const routes = [
     {path: '/', component:Host,},
     { path: '/login', component: Login },
     { path: '/regist', component: Regist },
     {path:'/article/:articleId',component:Article},
-    {path:'/individual/:uid',component:Individual,}
+    {path:'/individual/:uid',component:Individual},
+    {path:'/editor',component:Editor},  
+
 ]
   
   // 3. 创建路由实例并传递 `routes` 配置

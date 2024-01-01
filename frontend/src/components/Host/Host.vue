@@ -21,16 +21,17 @@
         <a :href="'individual/'+ this.uid">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
-        <img class="imgSearch" src="img/search.png" />
+        <img class="imgSearch" @click="getSearchList" src="img/search.png" />
         <input
           type="text"
           style="width: 400px"
           v-model="searchQuery"
-          @click="getSearchList"
+          @keyup.enter="getSearchList"
         />
       </div>
       <div class="navgationbarItemCreaterCenter">
-        <p style="color: white">创作者中心</p>
+        <a  :href="'editor/'" style="color: white">创作者中心</a>
+        
       </div>
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
@@ -116,10 +117,21 @@
 
       <!-- 搜索后的结果 -->
       <div class="articleRecommendedList" v-else>
-        <h3>
+        <h3 class="article">
           <a :href="'article/' +searchArticleId">{{ searchArticleHead }}</a>
+          <p>文章摘要或内容简介...</p>
         </h3>
-       
+        <div
+          class="article"
+          v-for="(item, index) in articleList.article_list"
+          :key="index"
+        >
+          <h3>
+            <a :href="'article/' + item.article_id">{{ item.head }}</a>
+          </h3>
+          <p>文章摘要或内容简介...</p>
+        </div>
+        
       </div>
     </section>
 
@@ -185,7 +197,7 @@ export default {
           console.log(response.data);
           this.searchArticleHead = response.data.cachehead; // 显示文章内容
          this.searchArticleId=response.data.cacheid
-         console.log("-----------",this.searchArticleId)
+         
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
         .catch((error) => {
