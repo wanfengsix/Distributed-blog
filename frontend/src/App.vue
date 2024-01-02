@@ -16,6 +16,7 @@ const routes = [
     { path: '/regist', component: Regist },
     {path:'/article/:articleId',component:Article},
     {path:'/individual/:uid',component:Individual},
+    {path:'/editor/:articleId',component:Editor},  
     {path:'/editor',component:Editor},  
 
 ]

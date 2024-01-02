@@ -28,7 +28,7 @@
         />
       </div>
       <div class="navgationbarItemCreaterCenter">
-        <a  :href="'../editor/'" style="color: white">创作者中心</a>
+        <a  :href="'../editor/'+ this.uid" style="color: white">创作者中心</a>
         
       </div>
       <div v-if="isLoggedIn" class="loggedIn">
