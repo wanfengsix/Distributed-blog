@@ -62,6 +62,7 @@ export default {
             [{ font: [] }],
             [{ align: [] }],
             ["clean"],
+            ["image","video"]//上传图片、上传视频
           ],
         },
       });
