@@ -95,33 +95,32 @@
                 />
                 <p v-else>{{ signature }}</p>
               </div>
-              <div class="you">
-                <button v-if="!isSetting" @click="isSetting = true">
-                  设置
-                </button>
-                <button v-else @click="sendSignature()">完成</button>
+              <div class="you">  
+                <button :disabled="!isValidUser()" v-if="!isSetting" @click="isSetting = true">  
+                  设置  
+                </button>  
+                <button :disabled="!isValidUser()" v-else @click="sendSignature()">完成</button>  
               </div>
 
               <div class="clear"></div>
             </div>
 
-            <div class="xia">
-              <div class="articleRecommendedLis">
-                <!-- 通过循环生成文章列表 -->
-                <div
-                  class="article"
-                  v-for="(item, index) in articleList.article_list"
-                  :key="index"
-                >
-                  <h3>
-                    <a :href="'../article/' + item.article_id">{{
-                      item.head
-                    }}</a>
-                  </h3>
-                  <p>文章摘要或内容简介...</p>
-                </div>
-              </div>
-              <div class="clear"></div>
+            <div class="xia">  
+              <div class="articleRecommendedLis">  
+                <!-- 通过循环生成文章列表 -->  
+                <div  
+                  class="article"  
+                  v-for="(item, index) in articleList.article_list"  
+                  :key="index"  
+                  :style="{ position: 'relative' }"  
+                >  
+                <a :href="getLink(item)">{{ item.head }}</a>  
+                  <p>文章摘要或内容简介...</p>  
+                  <!-- 添加删除按钮 -->  
+                  <button class="delete-button" @click="deleteArticle(item.article_id)">删除</button>  
+                </div>  
+              </div>  
+              <div class="clear"></div>  
             </div>
           </div>
 
@@ -200,6 +199,16 @@ export default {
         borderRadius: "75%",
       };
     },
+    isValidUser() {  
+    return this.u_name === this.username || this.username === 'admin';  
+  },  
+  getLink(item) {  
+      if (this.u_name === "username" || this.username === "admin") {  
+        return `../editor/${item.article_id}`; // 跳转到editor路由  
+      } else {  
+        return `../article/${item.article_id}`; // 跳转到article路由  
+      }  
+    },  
     sendSignature() {
       const data = {
         name: this.u_name,
@@ -315,6 +324,20 @@ export default {
           this.articleList = response.data; // 显示文章内容
 
           // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    deleteArticle(article_id){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/delete-article/${article_id}`) // 使用get请求
+        .then(async (response) => {
+         this.fetchArticleList();
+          
         })
         .catch((error) => {
           console.error(error);

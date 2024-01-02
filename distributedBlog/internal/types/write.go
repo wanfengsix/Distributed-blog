@@ -1,9 +1,10 @@
 package types
 
 type WriteReq struct {
-	Data string `json:"data"`
-	Uid  string `path:"uid"`
-	Head string `json:"head"`
+	Data      string `json:"data"`
+	Uid       string `path:"uid"`
+	Head      string `json:"head"`
+	ArticleId string `json:"article_id"`
 }
 type WriteResponse struct {
 	Success bool

@@ -44,46 +44,86 @@ func NewWriteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WriteLogic 
 func (w *WriteLogic) Write(req *types.WriteReq) (resp *types.WriteResponse, err error) {
 	respo := new(types.WriteResponse)
 	resp = respo
-	var U_list []*models.User_Total
-	user_query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where UID=?"
-	err2 := mysqlDB.QueryRowsCtx(context.Background(), &U_list, user_query, req.Uid)
-	var UserName string
-	if err2 != nil {
-		log.Println(err2)
-	}
-	//检验会不会查询的到,如果查询不到，那么就返回不存在
-	if len(U_list) == 0 {
-		resp.Code = 404
-		resp.Success = false
-		resp.Message = "can't find user!"
-		return
+
+	if req.ArticleId != "" { //不为空，则是对现有文章进行修改，查询该文章，对其标题内容修改
+		var R_list []*models.ArticleResource
+		query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+		err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.ArticleId)
+		if err != nil {
+			log.Println(err)
+		}
+		//检验会不会查询的到,如果查询不到，那么就返回不存在
+		if len(R_list) == 0 {
+			resp.Code = 404
+			resp.Success = false
+			resp.Message = "can't find article!"
+		} else {
+			resp.Code = 200
+			resp.Success = true
+			resp.Message = "find article!"
+		}
+		//写入文件内容
+		//给绝对路径赋值
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Println(err)
+		}
+		err = os.WriteFile(wd+"/staticdata/"+"article"+"/"+R_list[0].Article_url.String, []byte(req.Data), os.ModePerm)
+		if err != nil {
+			if err == io.EOF {
+
+			} else {
+				log.Println(err)
+			}
+		}
+		//修改文章标题
+		update := "UPDATE article SET head=? WHERE Article_ID=?"
+		_, err = mysqlDB.ExecCtx(context.Background(), update, req.Head, req.ArticleId)
+		if err != nil {
+			log.Println(err)
+		}
 	} else {
-		resp.Code = 200
-		resp.Success = true
-		resp.Message = "find user!"
-		UserName = U_list[0].UID.String
-	}
-	NewArticleId := UserName + strconv.Itoa(rand.Intn(100))
-	mysqlDateFormat := "2006-01-02"
-	time_now := time.Now().Format(mysqlDateFormat)
-	FileName := NewArticleId + ".txt" //生成随机文件名
-	//插入文章记录
-	query := "INSERT INTO article VALUES(?,?,?,?,?,?,?)"
-	_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName)
-	if err2 != nil {
-		log.Println(err2)
-	}
-	//写入文件内容
-	//给绝对路径赋值
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-	wd = wd + "/staticdata" + "/article"
-	RealPath := filepath.Join(wd, FileName)
-	err = os.WriteFile(RealPath, []byte(req.Data), os.ModePerm)
-	if err != nil {
-		log.Println(err)
+		var U_list []*models.User_Total
+		user_query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where UID=?"
+		err2 := mysqlDB.QueryRowsCtx(context.Background(), &U_list, user_query, req.Uid)
+		var UserName string
+		if err2 != nil {
+			log.Println(err2)
+		}
+		//检验会不会查询的到,如果查询不到，那么就返回不存在
+		if len(U_list) == 0 {
+			resp.Code = 404
+			resp.Success = false
+			resp.Message = "can't find user!"
+			return
+		} else {
+			resp.Code = 200
+			resp.Success = true
+			resp.Message = "find user!"
+			UserName = U_list[0].UID.String
+		}
+		NewArticleId := UserName + strconv.Itoa(rand.Intn(100))
+		mysqlDateFormat := "2006-01-02"
+		time_now := time.Now().Format(mysqlDateFormat)
+		FileName := NewArticleId + ".txt" //生成随机文件名
+		//插入文章记录
+		query := "INSERT INTO article VALUES(?,?,?,?,?,?,?)"
+		_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName)
+		if err2 != nil {
+			log.Println(err2)
+		}
+		//写入文件内容
+		//给绝对路径赋值
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Println(err)
+		}
+		wd = wd + "/staticdata" + "/article"
+		RealPath := filepath.Join(wd, FileName)
+		err = os.WriteFile(RealPath, []byte(req.Data), os.ModePerm)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 	return
 }

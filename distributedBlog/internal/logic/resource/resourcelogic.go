@@ -154,11 +154,11 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 	if len(R_list) == 0 {
 		resp.Code = 404
 		resp.Success = false
-		resp.Message = "can't find user!"
+		resp.Message = "can't find article!"
 	} else {
 		resp.Code = 200
 		resp.Success = true
-		resp.Message = "find user!"
+		resp.Message = "find article!"
 	}
 
 	data, err := os.ReadFile(wd + "/staticdata/" + resource_type + "/" + R_list[0].Article_url.String)
@@ -298,53 +298,65 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 	}
 	if req.Resource_type == "avatar" {
 		GetResource_Avatar(req, wd, resp) //对头像资源处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "article" {
 		GetResource_Article(req, wd, resp) //对文章体处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "signature" {
 		GetResource_Signature(req, wd, resp) //对签名资源处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "head" {
 		GetResource_Article_head(req, wd, resp) //对文章头处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "article-list" { //获取文章记录列表
 		GetResource_Article_list(req, wd, resp) //对文章列表处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "comment-list" { //获取评论列表
 		GetResource_Comment_list(req, wd, resp) //对评论列表处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "likes-nums-article" { //获取文章的点赞数
 		GetResource_likes_nums_article(req, wd, resp) //对文章的点赞数处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "author-rank" { //作者榜
 		GetResource_Author_Rank(req, resp)
-		if err != nil {
-			log.Println(err)
-		}
-
 	} else if req.Resource_type == "article-rank" { //作者榜
 		GetResource_Article_Rank(req, resp)
-		if err != nil {
-			log.Println(err)
-		}
 
+	} else if req.Resource_type == "delete-article" { //删除文章
+		Delete_Article(req, resp)
 	}
 	return
+}
+
+// 根据article_id删除文章:先查article表查找文章文件位置，再删除文件，最后删除记录
+func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
+	//先删除文件
+	var Article_list []*models.ArticleResource
+	//查询文章记录，获取url
+	get_query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &Article_list, get_query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	var url string
+	if len(Article_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find article!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
+		url = Article_list[0].Article_url.String
+	}
+	//执行删除文件操作
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	wd = wd + "/staticdata" + "/article/" + url
+	err = os.Remove(wd)
+	//删除文章记录
+	query := "delete from article where Article_ID=?"
+	_, err = mysqlDB.ExecCtx(context.Background(), query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+
 }
 
 // 获取作者榜，根据粉丝数来递减查询，取前8位
@@ -505,9 +517,6 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 
 	} else if req.Resource_type == "signature" {
 		PostResource_Signature(req, wd, resp) //对签名资源处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "head" {
 
 	} else if req.Resource_type == "article-list" { //获取文章记录列表
@@ -516,14 +525,8 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 
 	} else if req.Resource_type == "islike" { //获取用户对文章的点赞状态
 		GetResource_isliked(req, wd, resp) //对文章的点赞数处理
-		if err != nil {
-			log.Println(err)
-		}
 	} else if req.Resource_type == "isFollow" { //获取用户对文章的点赞状态
 		GetResource_isFollowed(req, wd, resp) //对文章的点赞数处理
-		if err != nil {
-			log.Println(err)
-		}
 	}
 	return
 }
