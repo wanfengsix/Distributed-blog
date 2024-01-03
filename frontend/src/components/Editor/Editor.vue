@@ -9,6 +9,9 @@
     <div class="drafts" @click="getDraft">草稿箱</div>
     <div class="save" @click="saveArticle">保存</div>
     <div class="release" @click="releaseArticle">发布</div>
+    <div class="exit" >
+      <a href="../">退出</a>
+    </div>
     <div v-if="isLoggedIn" class="loggedIn">
       <div class="navgationbarItemAvator">
         <img class="imgAvator" :src="imageSrc" alt="Image from backend" />
@@ -26,7 +29,7 @@
     </div>
   </div>
   <div>
-    <div class="editor" ></div>
+    <div class="editor" v-html="refs.contentTemp"></div>
   </div>
 </template>
 
@@ -37,6 +40,7 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import axios from "axios";
+import { useRoute } from 'vue-router';
 export default {
   data() {
     return {
@@ -45,7 +49,7 @@ export default {
       username: localStorage.getItem("username"),
       headertext: "",
       uid: "",
-      
+      routePath: this.$route.path,
       contentTemp: "",
     };
   },
@@ -53,7 +57,10 @@ export default {
     const uid = ref("");
     const headertext = ref("");
     const contentTemp = ref("");
+    const routePath = ref("");
 
+    
+    const route = useRoute();
     const state = reactive({
       isLoggedIn: localStorage.getItem("isLoggedIn"),
       imageSrc: "",
@@ -61,6 +68,7 @@ export default {
       headertext: "",
       uid: "",
       contentTemp: "",
+      routePath: ref(route.path),
       
     });
     const refs = toRefs(state);
@@ -109,7 +117,7 @@ export default {
 
           head: headertext.value,
         };
-        console.log("----------", typeof data.uid); // 访问 uid
+        console.log("----------", typeof uid.value); // 访问 uid
 
         instance
           .post(`http://127.0.0.1:8088/draft/${uid.value}`, data)
@@ -156,38 +164,50 @@ export default {
       }
     };
 
-    //   const getDraft = () => {
+      const getDraft = () => {
 
-    //     const instance = axios.create({
-    //       withCredentials: true,
-    //     });
+        const instance = axios.create({
+          withCredentials: true,
+        });
 
-    //     instance
-    //       .get(`http://127.0.0.1:8088/draft/${uid.value}`) // 使用get请求获取commentList内容
-    //       .then(async (response) => {
-    //         console.log(response.data);
-    //         content = response.data.data; // 显示评论列表内容
-    //       })
-    //       .catch((error) => {
-    //         console.error(error);
-    //       });
+        instance
+          .get(`http://127.0.0.1:8088/draft/${uid.value}`) // 使用get请求获取commentList内容
+          .then(async (response) => {
+            console.log(response.data);
+            state.contentTemp = response.data.message; // 显示评论列表内容
+            console.log("contentTemp", state.contentTemp);
+            const regex = /^\/editor\/.+/;
+             
+            console.log("regex",state.routePath, regex.test(state.routePath));
+            if (regex.test(state.routePath)) {
+              quill.value.clipboard.dangerouslyPasteHTML(state.contentTemp);
+            }
+            
+          })
+          .catch((error) => {
+            console.error(error);
+          });
 
-    //       // 在这里添加保存文章的逻辑，可以将 content 发送到后端保存
 
-    // };
+          // 在这里添加保存文章的逻辑，可以将 content 发送到后端保存
+
+    };
     return {
       refs,
       uid,
       headertext,
       contentTemp,
+      routePath,
       quill,
       saveArticle,
       releaseArticle,
-      // getDraft,
+      getDraft,
     };
   },
 
   methods: {
+
+
     fetchAvatar() {
       const instance = axios.create({
         withCredentials: true,
@@ -218,23 +238,7 @@ export default {
         });
     },
 
-    getDraft() {
-      const instance = axios.create({
-        withCredentials: true,
-      });
 
-      instance
-        .get(`http://127.0.0.1:8088/draft/${this.uid}`) // 使用get请求获取commentList内容
-        .then(async (response) => {
-          console.log(response.data);
-          this.contentTemp = response.data.message; // 显示评论列表内容
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      // 在这里添加保存文章的逻辑，可以将 content 发送到后端保存
-    },
   },
   created() {
     this.fetchAvatar();
@@ -273,6 +277,14 @@ export default {
     border-radius: 10%;
   }
   .release {
+    padding: 8px 16px;
+    font-size: 30px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: rgb(64, 149, 229);
+    border-radius: 10%;
+  }
+  .exit {
     padding: 8px 16px;
     font-size: 30px;
     cursor: pointer;

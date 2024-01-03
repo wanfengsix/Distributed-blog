@@ -17,7 +17,7 @@
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
-        <router-link to="/individual">个人中心</router-link>
+        <a :href="'../individual/' + this.uid">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
         <img class="imgSearch" src="../../../public/img/search.png" />
@@ -156,7 +156,8 @@
       </div>
 
       <div class="rightBox">
-        <div class="personalInfo">
+        <div class="personalInfo" >
+          
           <img
             class="imgIcon"
             src="../../../public/img/personalIcon.jpg"
@@ -164,7 +165,7 @@
           />
 
           <div class="rightPersonalInfo">
-            <p class="personalName">{{ u_name }}</p>
+            <a class="personalName" :href="'../individual/' + this.uid">{{ u_name }}</a>
 
             <img class="imgGrade" src="../../../public/img/grade1.png" alt="" />
           </div>
@@ -184,9 +185,13 @@
           </div>
         </div>
         <div class="follow">
-          <button class="followButton" @click="fetchFollow">
+          <button class="followButton" @click="fetchFollow" >
             {{ buttonText }}
           </button>
+          <div>
+           
+          </div>
+
         </div>
       </div>
     </div>
@@ -224,6 +229,7 @@ export default {
       read_nums: "",
       followed: "",
       level: "",
+      userid: "",
     };
   },
 
@@ -364,6 +370,22 @@ export default {
         .then(async (response) => {
           console.log(response.data);
           this.likeNums = response.data.data; // 显示评论列表内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    getUserId() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/u_name/${this.username}`)
+        .then(async (response) => {
+          console.log(response.data);
+          this.userid = response.data.data.uid.String; // 获取userid
+          console.log("用户id"+this.userid)
         })
         .catch((error) => {
           console.error(error);
@@ -548,6 +570,7 @@ export default {
     this.getLikes();
     this.GetLiked();
     this.getUser_Total();
+    this.getUserId();
     
   },
 };
