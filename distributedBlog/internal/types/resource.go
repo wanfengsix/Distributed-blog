@@ -1,5 +1,7 @@
 package types
 
+import "distributedBlog/internal/models"
+
 type ResourceReq struct {
 	Name          string `json:"name" path:"name"`
 	Resource_type string `json:"resource_type" path:"type"`
@@ -14,7 +16,7 @@ type Article_list_item struct {
 type Comment_list_item struct {
 	Comment_ID      string `json:"Comment_ID"`
 	Comment_content string `json:"Comment_content"`
-	UID             string `json:"UID"`
+	U_name          string `json:"U_name"`
 	Date            string `json:"date"`
 }
 type Author_list_item struct {
@@ -26,7 +28,8 @@ type ResourceResponse struct {
 	Message         string              `json:"message"`
 	Code            int                 `json:"code"`
 	Data            string              `json:"data" `
-	ArticleListData []Article_list_item `json:"article_list"` //只有请求文章列表集合用到
-	CommentListData []Comment_list_item `json:"comment_list"` //只有请求评论列表集合用到
-	AuthorListData  []Author_list_item  `json:"author_list"`  //只有请求作者列表集合用到
+	ArticleListData []Article_list_item `json:"article_list"`   //只有请求文章列表集合用到
+	CommentListData []Comment_list_item `json:"comment_list"`   //只有请求评论列表集合用到
+	AuthorListData  []Author_list_item  `json:"author_list"`    //只有请求作者列表集合用到
+	NoticeListData  []models.Notice     `json:"noticelistdata"` //只有请求通知列表集合用到
 }

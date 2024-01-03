@@ -45,6 +45,7 @@ func GetRegist(R types.RegistReq) *Regist { //获取Regist事务体
 		prequery := "INSERT INTO user VALUES(?,?,0,0,0,0,0,0,0)"
 		mysqlDB.ExecCtx(context.Background(), prequery, R.Username, R.Username)
 		mysqlDB.ExecCtx(context.Background(), "INSERT INTO register VALUES (?,?,?,?,?,0)", R.Username, R.Password, R.Password_Protection1, R.Password_Protection2, R.Password_Protection3)
+		mysqlDB.ExecCtx(context.Background(), "INSERT INTO user_information VALUES (?,?,?)", R.Username, "", R.Username+"的头像.jpg")
 	}
 	return newRegist
 

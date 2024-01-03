@@ -40,6 +40,119 @@ func NewResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Resource
 响应体返回给前端页面
 */
 
+func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
+	res := new(types.ResourceResponse)
+	resp = res
+	//给绝对路径赋值
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	if req.Resource_type == "avatar" {
+		GetResource_Avatar(req, wd, resp) //对头像资源处理
+	} else if req.Resource_type == "article" {
+		GetResource_Article(req, wd, resp) //对文章体处理
+	} else if req.Resource_type == "signature" {
+		GetResource_Signature(req, wd, resp) //对签名资源处理
+	} else if req.Resource_type == "head" {
+		GetResource_Article_head(req, wd, resp) //对文章头处理
+	} else if req.Resource_type == "article-list" { //获取文章记录列表
+		GetResource_Article_list(req, wd, resp) //对文章列表处理
+	} else if req.Resource_type == "comment-list" { //获取评论列表
+		GetResource_Comment_list(req, wd, resp) //对评论列表处理
+	} else if req.Resource_type == "likes-nums-article" { //获取文章的点赞数
+		GetResource_likes_nums_article(req, wd, resp) //对文章的点赞数处理
+	} else if req.Resource_type == "author-rank" { //作者榜
+		GetResource_Author_Rank(req, resp)
+	} else if req.Resource_type == "article-rank" { //作者榜
+		GetResource_Article_Rank(req, resp)
+
+	} else if req.Resource_type == "delete-article" { //删除文章
+		Delete_Article(req, resp)
+	} else if req.Resource_type == "notice-list" { //通知列表
+		GetResource_Notice_list(req, resp) //对文章列表处理
+	} else if req.Resource_type == "read-notice" { //对通知已读处理
+		Read_Notice(req, resp)
+	} else if req.Resource_type == "article-visible" { //修改文章公开
+		Article_visible(req, resp)
+	} else if req.Resource_type == "article-unvisible" { //修改文章隐私
+		Article_unvisible(req, resp)
+	} else if req.Resource_type == "article-list-individual" {
+		GetResource_Article_list_individual(req, wd, resp) //对文章列表处理
+	} else if req.Resource_type == "article-list-self" {
+		GetResource_Article_list_self(req, wd, resp)
+	}
+	return
+}
+
+// 获取文章列表,通过UID请求/user/article-list-individual/:uid
+func GetResource_Article_list_self(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where  UID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find article!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
+	}
+	articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
+	for k := 0; k < length; k++ {                          //拷贝
+		articleList[k].Article_ID = R_list[k].Article_ID.String
+		articleList[k].Head = R_list[k].Head.String
+	}
+	resp.ArticleListData = articleList
+	return
+
+}
+
+// 获取文章列表,通过UID请求/user/article-list-individual/:uid
+func GetResource_Article_list_individual(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	var R_list []*models.ArticleResource
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where is_visible=1 and UID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	var length int
+	if len(R_list) >= const_values.BIGGEST_LIST_NUM {
+		length = const_values.BIGGEST_LIST_NUM
+	} else {
+		length = len(R_list)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(R_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find article!"
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find article!"
+	}
+	articleList := make([]types.Article_list_item, length) //创建指定长度的文章集合
+	for k := 0; k < length; k++ {                          //拷贝
+		articleList[k].Article_ID = R_list[k].Article_ID.String
+		articleList[k].Head = R_list[k].Head.String
+	}
+	resp.ArticleListData = articleList
+	return
+
+}
+
 // 先根据用户名查用户id,然后再查询
 func GetResource_Avatar(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	resource_type := "avatar"
@@ -62,7 +175,7 @@ func GetResource_Avatar(req *types.ResourceReq, wd string, resp *types.ResourceR
 		resp.Message = "find user!"
 	}
 	query := "select uid,signature,avatar_url from user_information where uid=?"
-	err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, user[0].UID)
+	err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, user[0].UID.String)
 	if err != nil {
 		log.Println(err)
 	}
@@ -71,7 +184,7 @@ func GetResource_Avatar(req *types.ResourceReq, wd string, resp *types.ResourceR
 		if err == io.EOF {
 
 		} else {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 	}
 	var data_base64 string
@@ -170,6 +283,8 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 		}
 	}
 	resp.Data = string(data)
+	//加入read记录
+
 	return
 
 }
@@ -200,7 +315,7 @@ func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.Res
 // 获取文章列表
 func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where is_visible=1"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
 	if err != nil {
 		log.Println(err)
@@ -259,7 +374,27 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 	for k := 0; k < length; k++ {                          //拷贝
 		commentList[k].Comment_ID = R_list[k].Comment_ID.String
 		commentList[k].Comment_content = R_list[k].Comment_content.String
-		commentList[k].UID = R_list[k].UID.String
+		var U_List []*models.User_Total
+		var U_name string
+		user_query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+		err = mysqlDB.QueryRowsCtx(context.Background(), &U_List, user_query, R_list[k].UID.String)
+		if err != nil {
+			log.Println(err)
+
+		}
+		//检验会不会查询的到,如果查询不到，那么就返回不存在
+		if len(U_List) == 0 {
+			resp.Code = 404
+			resp.Success = false
+			resp.Message = "can't find user!"
+			return
+		} else {
+			resp.Code = 200
+			resp.Success = true
+			resp.Message = "find user!"
+			U_name = U_List[0].UID.String
+		}
+		commentList[k].U_name = U_name
 		commentList[k].Date = R_list[k].Date.String
 	}
 	resp.CommentListData = commentList
@@ -288,37 +423,54 @@ func GetResource_likes_nums_article(req *types.ResourceReq, wd string, resp *typ
 	return
 }
 
-func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
-	res := new(types.ResourceResponse)
-	resp = res
-	//给绝对路径赋值
-	wd, err := os.Getwd()
+// 根据articleid对其进行修改记录,is_read
+func Article_visible(req *types.ResourceReq, resp *types.ResourceResponse) {
+	query := "update article set is_visible=1 where Article_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
 	if err != nil {
 		log.Println(err)
 	}
-	if req.Resource_type == "avatar" {
-		GetResource_Avatar(req, wd, resp) //对头像资源处理
-	} else if req.Resource_type == "article" {
-		GetResource_Article(req, wd, resp) //对文章体处理
-	} else if req.Resource_type == "signature" {
-		GetResource_Signature(req, wd, resp) //对签名资源处理
-	} else if req.Resource_type == "head" {
-		GetResource_Article_head(req, wd, resp) //对文章头处理
-	} else if req.Resource_type == "article-list" { //获取文章记录列表
-		GetResource_Article_list(req, wd, resp) //对文章列表处理
-	} else if req.Resource_type == "comment-list" { //获取评论列表
-		GetResource_Comment_list(req, wd, resp) //对评论列表处理
-	} else if req.Resource_type == "likes-nums-article" { //获取文章的点赞数
-		GetResource_likes_nums_article(req, wd, resp) //对文章的点赞数处理
-	} else if req.Resource_type == "author-rank" { //作者榜
-		GetResource_Author_Rank(req, resp)
-	} else if req.Resource_type == "article-rank" { //作者榜
-		GetResource_Article_Rank(req, resp)
+}
 
-	} else if req.Resource_type == "delete-article" { //删除文章
-		Delete_Article(req, resp)
+// 根据articleid对其进行修改记录,is_read
+func Article_unvisible(req *types.ResourceReq, resp *types.ResourceResponse) {
+	query := "update article set is_visible=0 where Article_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
+	if err != nil {
+		log.Println(err)
 	}
-	return
+}
+
+// 根据noticeid对其进行修改记录,is_read
+func Read_Notice(req *types.ResourceReq, resp *types.ResourceResponse) {
+	query := "update notice set is_read=1 where notice_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+// 根据name作为authorID获取notice列表,请求方式为/user/notice-list/:uid
+func GetResource_Notice_list(req *types.ResourceReq, resp *types.ResourceResponse) {
+	var N_list []*models.Notice
+	query := "select UID,u_name,author_ID,author_name,Article_ID,head,type,is_read,notice_ID from notice where author_ID=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &N_list, query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	if len(N_list) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find notice!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find notice!"
+		for _, v := range N_list {
+			resp.NoticeListData = append(resp.NoticeListData, *v)
+		}
+	}
 }
 
 // 根据article_id删除文章:先查article表查找文章文件位置，再删除文件，最后删除记录
@@ -353,7 +505,7 @@ func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
 
 	//对应的用户点赞数-1,减去相应的评论数
 	query_4 := "select UID ,Article_ID from likes where Article_ID=?  "
-	var User_list []*models.User_Total
+	var User_list []*models.Likes
 	err = mysqlDB.QueryRowsCtx(context.Background(), &User_list, query_4, req.Name)
 	if err != nil {
 		log.Println(err)
@@ -364,16 +516,19 @@ func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
 		if err != nil {
 			log.Println(err)
 		}
-		//搜集各个用户在这篇文章评论数
-		var comment_list []*models.Comment
-		commentSearch_query := "select comment_ID,comment_content,Article_ID,UID,date from comment where UID=?"
-		err = mysqlDB.QueryRowsCtx(context.Background(), &comment_list, commentSearch_query, v.UID.String)
-		if err != nil {
-			log.Println(err)
-		}
+
+	}
+	//搜集各个用户在这篇文章评论数
+	var comment_list []*models.Comment
+	commentSearch_query := "select comment_ID,comment_content,Article_ID,UID,date from comment where Article_ID=?"
+	err = mysqlDB.QueryRowsCtx(context.Background(), &comment_list, commentSearch_query, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, v := range comment_list {
 		//减去相应评论数
-		commentsub_query := "update user set comment_nums= comment_nums-? where UID=?"
-		_, err = mysqlDB.ExecCtx(context.Background(), commentsub_query, len(comment_list), v.UID.String)
+		commentsub_query := "update user set comment_nums= comment_nums-1 where UID=?"
+		_, err = mysqlDB.ExecCtx(context.Background(), commentsub_query, v.UID.String)
 		if err != nil {
 			log.Println(err)
 		}
@@ -540,6 +695,43 @@ func GetResource_isFollowed(req *types.ResourceReq, wd string, resp *types.Resou
 	return
 }
 
+// 先找到avatar_url,再将postdata写入这个文件里
+func SAVE_avatar(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
+	resource_type := "avatar"
+	var R_list []*models.AvatarResource
+	var user []*models.User_Total
+	prequery := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+	err := mysqlDB.QueryRowsCtx(context.Background(), &user, prequery, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	//检验会不会查询的到,如果查询不到，那么就返回不存在
+	if len(user) == 0 {
+		resp.Code = 404
+		resp.Success = false
+		resp.Message = "can't find user!"
+		return
+	} else {
+		resp.Code = 200
+		resp.Success = true
+		resp.Message = "find user!"
+	}
+	query := "select uid,signature,avatar_url from user_information where uid=?"
+	err = mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, user[0].UID.String)
+	if err != nil {
+		log.Println(err)
+	}
+	err = os.WriteFile(wd+"/staticdata/"+resource_type+"/"+req.Name+"/"+R_list[0].Avatar_url.String, []byte(req.Post_data), os.ModePerm)
+	if err != nil {
+		if err == io.EOF {
+
+		} else {
+			log.Println(err)
+		}
+	}
+	return
+}
+
 // 处理发送的资源
 func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.ResourceResponse, err error) {
 	res := new(types.ResourceResponse)
@@ -551,17 +743,9 @@ func (r *ResourceLogic) ResourcePOST(req *types.ResourceReq) (resp *types.Resour
 	}
 
 	if req.Resource_type == "avatar" {
-
-	} else if req.Resource_type == "article" {
-
+		SAVE_avatar(req, wd, resp) //保存头像
 	} else if req.Resource_type == "signature" {
 		PostResource_Signature(req, wd, resp) //对签名资源处理
-	} else if req.Resource_type == "head" {
-
-	} else if req.Resource_type == "article-list" { //获取文章记录列表
-
-	} else if req.Resource_type == "comment-list" { //获取文章评论列表
-
 	} else if req.Resource_type == "islike" { //获取用户对文章的点赞状态
 		GetResource_isliked(req, wd, resp) //对文章的点赞数处理
 	} else if req.Resource_type == "isFollow" { //获取用户对文章的点赞状态

@@ -10,6 +10,7 @@ type Notice struct {
 	Head        sql.NullString `db:"head"`
 	Type        sql.NullString `db:"type"`
 	Is_read     int            `db:"is_read"`
+	Notice_ID   sql.NullString `db:"notice_ID"`
 }
 
 func (n *Notice) TableName() string {
