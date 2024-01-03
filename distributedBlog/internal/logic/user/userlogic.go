@@ -159,7 +159,7 @@ func FollowedList_By_U_name(req *types.UserReq, resp *types.UserResponse) {
 func GetUser_By_Article_ID(req *types.UserReq, resp *types.UserResponse) {
 	var R_list []*models.ArticleResource
 	//根据Article_ID查UID
-	Article_query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	Article_query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where Article_ID=?"
 	err1 := mysqlDB.QueryRowsCtx(context.Background(), &R_list, Article_query, req.Value)
 	if err1 != nil {
 		log.Println(err1)

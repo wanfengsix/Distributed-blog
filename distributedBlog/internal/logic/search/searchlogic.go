@@ -51,7 +51,7 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	var R_list []*models.ArticleResource
 	respo := new(types.SearchResponse)
 	resp = respo
-	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url FROM article WHERE head LIKE CONCAT('%', ?, '%')"
+	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url,abstract,is_visible FROM article WHERE head LIKE CONCAT('%', ?, '%')"
 
 	//redisquery := strings.ReplaceAll(query, "?", req.Name)
 

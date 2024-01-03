@@ -145,7 +145,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 
 	resource_type := "article"
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where Article_ID=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 	if err != nil {
 		log.Println(err)
@@ -166,7 +166,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 		if err == io.EOF {
 
 		} else {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 	}
 	resp.Data = string(data)
@@ -177,7 +177,7 @@ func GetResource_Article(req *types.ResourceReq, wd string, resp *types.Resource
 // 获取文章标题
 func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where Article_ID=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 	if err != nil {
 		log.Println(err)
@@ -200,7 +200,7 @@ func GetResource_Article_head(req *types.ResourceReq, wd string, resp *types.Res
 // 获取文章列表
 func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
 	if err != nil {
 		log.Println(err)
@@ -269,7 +269,7 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 // 获取文章点赞数，通过查询article表获取
 func GetResource_likes_nums_article(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url ,abstract,is_visible from article where Article_ID=?"
 	err1 := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.Name)
 	if err1 != nil {
 		log.Println(err1)
@@ -326,7 +326,7 @@ func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
 	//先删除文件
 	var Article_list []*models.ArticleResource
 	//查询文章记录，获取url
-	get_query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+	get_query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where Article_ID=?"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &Article_list, get_query, req.Name)
 	if err != nil {
 		log.Println(err)
@@ -350,13 +350,52 @@ func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
 	}
 	wd = wd + "/staticdata" + "/article/" + url
 	err = os.Remove(wd)
+
+	//对应的用户点赞数-1,减去相应的评论数
+	query_4 := "select UID ,Article_ID from likes where Article_ID=?  "
+	var User_list []*models.User_Total
+	err = mysqlDB.QueryRowsCtx(context.Background(), &User_list, query_4, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, v := range User_list {
+		likessub_query := "update user set likes_nums=likes_nums-1 where UID=?"
+		_, err = mysqlDB.ExecCtx(context.Background(), likessub_query, v.UID.String)
+		if err != nil {
+			log.Println(err)
+		}
+		//搜集各个用户在这篇文章评论数
+		var comment_list []*models.Comment
+		commentSearch_query := "select comment_ID,comment_content,Article_ID,UID,date from comment where UID=?"
+		err = mysqlDB.QueryRowsCtx(context.Background(), &comment_list, commentSearch_query, v.UID.String)
+		if err != nil {
+			log.Println(err)
+		}
+		//减去相应评论数
+		commentsub_query := "update user set comment_nums= comment_nums-? where UID=?"
+		_, err = mysqlDB.ExecCtx(context.Background(), commentsub_query, len(comment_list), v.UID.String)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	//删除点赞和评论记录
+	query2 := "delete from comment where Article_ID=?"
+	_, err = mysqlDB.ExecCtx(context.Background(), query2, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
+	query3 := "delete from likes where Article_ID=?"
+	_, err = mysqlDB.ExecCtx(context.Background(), query3, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
 	//删除文章记录
 	query := "delete from article where Article_ID=?"
 	_, err = mysqlDB.ExecCtx(context.Background(), query, req.Name)
 	if err != nil {
 		log.Println(err)
 	}
-
 }
 
 // 获取作者榜，根据粉丝数来递减查询，取前8位
@@ -395,7 +434,7 @@ func GetResource_Author_Rank(req *types.ResourceReq, resp *types.ResourceRespons
 // 获取作者榜，根据粉丝数来递减查询，取前8位
 func GetResource_Article_Rank(req *types.ResourceReq, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article order by likes_nums DESC"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article order by likes_nums DESC"
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
 	if err != nil {
 		log.Println(err)

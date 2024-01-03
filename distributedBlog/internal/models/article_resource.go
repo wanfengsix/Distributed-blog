@@ -10,6 +10,8 @@ type ArticleResource struct {
 	Likes_nums   int            `json:"likes_nums" db:"likes_nums"`
 	Comment_nums int            `json:"comment_nums" db:"comment_nums"`
 	Article_url  sql.NullString `json:"article_url" db:"article_url"`
+	Abstract     sql.NullString `db:"abstract"`
+	Isvisible    int            `db:"is_visible"`
 }
 
 func (a *ArticleResource) TableName() string {

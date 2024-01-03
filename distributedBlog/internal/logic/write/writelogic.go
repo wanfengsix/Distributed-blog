@@ -47,7 +47,7 @@ func (w *WriteLogic) Write(req *types.WriteReq) (resp *types.WriteResponse, err 
 
 	if req.ArticleId != "" { //不为空，则是对现有文章进行修改，查询该文章，对其标题内容修改
 		var R_list []*models.ArticleResource
-		query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url from article where Article_ID=?"
+		query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where Article_ID=?"
 		err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query, req.ArticleId)
 		if err != nil {
 			log.Println(err)
@@ -106,9 +106,11 @@ func (w *WriteLogic) Write(req *types.WriteReq) (resp *types.WriteResponse, err 
 		mysqlDateFormat := "2006-01-02"
 		time_now := time.Now().Format(mysqlDateFormat)
 		FileName := NewArticleId + ".txt" //生成随机文件名
+		//文章摘要
+		abstract := req.Data[:50]
 		//插入文章记录
-		query := "INSERT INTO article VALUES(?,?,?,?,?,?,?)"
-		_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName)
+		query := "INSERT INTO article VALUES(?,?,?,?,?,?,?,?,?)"
+		_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName, abstract, 0)
 		if err2 != nil {
 			log.Println(err2)
 		}
