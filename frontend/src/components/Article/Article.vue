@@ -86,7 +86,7 @@
       <div class="middleBox">
         <div class="article">
           <article>
-            <h1>文章标题</h1>
+            <h1>{{ this.articleHead }}</h1>
             <div v-html="articleText"></div>
           </article>
         </div>
@@ -128,13 +128,14 @@
             <div class="userImgBox">
               <img
                 class="userImg"
-                :src="imageSrc"
+                
+                :src=" imageSrc"
                 alt=""
                 style="width: 50px; height: 50px"
               />
             </div>
             <div class="commentBox">
-              <div class="userName">{{ item.UID }}</div>
+              <div class="userName">{{ item.U_name }}</div>
 
               <div class="comment">
                 {{ item.Comment_content }}
@@ -223,6 +224,9 @@ export default {
       followed: "",
       level: "",
       userid: "",
+      articleHead: "",
+      imageSrca: "",
+      temp:"",
     };
   },
 
@@ -449,6 +453,20 @@ export default {
           console.error(error);
         });
     },
+    fetchArticleHead() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/head/${this.articleId}`) // 使用get请求获取文章内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleHead = response.data.data; // 显示文章内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     changeImgCollect() {
       this.isCollected = !this.isCollected;
     },
@@ -526,6 +544,26 @@ export default {
           console.error(error);
         });
     },
+    fetchAvatara(str) {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+
+
+      
+
+      return instance
+        .get(`http://127.0.0.1:8088/user/avatar/${str}`) // 使用get请求获取头像图片文件
+        .then(async (response) => {
+          console.log("2222222222222222222222",response.data);
+         
+         
+          return  "data:image/png;base64," + response.data.data; // 更新imageSrc以显示头像
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     handleFileChange(event) {
       const file = event.target.files[0];
 
@@ -570,6 +608,7 @@ export default {
     this.GetLiked();
     this.getUser_Total();
     this.getUserId();
+    this.fetchArticleHead();
     
   },
 };

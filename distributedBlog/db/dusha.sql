@@ -11,7 +11,7 @@
  Target Server Version : 80100
  File Encoding         : 65001
 
- Date: 05/01/2024 01:51:16
+ Date: 05/01/2024 02:39:31
 */
 
 SET NAMES utf8mb4;
@@ -42,7 +42,7 @@ CREATE TABLE `article`  (
 -- ----------------------------
 INSERT INTO `article` VALUES ('030', 'spacex', '2024-01-04 00:00:00', '0', 0, 0, '030.txt', '<p>埃隆·马斯克领导的spacex获得一份巨', 0);
 INSERT INTO `article` VALUES ('037', '被裁后的一天', '2024-01-04 00:00:00', '0', 0, 0, '037.txt', '<p>距离被裁已经过去了34天</p>', 1);
-INSERT INTO `article` VALUES ('050', '前端出什么事了', '2024-01-04 00:00:00', '0', 1, 2, '050.txt', '<p>最近前端出了一个信框架</p>', 1);
+INSERT INTO `article` VALUES ('050', '前端出什么事了', '2024-01-04 00:00:00', '0', 1, 6, '050.txt', '<p>最近前端出了一个信框架</p>', 1);
 INSERT INTO `article` VALUES ('089', '生存or毁灭', '2024-01-04 00:00:00', '0', 0, 0, '089.txt', '<p>今年是qq空间诞生18周年</p>', 1);
 INSERT INTO `article` VALUES ('091', '亚马逊', '2024-01-04 00:00:00', '0', 0, 0, '091.txt', '<p>亚马逊是世界最大网上购物商城</p>', 1);
 INSERT INTO `article` VALUES ('095', '百度', '2024-01-04 00:00:00', '0', 0, 0, '095.txt', '<p>三大巨头之一</p>', 1);
@@ -75,6 +75,10 @@ CREATE TABLE `comment`  (
 -- ----------------------------
 -- Records of comment
 -- ----------------------------
+INSERT INTO `comment` VALUES ('02024-1-5 2:2:25', '123421432', '050', '123', '2024-01-05');
+INSERT INTO `comment` VALUES ('02024-1-5 2:2:30', '23dsgtd', '050', '123', '2024-01-05');
+INSERT INTO `comment` VALUES ('02024-1-5 2:2:53', '1243', '050', '0', '2024-01-05');
+INSERT INTO `comment` VALUES ('02024-1-5 2:28:9', '333', '050', '0', '2024-01-05');
 
 -- ----------------------------
 -- Table structure for draft
@@ -161,8 +165,12 @@ CREATE TABLE `notice`  (
 -- Records of notice
 -- ----------------------------
 INSERT INTO `notice` VALUES ('0', 'admin', '0', 'admin', '050', '前端出什么事了', '点赞', 0, '02024-01-05187');
+INSERT INTO `notice` VALUES ('0', 'admin', '0', 'admin', '050', '前端出什么事了', '评论', 0, '02024-01-05456');
 INSERT INTO `notice` VALUES ('0', 'admin', '0', 'admin', '050', '前端出什么事了', '评论', 0, '02024-01-05501');
+INSERT INTO `notice` VALUES ('0', 'admin', '0', 'admin', '050', '前端出什么事了', '评论', 0, '02024-01-0555');
 INSERT INTO `notice` VALUES ('0', 'admin', '0', 'admin', '050', '前端出什么事了', '评论', 0, '02024-01-05778');
+INSERT INTO `notice` VALUES ('123', '123', '0', 'admin', '050', '前端出什么事了', '评论', 0, '1232024-01-05271');
+INSERT INTO `notice` VALUES ('123', '123', '0', 'admin', '050', '前端出什么事了', '评论', 0, '1232024-01-05400');
 
 -- ----------------------------
 -- Table structure for readed
@@ -225,8 +233,8 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('0', 'admin', 1, 3, 0, 0, 42, 2, 0);
-INSERT INTO `user` VALUES ('123', '123', 1, 0, 0, 0, 0, 0, 0);
+INSERT INTO `user` VALUES ('0', 'admin', 1, 3, 0, 0, 44, 2, 0);
+INSERT INTO `user` VALUES ('123', '123', 1, 0, 0, 0, 2, 0, 0);
 INSERT INTO `user` VALUES ('324', '小李', 44, 44, 44, 44, 444, 4, 4);
 INSERT INTO `user` VALUES ('343', '小明', 222, 222, 2, 90, 0, 7, 7);
 INSERT INTO `user` VALUES ('366', '李盼', 78, 777, 2, 90, 0, 7, 7);
