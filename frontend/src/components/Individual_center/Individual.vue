@@ -11,15 +11,23 @@
         <a href="/">首页</a>
       </div>
       <div class="navgationbarItemNotifications">
-        <img class="imgNotifications" src="../../../public/img/notifications.png" alt="" />
+        <img
+          class="imgNotifications"
+          src="../../../public/img/notifications.png"
+          alt=""
+        />
         <a href="#notifications">通知</a>
       </div>
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
-        <a :href="'individual/'+ this.uid">个人中心</a>
+        <a :href="'individual/' + this.uid">个人中心</a>
       </div>
       <div class="navgationbarItemSearch">
-        <img class="imgSearch" @click="getSearchList" src="../../../public/img/search.png" />
+        <img
+          class="imgSearch"
+          @click="getSearchList"
+          src="../../../public/img/search.png"
+        />
         <input
           type="text"
           style="width: 400px"
@@ -28,8 +36,7 @@
         />
       </div>
       <div class="navgationbarItemCreaterCenter">
-        <a  :href="'../editor/'+ this.uid" style="color: white">创作者中心</a>
-        
+        <a :href="'../editor/' + this.uid" style="color: white">创作者中心</a>
       </div>
       <div v-if="isLoggedIn" class="loggedIn">
         <div class="navgationbarItemAvator">
@@ -95,32 +102,58 @@
                 />
                 <p v-else>{{ signature }}</p>
               </div>
-              <div class="you">  
-                <button :disabled="!isValidUser()" v-if="!isSetting" @click="isSetting = true">  
-                  设置  
-                </button>  
-                <button :disabled="!isValidUser()" v-else @click="sendSignature()">完成</button>  
+              <div class="you">
+                <button
+                  :disabled="!isValidUser()"
+                  v-if="!isSetting"
+                  @click="isSetting = true"
+                >
+                  设置
+                </button>
+                <button
+                  :disabled="!isValidUser()"
+                  v-else
+                  @click="sendSignature()"
+                >
+                  完成
+                </button>
               </div>
 
               <div class="clear"></div>
             </div>
 
-            <div class="xia">  
-              <div class="articleRecommendedLis">  
-                <!-- 通过循环生成文章列表 -->  
-                <div  
-                  class="article"  
-                  v-for="(item, index) in articleList.article_list"  
-                  :key="index"  
-                  :style="{ position: 'relative' }"  
-                >  
-                <a :href="getLink(item)">{{ item.head }}</a>  
-                  <p>文章摘要或内容简介...</p>  
-                  <!-- 添加删除按钮 -->  
-                  <button class="delete-button" @click="deleteArticle(item.article_id)">删除</button>  
-                </div>  
-              </div>  
-              <div class="clear"></div>  
+            <div class="xia">
+              <div class="articleRecommendedLis">
+                <!-- 通过循环生成文章列表 -->
+                <div
+                  class="article"
+                  v-for="(item, index) in articleList.article_list"
+                  :key="index"
+                  :style="{ position: 'relative' }"
+                >
+                  <a :href="getLink(item)">{{ item.head }}</a>
+                  <p>文章摘要或内容简介...</p>
+                  <!-- 添加删除按钮 -->
+                  <button
+                    class="delete-button"
+                    @click="deleteArticle(item.article_id)"
+                  >
+                    删除
+                  </button>
+
+                  <div class="isVisible">
+                    <div class="isVisibleText">文章允许可见</div>
+                    <input
+                      type="checkbox"
+                      :id="'isVisibleButton_' + index" 
+                      @click="handleIsvisible(item)"
+
+                      v-model="isVisible"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="clear"></div>
             </div>
           </div>
 
@@ -177,6 +210,7 @@ export default {
       fansList: [], // 粉丝列表数据
       uid: this.$route.params.uid,
       u_name: "",
+      isVisible: true,
     };
   },
   created() {
@@ -199,16 +233,16 @@ export default {
         borderRadius: "75%",
       };
     },
-    isValidUser() {  
-    return this.u_name === this.username || this.username === 'admin';  
-  },  
-  getLink(item) {  
-      if (this.u_name === "username" || this.username === "admin") {  
-        return `../editor/${item.article_id}`; // 跳转到editor路由  
-      } else {  
-        return `../article/${item.article_id}`; // 跳转到article路由  
-      }  
-    },  
+    isValidUser() {
+      return this.u_name === this.username || this.username === "admin";
+    },
+    getLink(item) {
+      if (this.u_name === "username" || this.username === "admin") {
+        return `../editor/${item.article_id}`; // 跳转到editor路由
+      } else {
+        return `../article/${item.article_id}`; // 跳转到article路由
+      }
+    },
     sendSignature() {
       const data = {
         name: this.u_name,
@@ -314,6 +348,10 @@ export default {
         });
   },
   */
+    handleIsvisible() {
+      this.isVisible = !this.isVisible;
+    },
+
     fetchArticleList() {
       const instance = axios.create({
         withCredentials: true,
@@ -329,15 +367,14 @@ export default {
           console.error(error);
         });
     },
-    deleteArticle(article_id){
+    deleteArticle(article_id) {
       const instance = axios.create({
         withCredentials: true,
       });
       instance
         .get(`http://127.0.0.1:8088/user/delete-article/${article_id}`) // 使用get请求
         .then(async (response) => {
-         this.fetchArticleList();
-          
+          this.fetchArticleList();
         })
         .catch((error) => {
           console.error(error);
@@ -560,8 +597,6 @@ div.clear {
   margin: 0 auto;
 }
 
-
-
 .lists-container {
   display: flex; /* 使用Flex布局 */
   justify-content: space-between; /* 使两个列表水平排列，并在它们之间添加间距 */
@@ -691,6 +726,30 @@ div.clear {
   background-color: #ffffff;
   margin-top: 30px;
   padding-bottom: 100px;
+  .articleRecommendedLis {
+    .delete-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: 30px;
+      background-color: rgb(229, 229, 229);
+      color: #fff;
+
+      border-radius: 10%;
+      outline: none;
+      cursor: pointer;
+    }
+    .isVisibleText {
+      width: 60px;
+      font-size: 10px;
+      background-color: rgb(229, 229, 229);
+      color: black;
+
+      border-radius: 10%;
+      outline: none;
+      cursor: pointer;
+    }
+  }
 }
 .centen1 .zhong .xia ul li {
   padding: 15px;
