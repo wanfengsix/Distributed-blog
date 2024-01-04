@@ -90,8 +90,7 @@
               </div>  
               <div class="clear"></div>  
             </div>
-            <div class="clear"></div>
-          </div>
+          
 
           <div class="zhong">
             <div class="shang">
@@ -105,7 +104,6 @@
                 <h3>{{ u_name }}</h3>
                 <h3>LV.{{ level }}</h3>
                 <span>个性签名</span>
-
                 <input
                   v-model="signature"
                   v-if="isSetting"
@@ -210,7 +208,6 @@
         </div>
       </div>
     </div>
-
   </body>
 </template>
 <script>

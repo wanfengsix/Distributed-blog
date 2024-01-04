@@ -2,6 +2,7 @@
   "dependencies": {
     "vue": "^3.3.9",
     "vue-router": "^4.2.5",
-    "requireConfigFile": false
+    "requireConfigFile": false,
+    "x-invalid-end-tag": false
   }
 }
