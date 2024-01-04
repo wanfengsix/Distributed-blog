@@ -374,9 +374,6 @@ export default {
           console.error(error);
         });
     },
-<<<<<<< HEAD
-    deleteArticle(article_id) {
-=======
     NoticeList() {
       const instance = axios.create({
         withCredentials: true,
@@ -394,7 +391,6 @@ export default {
         });
     },
     deleteArticle(article_id){
->>>>>>> c4bb5b2577fe6a18c41ef48ce0d3bd817644cee7
       const instance = axios.create({
         withCredentials: true,
       });
