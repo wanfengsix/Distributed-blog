@@ -61,22 +61,23 @@
         <div class="centen1">
           <div class="left">
             <span class="aw1">通知</span>
-            <div class="notificationItems">
-              “用户123456"给你的文章“鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点”点赞了。
+            
+              <div class="noticecommand">  
+                <!-- 通过循环生成通知列表 -->  
+                <div  
+                  class="notice"  
+                  v-for="notice in noticeList"  
+                  :key="notice.Notice_ID.String"  
+                  :style="{ position: 'relative' }"  
+                >  
+                <a >{{ notice.U_name.String }}给{{ notice.Author_name.String }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }} </a>  
+                  
+                  
+                </div>  
+              </div>  
+              <div class="clear"></div>  
             </div>
-            <div class="notificationItems">
-              “用户123456"给你的文章“鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点”点赞了。
-            </div>
-            <div class="notificationItems">
-              “用户123456"给你的文章“鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点”点赞了。
-            </div>
-            <div class="notificationItems">
-              “用户123456"给你的文章“鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点”点赞了。
-            </div>
-            <div class="notificationItems">
-              “用户123456"给你的文章“鸿蒙OS起步照官网练习创建第一页面和跳转的第二页面需要注意的点”点赞了。
-            </div>
-          </div>
+          
 
           <div class="zhong">
             <div class="shang">
@@ -169,6 +170,7 @@ export default {
       signature: "",
       isSetting: false,
       articleId: "0",
+      noticeList:"",
       articleList: "",
       level: 0,
       following: 0,
@@ -186,9 +188,10 @@ export default {
       //this.fetchArticleList();
       //this.getfollowing();
       //this.getfollowed();
-      this.getfollowers_list();
-      this.getfans_list();
+     // this.getfollowers_list();
+      //this.getfans_list();
       this.getu_name();
+      this.NoticeList();
     }
   },
   methods: {
@@ -329,6 +332,22 @@ export default {
           console.error(error);
         });
     },
+    NoticeList() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/notice-list/${this.uid}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+          this.noticeList = response.data.noticelistdata; // 显示通知列表内容
+          console.log(response.data);
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     deleteArticle(article_id){
       const instance = axios.create({
         withCredentials: true,
@@ -348,7 +367,7 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/userinfo/following-list/${this.username}`) // 使用get请求获取关注列表
+        .get(`http://127.0.0.1:8088/userinfo/following-list/${this.u_name}`) // 使用get请求获取关注列表
         .then(async (response) => {
           this.followersList = response.data.List; // 显示关注列表
         })
@@ -361,7 +380,7 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/userinfo/followed-list/${this.username}`) // 使用get请求获取粉丝列表
+        .get(`http://127.0.0.1:8088/userinfo/followed-list/${this.u_name}`) // 使用get请求获取粉丝列表
         .then(async (response) => {
           this.fansList = response.data.List; // 显示粉丝列表
         })
@@ -383,6 +402,9 @@ export default {
           this.getSignature();
           this.fetchArticleList();
           this.fetchAvatara();
+          this.getfollowers_list();
+         this.getfans_list();
+
         })
         .catch((error) => {
           console.error(error);
@@ -404,7 +426,8 @@ export default {
   .imgLogo {
     margin-right: 25px;
     margin-left: 10px;
-  }
+  } 
+ 
 
   .navgationbarItemHome {
     width: 5%;
