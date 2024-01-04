@@ -117,7 +117,7 @@ export default {
 
           head: headertext.value,
         };
-        console.log("----------", typeof uid.value); // 访问 uid
+        // console.log("----------", typeof uid.value); // 访问 uid
 
         instance
           .post(`http://127.0.0.1:8088/draft/${uid.value}`, data)

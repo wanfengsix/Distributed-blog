@@ -68,33 +68,39 @@
         <div class="centen1">
           <div class="left">
             <span class="aw1">通知</span>
-            
-              <div class="noticecommand">  
-                <!-- 通过循环生成通知列表 -->  
-                <div  v-if="shouldShowNoticeList()"
-                  class="notice"  
-                  v-for="notice in noticeList"  
-                  :key="notice.Notice_ID.String"  
-                  :style="{ position: 'relative' }"  
-                >  
-                <a >{{ notice.U_name.String }}给{{ notice.Author_name.String }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }} </a>  
-                  
-                  
-                </div>  
-              </div>  
-              <div class="clear"></div>  
+
+            <div class="noticecommand">
+              <!-- 通过循环生成通知列表 -->
+              <div
+                v-if="shouldShowNoticeList()"
+                class="notice"
+                v-for="notice in noticeList"
+                :key="notice.Notice_ID.String"
+                :style="{ position: 'relative' }"
+              >
+                <a
+                  >{{ notice.U_name.String }}给{{
+                    notice.Author_name.String
+                  }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }}
+                </a>
+              </div>
             </div>
-          
+            <div class="clear"></div>
+          </div>
 
           <div class="zhong">
             <div class="shang">
-              <div class="zuo">
-                <img :src="imageSrca" />
+              <div class="zuo" v-if="avatarPreview">
+                <img :src="avatarPreview" alt="Avatar Preview" />
+              </div>
+              <div class="zuo" v-else>
+                <img :src="imageSrc" />
               </div>
               <div class="zhong">
                 <h3>{{ u_name }}</h3>
                 <h3>LV.{{ level }}</h3>
                 <span>个性签名</span>
+
                 <input
                   v-model="signature"
                   v-if="isSetting"
@@ -104,12 +110,27 @@
                 <p v-else>{{ signature }}</p>
               </div>
               <div class="you">
+                <div>
+                  <input
+                    type="file"
+                    ref="fileInput"
+                    @change="handleFileChange"
+                    style="width: 100px; height: 50px; font-size: 15px"
+                  />
+                  <button
+                    @click="uploadAvatar"
+                    style="width: 100px; height: 30px; font-size: 15px"
+                  >
+                    上传头像
+                  </button>
+                </div>
                 <button
                   :disabled="!isValidUser()"
                   v-if="!isSetting"
                   @click="isSetting = true"
+                  style="width: 100px; height: 30px; font-size: 15px"
                 >
-                  设置
+                  设置个性签名
                 </button>
                 <button
                   :disabled="!isValidUser()"
@@ -146,9 +167,8 @@
                     <div class="isVisibleText">文章允许可见</div>
                     <input
                       type="checkbox"
-                      :id="'isVisibleButton_' + index" 
+                      :id="'isVisibleButton_' + index"
                       @click="handleIsvisible(item)"
-
                       v-model="isVisible"
                     />
                   </div>
@@ -203,7 +223,7 @@ export default {
       signature: "",
       isSetting: false,
       articleId: "0",
-      noticeList:"",
+      noticeList: "",
       articleList: "",
       level: 0,
       following: 0,
@@ -213,6 +233,10 @@ export default {
       uid: this.$route.params.uid,
       u_name: "",
       isVisible: true,
+      avatarFile: null,
+      avatarPreview: null,
+      avatarBinary: null,
+      avatarBase64: null,
     };
   },
   created() {
@@ -222,13 +246,76 @@ export default {
       //this.fetchArticleList();
       //this.getfollowing();
       //this.getfollowed();
-     // this.getfollowers_list();
+      // this.getfollowers_list();
       //this.getfans_list();
       this.getu_name();
       this.NoticeList();
     }
   },
   methods: {
+    getBase64() {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.avatarBase64 = e.target.result.split(",")[1];
+      };
+      reader.readAsDataURL(this.avatarFile);
+    },
+    convertBinaryToString(binaryData) {
+      const decoder = new TextDecoder("utf-8"); // 使用 UTF-8 编码解析二进制数据
+      return decoder.decode(binaryData);
+    },
+    getBinary() {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.avatarBinary = new Uint8Array(e.target.result);
+      };
+      reader.readAsArrayBuffer(this.avatarFile);
+    },
+    handleFileChange() {
+      const fileInput = this.$refs.fileInput;
+      if (fileInput.files.length > 0) {
+        this.avatarFile = fileInput.files[0];
+        this.previewAvatar();
+      }
+    },
+    previewAvatar() {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.avatarPreview = e.target.result;
+        this.getBinary();
+        this.getBase64();
+      };
+      reader.readAsDataURL(this.avatarFile);
+    },
+    uploadAvatar() {
+      // 在这里实现上传头像的逻辑，使用 this.avatarFile
+      // 你可以使用 FormData 将文件上传到服务器
+      // 例如，可以使用 axios 或 Fetch API 发送 POST 请求
+      // 示例：axios.post('/upload/avatar', formData)
+      const data = {
+        name: this.u_name,
+        resource_type: "avatar",
+        post_data: this.avatarBase64,
+      };
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      console.log("post头像", this.avatarBase64);
+      console.log("post头像", typeof this.avatarBase64);
+
+      //将signature发送到后端
+      instance
+        .post(`http://127.0.0.1:8088/user/avatar/${this.u_name}`, data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log("post成功base", response.data);
+          this.$forceUpdate(); // 强制Vue组件重新渲染
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
     updateImage() {
       // 在这里更新 imageSrc 的值
       this.imageStyle = {
@@ -236,20 +323,20 @@ export default {
         borderRadius: "75%",
       };
     },
-    isValidUser() {  
-    return this.u_name === this.username || this.username === 'admin';  
-  },  
-  getLink(item) {  
-      if (this.u_name === "username" || this.username === "admin") {  
-        return `../editor/${item.article_id}`; // 跳转到editor路由  
-      } else {  
-        return `../article/${item.article_id}`; // 跳转到article路由  
-      }  
-    },  
-    shouldShowNoticeList() {  
-      // 判断是否显示通知列表  
-      return this.u_name === this.username || this.username === 'admin';
-    },  
+    isValidUser() {
+      return this.u_name === this.username || this.username === "admin";
+    },
+    getLink(item) {
+      if (this.u_name === "username" || this.username === "admin") {
+        return `../editor/${item.article_id}`; // 跳转到editor路由
+      } else {
+        return `../article/${item.article_id}`; // 跳转到article路由
+      }
+    },
+    shouldShowNoticeList() {
+      // 判断是否显示通知列表
+      return this.u_name === this.username || this.username === "admin";
+    },
     sendSignature() {
       const data = {
         name: this.u_name,
@@ -303,14 +390,15 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/avatar/${this.u_name}`) // 使用get请求获取头像图片文件
+        .get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
         .then(async (response) => {
-          this.imageSrca = "data:img/png;base64," + response.data.data; // 更新imageSrc以显示头像
+          this.imageSrc = "data:img/png;base64," + response.data.data; // 更新imageSrc以显示头像
         })
         .catch((error) => {
           console.error(error);
         });
     },
+
     getSignature() {
       const instance = axios.create({
         withCredentials: true,
@@ -324,37 +412,38 @@ export default {
           console.error(error);
         });
     },
-    /*
-  getfollowing(){
-	const instance = axios.create({
+
+    // getfollowing(){
+    // const instance = axios.create({
+    //       withCredentials: true,
+    //     });
+
+    //     instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.username}`)
+    //       .then(async response => {
+    //         console.log(response.data)
+    //         this.following = response.data.data.following; // 更新关注者数量
+    // 	  this.followed=response.data.data.followed
+    //       })
+    //       .catch(error => {
+    //         console.error(error);
+    //       });
+    // },
+    getfollowed() {
+      const instance = axios.create({
         withCredentials: true,
       });
-	  
-      instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.username}`) 
-        .then(async response => {
-          console.log(response.data)
-          this.following = response.data.data.following; // 更新关注者数量
-		  this.followed=response.data.data.followed  
-        })
-        .catch(error => {
-          console.error(error);
-        });
-  },
-  getfollowed(){
-	const instance = axios.create({
-        withCredentials: true,
-      });
-	  console.log(this.u_name)
-      instance.get(`http://127.0.0.1:8088/userinfo/u_name/${this.u_name}`) 
-        .then(async response => {
-          console.log(response.data)
+      console.log(this.u_name);
+      instance
+        .get(`http://127.0.0.1:8088/userinfo/u_name/${this.u_name}`)
+        .then(async (response) => {
+          console.log(response.data);
           this.followed = response.data.data.followed; // 更新粉丝数量
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
-  },
-  */
+    },
+
     handleIsvisible() {
       this.isVisible = !this.isVisible;
     },
@@ -390,7 +479,7 @@ export default {
           console.error(error);
         });
     },
-    deleteArticle(article_id){
+    deleteArticle(article_id) {
       const instance = axios.create({
         withCredentials: true,
       });
@@ -444,8 +533,7 @@ export default {
           this.fetchArticleList();
           this.fetchAvatara();
           this.getfollowers_list();
-         this.getfans_list();
-
+          this.getfans_list();
         })
         .catch((error) => {
           console.error(error);
@@ -467,8 +555,7 @@ export default {
   .imgLogo {
     margin-right: 25px;
     margin-left: 10px;
-  } 
- 
+  }
 
   .navgationbarItemHome {
     width: 5%;

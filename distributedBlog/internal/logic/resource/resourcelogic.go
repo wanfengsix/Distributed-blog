@@ -721,7 +721,8 @@ func SAVE_avatar(req *types.ResourceReq, wd string, resp *types.ResourceResponse
 	if err != nil {
 		log.Println(err)
 	}
-	err = os.WriteFile(wd+"/staticdata/"+resource_type+"/"+req.Name+"/"+R_list[0].Avatar_url.String, []byte(req.Post_data), os.ModePerm)
+	real_data, _ := base64.StdEncoding.DecodeString(req.Post_data)
+	err = os.WriteFile(wd+"/staticdata/"+resource_type+"/"+req.Name+"/"+R_list[0].Avatar_url.String, real_data, os.ModePerm)
 	if err != nil {
 		if err == io.EOF {
 
