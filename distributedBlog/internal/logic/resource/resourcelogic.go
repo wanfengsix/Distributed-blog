@@ -599,7 +599,7 @@ func GetResource_Author_Rank(req *types.ResourceReq, resp *types.ResourceRespons
 // 获取作者榜，根据粉丝数来递减查询，取前8位
 func GetResource_Article_Rank(req *types.ResourceReq, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
-	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article order by likes_nums DESC"
+	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where is_visible=1 order by likes_nums DESC "
 	err := mysqlDB.QueryRowsCtx(context.Background(), &R_list, query)
 	if err != nil {
 		log.Println(err)

@@ -94,7 +94,7 @@
                 <img :src="avatarPreview" alt="Avatar Preview" />
               </div>
               <div class="zuo" v-else>
-                <img :src="imageSrc" />
+                <img :src="imageSrca" />
               </div>
               <div class="zhong">
                 <h3>{{ u_name }}</h3>
@@ -408,9 +408,9 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/avatar/${this.username}`) // 使用get请求获取头像图片文件
+        .get(`http://127.0.0.1:8088/user/avatar/${this.u_name}`) // 使用get请求获取头像图片文件
         .then(async (response) => {
-          this.imageSrc = "data:img/png;base64," + response.data.data; // 更新imageSrc以显示头像
+          this.imageSrca = "data:img/png;base64," + response.data.data; // 更新imageSrc以显示头像
         })
         .catch((error) => {
           console.error(error);
