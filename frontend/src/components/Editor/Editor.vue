@@ -51,6 +51,8 @@ export default {
       uid: "",
       routePath: this.$route.path,
       contentTemp: "",
+      
+      articleText: "",
     };
   },
   setup() {
@@ -58,6 +60,9 @@ export default {
     const headertext = ref("");
     const contentTemp = ref("");
     const routePath = ref("");
+    const articleText= ref("");
+    const articleId= ref("");
+    
 
     
     const route = useRoute();
@@ -69,6 +74,10 @@ export default {
       uid: "",
       contentTemp: "",
       routePath: ref(route.path),
+      articleText: "",
+      articleId: ref(route.params.articleId),
+      
+      
       
     });
     const refs = toRefs(state);
@@ -98,6 +107,8 @@ export default {
         },
       });
       quill.value.clipboard.dangerouslyPasteHTML(state.contentTemp);
+      getArticle();
+      console.log("测试---------------------------------");
     });
 
    
@@ -147,7 +158,7 @@ export default {
 
           head: headertext.value,
         };
-        console.log("----------", typeof data.uid); // 访问 uid
+        // console.log("----------", typeof data.uid); // 访问 uid
 
         instance
           .post(`http://127.0.0.1:8088/write/${uid.value}`, data)
@@ -176,12 +187,10 @@ export default {
             console.log(response.data);
             state.contentTemp = response.data.message; // 显示评论列表内容
             console.log("contentTemp", state.contentTemp);
-            const regex = /^\/editor\/.+/;
-             
-            console.log("regex",state.routePath, regex.test(state.routePath));
-            if (regex.test(state.routePath)) {
+          
+            
               quill.value.clipboard.dangerouslyPasteHTML(state.contentTemp);
-            }
+            
             
           })
           .catch((error) => {
@@ -192,6 +201,35 @@ export default {
           // 在这里添加保存文章的逻辑，可以将 content 发送到后端保存
 
     };
+
+    const getArticle = () => {
+      console.log("articleId------------", state.articleId);
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article/${state.articleId}`) // 使用get请求获取文章内容
+        .then(async (response) => {
+          console.log(response.data);
+          state.articleText = response.data.data; // 显示文章内容
+          console.log("articleText", state.articleText);
+
+          const regex = /^\/editor\/.+/;
+          if (regex.test(state.routePath)) {
+              quill.value.clipboard.dangerouslyPasteHTML(state.articleText);
+            }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      }
+
+
+
+
+
+
+
     return {
       refs,
       uid,
@@ -199,15 +237,32 @@ export default {
       contentTemp,
       routePath,
       quill,
+      articleText,
+      articleId,
       saveArticle,
       releaseArticle,
       getDraft,
+      getArticle
     };
   },
 
   methods: {
 
-
+    fetchArticle() {
+      console.log("articleId------------", this.articleId);
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article/${this.articleId}`) // 使用get请求获取文章内容
+        .then(async (response) => {
+          console.log(response.data);
+          this.articleText = response.data.data; // 显示文章内容
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     fetchAvatar() {
       const instance = axios.create({
         withCredentials: true,
@@ -223,6 +278,7 @@ export default {
         });
     },
     getuid() {
+    
       const instance = axios.create({
         withCredentials: true,
       });
@@ -243,6 +299,9 @@ export default {
   created() {
     this.fetchAvatar();
     this.getuid();
+    
+
+  
   },
 };
 </script>

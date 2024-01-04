@@ -6,6 +6,8 @@ import (
 	"distributedBlog/internal/models"
 	"distributedBlog/internal/types"
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -46,6 +48,12 @@ func GetRegist(R types.RegistReq) *Regist { //获取Regist事务体
 		mysqlDB.ExecCtx(context.Background(), prequery, R.Username, R.Username)
 		mysqlDB.ExecCtx(context.Background(), "INSERT INTO register VALUES (?,?,?,?,?,0)", R.Username, R.Password, R.Password_Protection1, R.Password_Protection2, R.Password_Protection3)
 		mysqlDB.ExecCtx(context.Background(), "INSERT INTO user_information VALUES (?,?,?)", R.Username, "", R.Username+"的头像.jpg")
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Println(err)
+		}
+		os.Mkdir(wd+"\\staticdata\\"+"avatar\\"+R.Username, os.ModePerm)
+		os.WriteFile(wd+"\\staticdata\\"+"avatar\\"+R.Username+"\\"+R.Username+"的头像.jpg", []byte("123"), os.ModePerm)
 	}
 	return newRegist
 

@@ -10,14 +10,7 @@
         <img class="imgHome" src="../../../public/img/home.png" alt="" />
         <a href="/">首页</a>
       </div>
-      <div class="navgationbarItemNotifications">
-        <img
-          class="imgNotifications"
-          src="../../../public/img/notifications.png"
-          alt=""
-        />
-        <a href="#notifications">通知</a>
-      </div>
+     
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
         <a :href="'individual/' + this.uid">个人中心</a>
@@ -54,10 +47,10 @@
       <div v-else class="nologgedIn">
         <div class="navgationbarItemRight">
           <div class="navgationbarItemLog">
-            <a href="login">登录</a>
+            <a href="../login">登录</a>
           </div>
           <div class="navgationbarItemRegister">
-            <a href="regist">注册</a>
+            <a href="../regist">注册</a>
           </div>
         </div>
       </div>
@@ -68,29 +61,32 @@
         <div class="centen1">
           <div class="left">
             <span class="aw1">通知</span>
-            
-              <div class="noticecommand">  
-                <!-- 通过循环生成通知列表 -->  
-                <div  v-if="shouldShowNoticeList()"
-                  class="notice"  
-                  v-for="notice in noticeList"  
-                  :key="notice.Notice_ID.String"  
-                  :style="{ position: 'relative' }"  
-                >  
-                <a >{{ notice.U_name.String }}给{{ notice.Author_name.String }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }} </a>  
-                <button
-                class="read-button"
-                
-                @click="readnotice(notice.Notice_ID.String)"
+
+            <div class="noticecommand">
+              <!-- 通过循环生成通知列表 -->
+              <div
+                v-if="shouldShowNoticeList()"
+                class="notice"
+                v-for="notice in noticeList"
+                :key="notice.Notice_ID.String"
+                :style="{ position: 'relative' }"
               >
-                已读
-              </button>
-                  
-                </div>  
-              </div>  
-              <div class="clear"></div>  
+                <a style="display: flex; align-items: center"
+                  >{{ notice.U_name.String }}给{{
+                    notice.Author_name.String
+                  }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }}
+                </a>
+                <button
+                  class="read-button"
+                  style="width: 50px; height: 30px; font-size: 15px"
+                  @click="readnotice(notice.Notice_ID.String)"
+                >
+                  已读
+                </button>
+              </div>
             </div>
-          
+            <div class="clear"></div>
+          </div>
 
           <div class="zhong">
             <div class="shang">
@@ -115,12 +111,14 @@
               <div class="you">
                 <div>
                   <input
+                  :disabled="!isValidUser()"
                     type="file"
                     ref="fileInput"
                     @change="handleFileChange"
                     style="width: 100px; height: 50px; font-size: 15px"
                   />
                   <button
+                  :disabled="!isValidUser()"
                     @click="uploadAvatar"
                     style="width: 100px; height: 30px; font-size: 15px"
                   >
@@ -156,8 +154,11 @@
                   :key="index"
                   :style="{ position: 'relative' }"
                 >
-                  <a :href="getLink(item) " style="font-size: 25px;">{{ item.head }}</a>
-                  <p style="font-size: 20px;">文章摘要或内容简介...</p>
+                  <a :href="getLink(item)" style="font-size: 27px">{{
+                    item.head
+                  }}</a>
+                  
+                  <p style="font-size: 16px" v-html="item.abstract"></p>
                   <!-- 添加删除按钮 -->
                   <button
                     class="delete-button"
@@ -168,9 +169,21 @@
                   </button>
 
                   <div class="isVisible">
-                    <div class="isVisibleText">文章允许可见或不可见</div>
-                    <button class="visible-button" :disabled="!isValidUser()" @click="setVisible(item.article_id)">可见</button>  
-                    <button class="invisible-button" :disabled="!isValidUser()" @click="setunVisible(item.article_id)">不可见</button> 
+                    <div class="isVisibleText" style="font-size: 12px; color: gray;">文章允许可见或不可见</div>
+                    <button
+                      class="visible-button"
+                      :disabled="!isValidUser()"
+                      @click="setVisible(item.article_id)"
+                    >
+                      可见
+                    </button>
+                    <button
+                      class="invisible-button"
+                      :disabled="!isValidUser()"
+                      @click="setunVisible(item.article_id)"
+                    >
+                      不可见
+                    </button>
                   </div>
                 </div>
               </div>
@@ -237,7 +250,7 @@ export default {
       avatarPreview: null,
       avatarBinary: null,
       avatarBase64: null,
-      vif:this.u_name === this.username || this.username === 'admin',
+      vif: this.u_name === this.username || this.username === "admin",
     };
   },
   created() {
@@ -251,12 +264,10 @@ export default {
       //this.getfans_list();
       this.getu_name();
       this.NoticeList();
-
     }
-    if (this.u_name === this.username || this.username === 'admin') {
+    if (this.u_name === this.username || this.username === "admin") {
       this.fetchArticleListb();
-    }
-    else{
+    } else {
       this.fetchArticleList();
     }
   },
@@ -376,9 +387,8 @@ export default {
     },
     logout() {
       this.isLoggedIn = false;
-      localStorage.setItem("isLoggedIn", false);
-      // 在这里编写退出登录的逻辑，比如清除本地存储的用户信息等。
-      // 这里只是一个示例，具体的实现取决于您的应用需求。
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
     },
     fetchAvatar() {
       const instance = axios.create({
@@ -464,7 +474,7 @@ export default {
         .get(`http://127.0.0.1:8088/user/article-list-individual/${this.uid}`) // 使用get请求获取文章标题
         .then(async (response) => {
           this.articleList = response.data; // 显示文章内容
-          console.log(response.data);
+          console.log("222222222222",response.data);
 
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
@@ -480,7 +490,8 @@ export default {
         .get(`http://127.0.0.1:8088/user/article-list-self/${this.uid}`) // 使用get请求获取文章标题
         .then(async (response) => {
           this.articleList = response.data; // 显示文章内容
-          console.log(response.data);
+          console.log("2222222222221111",response.data);
+
 
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
@@ -493,7 +504,7 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/notice-list/${this.uid}`) 
+        .get(`http://127.0.0.1:8088/user/notice-list/${this.uid}`)
         .then(async (response) => {
           this.noticeList = response.data.noticelistdata; // 显示通知列表内容
           console.log(response.data);
@@ -504,21 +515,18 @@ export default {
           console.error(error);
         });
     },
-    readnotice(Notice_ID){
+    readnotice(Notice_ID) {
       const instance = axios.create({
         withCredentials: true,
       });
       instance
         .get(`http://127.0.0.1:8088/user/read-notice/${Notice_ID}`) // 使用get请求
-        .then(async (response) => {
-        
-        })
+        .then(async (response) => {})
         .catch((error) => {
           console.error(error);
         });
-
     },
-    deleteArticle(article_id){
+    deleteArticle(article_id) {
       const instance = axios.create({
         withCredentials: true,
       });
@@ -531,33 +539,27 @@ export default {
           console.error(error);
         });
     },
-    setVisible(article_id){
+    setVisible(article_id) {
       const instance = axios.create({
         withCredentials: true,
       });
       instance
         .get(`http://127.0.0.1:8088/user/article-visible/${article_id}`) // 使用get请求
-        .then(async (response) => {
-        
-        })
+        .then(async (response) => {})
         .catch((error) => {
           console.error(error);
         });
-
     },
-    setunVisible(article_id){
+    setunVisible(article_id) {
       const instance = axios.create({
         withCredentials: true,
       });
       instance
         .get(`http://127.0.0.1:8088/user/article-unvisible/${article_id}`) // 使用get请求
-        .then(async (response) => {
-       
-        })
+        .then(async (response) => {})
         .catch((error) => {
           console.error(error);
         });
-
     },
     getfollowers_list() {
       const instance = axios.create({
@@ -919,14 +921,15 @@ div.clear {
       outline: none;
       cursor: pointer;
     }
-    .isVisibleText {  
-      font-size: 13px;  
+    .isVisibleText {
+      font-size: 13px;
     }
-    
-    .visible-button, .invisible-button {  
-      width: 50px;  
-      height: 30px; 
-      font-size: 15px;  
+
+    .visible-button,
+    .invisible-button {
+      width: 50px;
+      height: 30px;
+      font-size: 15px;
     }
   }
 }

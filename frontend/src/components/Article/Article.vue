@@ -7,14 +7,7 @@
         <img class="imgHome" src="../../../public/img/home.png" alt="" />
         <router-link to="/">首页</router-link>
       </div>
-      <div class="navgationbarItemNotifications">
-        <img
-          class="imgNotifications"
-          src="../../../public/img/notifications.png"
-          alt=""
-        />
-        <router-link to="/notifications">通知</router-link>
-      </div>
+     
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="../../../public/img/profile.png" alt="" />
         <a :href="'../individual/' + this.uid">个人中心</a>
@@ -94,7 +87,7 @@
         <div class="article">
           <article>
             <h1>文章标题</h1>
-            <div>{{ articleText }}</div>
+            <div v-html="articleText"></div>
           </article>
         </div>
 
@@ -148,7 +141,7 @@
               </div>
 
               <div class="commentTime">
-                {{ time }}
+                {{ item.date }}
               </div>
             </div>
           </div>
@@ -426,51 +419,6 @@ export default {
           console.error(error);
         });
     },
-    changeImgCollect() {
-      this.isCollected = !this.isCollected;
-    },
-    fetchComment() {
-      var date = new Date();
-      this.time =
-        date.getFullYear() +
-        "-" +
-        (date.getMonth() + 1) +
-        "-" +
-        date.getDate() +
-        " " +
-        date.getHours() +
-        ":" +
-        date.getMinutes() +
-        ":" +
-        date.getSeconds();
-      const data = {
-        Comment_ID: this.uid + this.time,
-        Comment_content: this.inputHistory,
-        Article_ID: this.articleId,
-        u_name: this.username,
-      };
-      const instance = axios.create({
-        withCredentials: true,
-      });
-      // 将comment体发送到后端
-      instance
-        .post("http://127.0.0.1:8088/comment", data)
-        .then((response) => {
-          // 处理成功的响应
-          console.log(response.data);
-          if (response.data.Success == true) {
-            alert("您已评论成功");
-            this.showCommentsFangfa();
-            this.getCommentList();
-          } else {
-            alert("评论失败");
-          }
-        })
-        .catch((error) => {
-          // 处理错误
-          console.error(error);
-        });
-    },
     getCommentList() {
       const instance = axios.create({
         withCredentials: true,
@@ -479,7 +427,7 @@ export default {
       instance
         .get(`http://127.0.0.1:8088/user/comment-list/${this.articleId}`) // 使用get请求获取commentList内容
         .then(async (response) => {
-          console.log(response.data);
+          console.log("comment",response.data);
           this.commentList = response.data; // 显示评论列表内容
         })
         .catch((error) => {
@@ -501,6 +449,55 @@ export default {
           console.error(error);
         });
     },
+    changeImgCollect() {
+      this.isCollected = !this.isCollected;
+    },
+    fetchComment() {
+      console.log("kaishi");
+      var date = new Date();
+      this.time =
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1) +
+        "-" +
+        date.getDate() +
+        " " +
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        date.getSeconds();
+        this.showCommentsFangfa();
+      const data = {
+        Comment_ID: this.uid + this.time,
+        Comment_content: this.inputHistory,
+        Article_ID: this.articleId,
+        u_name: this.username,
+      };
+      
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      // 将comment体发送到后端
+      instance
+        .post("http://127.0.0.1:8088/comment", data)
+        .then((response) => {
+          // 处理成功的响应
+          console.log(response.data);
+          if (response.data.Success == true) {
+            alert("您已评论成功");
+            
+            this.getCommentList();
+          } else {
+            alert("评论失败");
+          }
+        })
+        .catch((error) => {
+          // 处理错误
+          console.error(error);
+        });
+    },
+   
     logout() {
       this.isLoggedIn = false;
       //localStorage.setItem('isLoggedIn',this.isLoggedIn)
@@ -510,7 +507,9 @@ export default {
     showCommentsFangfa() {
       this.showComments = true;
       this.inputHistory = this.inputText;
-      this.inputText = ""; //inputText会显现在输入框中 所以要清空
+      console.log("inputhis",this.inputHistory);
+      this.inputText = "";
+       //inputText会显现在输入框中 所以要清空
       this.fetchAvatar();
     },
     fetchAvatar() {

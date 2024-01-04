@@ -106,11 +106,17 @@ func (w *WriteLogic) Write(req *types.WriteReq) (resp *types.WriteResponse, err 
 		mysqlDateFormat := "2006-01-02"
 		time_now := time.Now().Format(mysqlDateFormat)
 		FileName := NewArticleId + ".txt" //生成随机文件名
-		//文章摘要
-		abstract := req.Data[:50]
+		//文章摘要50
+		length := 0
+		if len(req.Data) < 50 {
+			length = len(req.Data)
+		} else {
+			length = 50
+		}
+		abstract := req.Data[:length]
 		//插入文章记录
 		query := "INSERT INTO article VALUES(?,?,?,?,?,?,?,?,?)"
-		_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName, abstract, 0)
+		_, err2 = mysqlDB.ExecCtx(context.Background(), query, NewArticleId, req.Head, time_now, req.Uid, 0, 0, FileName, abstract, 1)
 		if err2 != nil {
 			log.Println(err2)
 		}

@@ -113,6 +113,8 @@ func GetResource_Article_list_self(req *types.ResourceReq, wd string, resp *type
 	for k := 0; k < length; k++ {                          //拷贝
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
+		articleList[k].Abstract = R_list[k].Abstract.String
+
 	}
 	resp.ArticleListData = articleList
 	return
@@ -147,6 +149,7 @@ func GetResource_Article_list_individual(req *types.ResourceReq, wd string, resp
 	for k := 0; k < length; k++ {                          //拷贝
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
+		articleList[k].Abstract = R_list[k].Abstract.String
 	}
 	resp.ArticleListData = articleList
 	return
@@ -340,6 +343,7 @@ func GetResource_Article_list(req *types.ResourceReq, wd string, resp *types.Res
 	for k := 0; k < length; k++ {                          //拷贝
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
+		articleList[k].Abstract = R_list[k].Abstract.String
 	}
 	resp.ArticleListData = articleList
 	return
@@ -376,7 +380,7 @@ func GetResource_Comment_list(req *types.ResourceReq, wd string, resp *types.Res
 		commentList[k].Comment_content = R_list[k].Comment_content.String
 		var U_List []*models.User_Total
 		var U_name string
-		user_query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where u_name=?"
+		user_query := "select uid,u_name,following,followed,article_nums,read_nums,comment_nums,likes_nums,level from user where UID=?"
 		err = mysqlDB.QueryRowsCtx(context.Background(), &U_List, user_query, R_list[k].UID.String)
 		if err != nil {
 			log.Println(err)
@@ -545,6 +549,12 @@ func Delete_Article(req *types.ResourceReq, resp *types.ResourceResponse) {
 	if err != nil {
 		log.Println(err)
 	}
+	//删除通知记录
+	query5 := "delete from notice where Article_ID=?"
+	_, err = mysqlDB.ExecCtx(context.Background(), query5, req.Name)
+	if err != nil {
+		log.Println(err)
+	}
 	//删除文章记录
 	query := "delete from article where Article_ID=?"
 	_, err = mysqlDB.ExecCtx(context.Background(), query, req.Name)
@@ -614,6 +624,7 @@ func GetResource_Article_Rank(req *types.ResourceReq, resp *types.ResourceRespon
 	for k := 0; k < length; k++ {                          //拷贝
 		articleList[k].Article_ID = R_list[k].Article_ID.String
 		articleList[k].Head = R_list[k].Head.String
+		articleList[k].Abstract = R_list[k].Abstract.String
 	}
 	resp.ArticleListData = articleList
 	return

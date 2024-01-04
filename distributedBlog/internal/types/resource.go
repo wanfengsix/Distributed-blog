@@ -12,6 +12,7 @@ type ResourceReq struct {
 type Article_list_item struct {
 	Head       string `json:"head"`
 	Article_ID string `json:"article_id"`
+	Abstract   string `json:"abstract"`
 }
 type Comment_list_item struct {
 	Comment_ID      string `json:"Comment_ID"`

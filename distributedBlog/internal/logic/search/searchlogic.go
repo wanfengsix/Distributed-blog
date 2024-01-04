@@ -51,7 +51,7 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 	var R_list []*models.ArticleResource
 	respo := new(types.SearchResponse)
 	resp = respo
-	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url,abstract,is_visible FROM article WHERE head LIKE CONCAT('%', ?, '%')"
+	query := "SELECT Article_ID, head, date, UID, likes_nums, comment_nums, article_url,abstract,is_visible FROM article WHERE head LIKE CONCAT('%', ?, '%') and is_visible=1"
 
 	//redisquery := strings.ReplaceAll(query, "?", req.Name)
 
@@ -88,6 +88,7 @@ func (s *SearchLogic) Search(req *types.SearchRequest) (resp *types.SearchRespon
 		for k := 0; k < length; k++ {                          //拷贝
 			articleList[k].Article_ID = R_list[k].Article_ID.String
 			articleList[k].Head = R_list[k].Head.String
+			articleList[k].Abstract = R_list[k].Abstract.String
 		}
 		//将内容放入缓存
 		jsondata, err2 := json.Marshal(articleList)

@@ -12,10 +12,7 @@
         <img class="imgHome" src="img/home.png" alt="" />
         <a href="/">首页</a>
       </div>
-      <div class="navgationbarItemNotifications">
-        <img class="imgNotifications" src="img/notifications.png" alt="" />
-        <a href="#notifications">通知</a>
-      </div>
+      
       <div class="navgationbarItemProfile">
         <img class="imgProfile" src="img/profile.png" alt="" />
         <a :href="'individual/'+ this.uid">个人中心</a>
@@ -109,7 +106,10 @@
           <h3>
             <a :href="'article/' + item.article_id">{{ item.head }}</a>
           </h3>
-          <p>文章摘要或内容简介...</p>
+          <!-- <p>文章摘要或内容简介...</p> -->
+          <p v-html="item.abstract"></p>
+
+
         </div>
 
         <!-- 可以添加更多文章项 -->
@@ -129,7 +129,8 @@
           <h3>
             <a :href="'article/' + item.article_id">{{ item.head }}</a>
           </h3>
-          <p>文章摘要或内容简介...</p>
+          <p v-html="item.abstract"></p>
+
         </div>
         
       </div>
@@ -193,7 +194,7 @@ export default {
       instance
         .get(`http://127.0.0.1:8088/search/${this.searchQuery}`) // 使用get请求获取文章标题
         .then(async (response) => {
-          console.log(response.data);
+          console.log("searchList",response.data);
           this.searchList = response.data.data; // 显示文章内容
         
          
@@ -294,8 +295,9 @@ export default {
       instance
         .get(`http://127.0.0.1:8088/user/article-list/${this.articleId}`) // 使用get请求获取文章标题
         .then(async (response) => {
-          console.log(response.data);
+          console.log("-----",response.data);
           this.articleList = response.data; // 显示文章内容
+          
 
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
