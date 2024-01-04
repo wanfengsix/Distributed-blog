@@ -64,7 +64,7 @@
             
               <div class="noticecommand">  
                 <!-- 通过循环生成通知列表 -->  
-                <div  
+                <div  v-if="shouldShowNoticeList()"
                   class="notice"  
                   v-for="notice in noticeList"  
                   :key="notice.Notice_ID.String"  
@@ -211,6 +211,10 @@ export default {
       } else {  
         return `../article/${item.article_id}`; // 跳转到article路由  
       }  
+    },  
+    shouldShowNoticeList() {  
+      // 判断是否显示通知列表  
+      return this.u_name === this.username || this.username === 'admin';
     },  
     sendSignature() {
       const data = {
