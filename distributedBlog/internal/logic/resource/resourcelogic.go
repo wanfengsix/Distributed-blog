@@ -85,7 +85,7 @@ func (r *ResourceLogic) Resource(req *types.ResourceReq) (resp *types.ResourceRe
 	return
 }
 
-// 获取文章列表,通过UID请求/user/article-list-individual/:uid
+// 获取文章列表,通过UID请求/user/article-list-self/:uid
 func GetResource_Article_list_self(req *types.ResourceReq, wd string, resp *types.ResourceResponse) {
 	var R_list []*models.ArticleResource
 	query := "select Article_ID,head,date,UID,likes_nums,comment_nums,article_url,abstract,is_visible from article where  UID=?"
@@ -426,7 +426,7 @@ func GetResource_likes_nums_article(req *types.ResourceReq, wd string, resp *typ
 // 根据articleid对其进行修改记录,is_read
 func Article_visible(req *types.ResourceReq, resp *types.ResourceResponse) {
 	query := "update article set is_visible=1 where Article_ID=?"
-	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
+	_,err := mysqlDB.ExecCtx(context.Background(), query, req.Name)
 	if err != nil {
 		log.Println(err)
 	}
@@ -435,7 +435,7 @@ func Article_visible(req *types.ResourceReq, resp *types.ResourceResponse) {
 // 根据articleid对其进行修改记录,is_read
 func Article_unvisible(req *types.ResourceReq, resp *types.ResourceResponse) {
 	query := "update article set is_visible=0 where Article_ID=?"
-	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
+	_,err := mysqlDB.ExecCtx(context.Background(), query, req.Name)
 	if err != nil {
 		log.Println(err)
 	}
@@ -444,7 +444,7 @@ func Article_unvisible(req *types.ResourceReq, resp *types.ResourceResponse) {
 // 根据noticeid对其进行修改记录,is_read
 func Read_Notice(req *types.ResourceReq, resp *types.ResourceResponse) {
 	query := "update notice set is_read=1 where notice_ID=?"
-	err := mysqlDB.QueryRowsCtx(context.Background(), query, req.Name)
+	_,err := mysqlDB.ExecCtx(context.Background(), query, req.Name)
 	if err != nil {
 		log.Println(err)
 	}
