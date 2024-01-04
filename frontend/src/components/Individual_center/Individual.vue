@@ -78,7 +78,13 @@
                   :style="{ position: 'relative' }"  
                 >  
                 <a >{{ notice.U_name.String }}给{{ notice.Author_name.String }}的文章“{{ notice.Head.String }}”{{ notice.Type.String }} </a>  
-                  
+                <button
+                class="read-button"
+                
+                @click="readnotice(notice.Notice_ID.String)"
+              >
+                已读
+              </button>
                   
                 </div>  
               </div>  
@@ -132,25 +138,21 @@
                   :key="index"
                   :style="{ position: 'relative' }"
                 >
-                  <a :href="getLink(item)">{{ item.head }}</a>
-                  <p>文章摘要或内容简介...</p>
+                  <a :href="getLink(item) " style="font-size: 25px;">{{ item.head }}</a>
+                  <p style="font-size: 20px;">文章摘要或内容简介...</p>
                   <!-- 添加删除按钮 -->
                   <button
                     class="delete-button"
+                    :disabled="!isValidUser()"
                     @click="deleteArticle(item.article_id)"
                   >
                     删除
                   </button>
 
                   <div class="isVisible">
-                    <div class="isVisibleText">文章允许可见</div>
-                    <input
-                      type="checkbox"
-                      :id="'isVisibleButton_' + index" 
-                      @click="handleIsvisible(item)"
-
-                      v-model="isVisible"
-                    />
+                    <div class="isVisibleText">文章允许可见或不可见</div>
+                    <button class="visible-button" :disabled="!isValidUser()" @click="setVisible(item.article_id)">可见</button>  
+                    <button class="invisible-button" :disabled="!isValidUser()" @click="setunVisible(item.article_id)">不可见</button> 
                   </div>
                 </div>
               </div>
@@ -213,6 +215,7 @@ export default {
       uid: this.$route.params.uid,
       u_name: "",
       isVisible: true,
+      vif:this.u_name === this.username || this.username === 'admin',
     };
   },
   created() {
@@ -226,6 +229,13 @@ export default {
       //this.getfans_list();
       this.getu_name();
       this.NoticeList();
+
+    }
+    if (this.u_name === this.username || this.username === 'admin') {
+      this.fetchArticleListb();
+    }
+    else{
+      this.fetchArticleList();
     }
   },
   methods: {
@@ -364,9 +374,26 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/article-list/${this.u_name}`) // 使用get请求获取文章标题
+        .get(`http://127.0.0.1:8088/user/article-list-individual/${this.uid}`) // 使用get请求获取文章标题
         .then(async (response) => {
           this.articleList = response.data; // 显示文章内容
+          console.log(response.data);
+
+          // this.articleList = make([]interface{},len(response.data.articleList))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    fetchArticleListb() {
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-list-self/${this.uid}`) // 使用get请求获取文章标题
+        .then(async (response) => {
+          this.articleList = response.data; // 显示文章内容
+          console.log(response.data);
 
           // this.articleList = make([]interface{},len(response.data.articleList))
         })
@@ -379,7 +406,7 @@ export default {
         withCredentials: true,
       });
       instance
-        .get(`http://127.0.0.1:8088/user/notice-list/${this.uid}`) // 使用get请求获取文章标题
+        .get(`http://127.0.0.1:8088/user/notice-list/${this.uid}`) 
         .then(async (response) => {
           this.noticeList = response.data.noticelistdata; // 显示通知列表内容
           console.log(response.data);
@@ -389,6 +416,20 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+    },
+    readnotice(Notice_ID){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/read-notice/${Notice_ID}`) // 使用get请求
+        .then(async (response) => {
+        
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
     },
     deleteArticle(article_id){
       const instance = axios.create({
@@ -402,6 +443,34 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+    },
+    setVisible(article_id){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-visible/${article_id}`) // 使用get请求
+        .then(async (response) => {
+        
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+    },
+    setunVisible(article_id){
+      const instance = axios.create({
+        withCredentials: true,
+      });
+      instance
+        .get(`http://127.0.0.1:8088/user/article-unvisible/${article_id}`) // 使用get请求
+        .then(async (response) => {
+       
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
     },
     getfollowers_list() {
       const instance = axios.create({
@@ -441,7 +510,6 @@ export default {
           this.following = response.data.data.following;
           this.level = response.data.data.level;
           this.getSignature();
-          this.fetchArticleList();
           this.fetchAvatara();
           this.getfollowers_list();
          this.getfans_list();
@@ -766,15 +834,14 @@ div.clear {
       outline: none;
       cursor: pointer;
     }
-    .isVisibleText {
-      width: 60px;
-      font-size: 10px;
-      background-color: rgb(229, 229, 229);
-      color: black;
-
-      border-radius: 10%;
-      outline: none;
-      cursor: pointer;
+    .isVisibleText {  
+      font-size: 13px;  
+    }
+    
+    .visible-button, .invisible-button {  
+      width: 50px;  
+      height: 30px; 
+      font-size: 15px;  
     }
   }
 }
